@@ -1,25 +1,27 @@
 PRF ( PHP - Rails framework )
---------------
+--------------------------------
 
 PRF is an open source "port" of Ruby on Rails to PHP.
 Goal of this project is to help developers build their web applications in a MVC pattern, which lets developers write less code.
 
 
 Features
------------
+--------------------------------
 - Database backend ( currently only Mysql, but will feature Postgresql and others in the future )
-- MVC ( only model now )
+- MVC
 
 In near future:
 - Relationships between models
 - Tests
-- Caching
+- Caching ( page, fragment )
 - Views / Templates
 - Validations
 - Generators
+- I18n
+- Database migrations
 
 Notice
---------------
+--------------------------------
 This is a alpha ( preview ) release of PRF. It isn't stable for production yet!
 If you feel contributing in this project, contact me ( Matija Folnovic ) on mail below. Thank you!
 

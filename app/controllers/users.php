@@ -7,6 +7,7 @@ class UsersController extends ControllerBase {
 		global $users;
 		
 		$users = new User;
+		$users -> where( array( 'username' => 'mfolnovic' ) ) -> username = 'mfolnovich';
 	}
 }
 

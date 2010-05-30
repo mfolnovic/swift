@@ -16,6 +16,6 @@ function __autoload( $class ) {
 $router -> route( $_SERVER[ "REQUEST_URI" ] );
 
 // Render
-$view -> render();
+$view -> renderLayout();
 
 ?>
