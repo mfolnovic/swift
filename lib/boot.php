@@ -3,24 +3,13 @@
 // Load constants
 include "constants.php";
 
-loadConfig();
-includeLib();
 
-// Load config files
-function loadConfig() {
-	$files = array( "application" );
+// Load PRF
+$files = array( "helpers", "base", "log", "router", "config" );
+foreach( $files as $file ) 
+	include LIB_DIR . $file . ".php";
 
-	foreach( $files as $file )	
-		include CONFIG_DIR . $file . ".php";
-}
-
-
-// Load PRF files
-function includeLib() {
-	$files = array( "base", "log" );
-
-	foreach( $files as $file )
-		include LIB_DIR . $file . ".php";
-}
+// Route
+$router -> route( $_SERVER[ "REQUEST_URI" ] );
 
 ?>
