@@ -1,15 +1,22 @@
 <?php
 
 class Controller extends Base {
+	var $data;
+	
 	function run( $r ) {
+		$this -> data = $r;
+		
 		$this -> get( $r[ 'controller' ] );
 		$this -> call( $r[ 'controller' ], $r[ 'action' ] );
 	}
 	
 	private function call( $controller, $action ) {		
-		if( is_callable( array( $controller . 'Controller', $action ) ) )
-			call_user_func( array( $controller . 'Controller', $action ) );
-		else
+		if( is_callable( array( $controller . 'Controller', $action ) ) ) {
+			$str = $controller . 'Controller';
+			$obj = new $str;
+			$obj -> initObj();
+			$obj -> $action();
+		} else
 			die( "Action not found!" );
 	}
 	

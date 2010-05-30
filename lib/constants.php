@@ -8,6 +8,7 @@ define( "CONFIG_DIR", DIR . "/config/" );
 define( "APP_DIR", DIR . "/app/" );
 
 define( "CONTROLLERS_DIR", APP_DIR . "controllers/" );
+define( "MODEL_DIR", APP_DIR . "models/" );
 
 define( "LOG_ERROR", "error" );
 
