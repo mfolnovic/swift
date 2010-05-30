@@ -5,7 +5,7 @@ include "constants.php";
 
 
 // Load PRF
-$files = array( "helpers", "base", "log", "router", "config" );
+$files = array( "helpers", "base", "log", "controller", "router", "config" );
 foreach( $files as $file ) 
 	include LIB_DIR . $file . ".php";
 

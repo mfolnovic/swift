@@ -4,6 +4,8 @@ class Router extends Base {
 	var $routes;
 
 	function route( $path ) {
+		global $controller;
+	
 		$path = $this -> removePrefix( $path );	
 		$path = explode( "/", $path );
 		
