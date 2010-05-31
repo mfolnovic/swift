@@ -1,6 +1,16 @@
 <?php
 
 class ModelQuery extends Base {
+	function __get( $name ) {
+		global $db;
+	
+		$r = $this -> doQuery();
+		
+		if( $db -> numrows == 0 ) die( "No rows" );
+		
+		return $r[ 0 ][ $name ];
+	}
+
 	function all() {
 		return $this -> doQuery();
 	}
@@ -16,6 +26,12 @@ class ModelQuery extends Base {
 		
 		$o = $this -> relation[ 'order' ];
 		$this -> order( $o[ 0 ], !$o[ 1 ] );
+		
+		return $this -> doQuery();
+	}
+	
+	function find( $id ) {
+		$this -> where( array( 'ID', $id ) );
 		
 		return $this -> doQuery();
 	}
@@ -58,10 +74,16 @@ class ModelQuery extends Base {
 			if( !$first ) { $ret .= "AND "; $first = false; }
 			else $ret .= ' WHERE';
 			
-			$ret .= '`' . $id . '` = ' . ( $db -> safe( $val ) );
+			$ret .= '`' . $id . '`' . ( $this -> value( $val ) );
 		}
 		
 		return $ret;
+	}
+	
+	function query( $q ) {
+		global $db;
+		
+		return $db -> query( $q );
 	}
 }
 

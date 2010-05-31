@@ -4,10 +4,15 @@ class Controller extends Base {
 	var $data;
 	
 	function run( $r ) {
+		global $benchmark;
+		
+		$benchmark -> start( "Running controller" );
 		$this -> data = $r;
 		
 		$this -> get( $r[ 'controller' ] );
 		$this -> call( $r[ 'controller' ], $r[ 'action' ] );
+		
+		$benchmark -> end( "Running controller" );
 	}
 	
 	private function call( $controller, $action ) {		
