@@ -5,8 +5,13 @@ class DBDriver extends Base {
 	var $conn, $last_query, $numrows;
 
 	function __construct() {
+		global $benchmark;
+		$benchmark -> start( 'Connecting to database' );
+
 		$this -> conn = @mysql_connect( DB_HOST, DB_USERNAME, DB_PASSWORD ) or die( "Didn't connect to mysql" );
 		mysql_select_db( DB_DATABASE );
+		
+		$benchmark -> end( "Connecting to database" );
 	}
 	
 	function __destruct() {

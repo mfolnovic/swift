@@ -43,6 +43,15 @@ class ModelRelation extends ModelCallbacks {
 	function having( $what ) {
 		$this -> relation[ 'having' ] = ' HAVING ' . $what;
 	}
+	
+	/* range */
+	protected function value( $o ) {
+		global $db;
+		
+		if( !is_array( $o ) ) return " = " . $db -> safe( $o );
+		else if( isset( $o[ 1 ] ) ) return " IN ( " . implode( ',' ) . " )";
+		else return " = " . $o[ 0 ];
+	}
 }
 
 ?>

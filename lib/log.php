@@ -20,15 +20,15 @@ class Log extends Base {
 	}
 
 	private function fileConstruct() {
-		$this -> handle = fopen( LOG_DIR . $this -> args . ".log", "a" );
+		$this -> handle = fopen( LOG_DIR . $this -> args . ".log", "w" );
 	}
 
 	private function fileDestruct() {
 		fclose( $this -> handle );
 	}
 
-	private function log( $message ) {
-		fwrite( $this -> handle, $message . "\n" );
+	function log( $message ) {
+		fwrite( $this -> handle, $message . PHP_EOL );
 	}
 
 	function error( $message ) {

@@ -4,7 +4,8 @@ class Router extends Base {
 	var $routes;
 
 	function route( $path ) {
-		global $controller;
+		global $controller, $benchmark;
+		$benchmark -> start( "Routing" );
 	
 		$path = $this -> removePrefix( $path );	
 		$path = explode( "/", $path );
@@ -12,6 +13,7 @@ class Router extends Base {
 		foreach( $this -> routes as $route ) {
 			$r = $this -> checkRoute( $route, $path );
 			if( $r != false ) {
+				$benchmark -> end( "Routing" );
 				$controller -> run( $r );
 				return;
 			}
