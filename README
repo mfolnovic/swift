@@ -9,6 +9,7 @@ Features
 --------------------------------
 - Database backend ( currently only Mysql, but will feature Postgresql and others in the future )
 - MVC
+- Caching ( objects, only in files now )
 
 In near future:
 - Relationships between models
