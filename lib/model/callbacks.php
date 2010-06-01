@@ -6,7 +6,8 @@ class ModelCallbacks extends ModelValidations {
 	function __set( $name, $value ) {
 		global $db;
 	
-		$this -> update[ $name ] = $db -> safe( $value );
+		$this -> cache[ $name ] = $db -> safe( $value );
+		$this -> update[ $name ] = TRUE; //$db -> safe( $value );
 		
 		return $this;
 	}
@@ -30,6 +31,10 @@ class ModelCallbacks extends ModelValidations {
 //		$db -> query( $q );
 		
 		return $this;
+	}
+	
+	function create() {
+		
 	}
 }
 

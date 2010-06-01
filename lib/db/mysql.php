@@ -15,13 +15,15 @@ class DBDriver extends Base {
 	}
 	
 	function __destruct() {
+		if( !$this -> conn ) return;
 		mysql_close( $this -> conn );
 	}
 
 	function query( $q ) {
 		$r = mysql_query( $q, $this -> conn );
 		
-		$this -> numrows = mysql_num_rows( $r );
+		if( is_resource( $r ) ) $this -> numrows = mysql_num_rows( $r );
+		else if( $r === FALSE ) die( "Mysql query: " . mysql_error() );
 		
 		return $r;
 	}
