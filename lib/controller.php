@@ -7,10 +7,13 @@ class Controller extends Base {
 		global $benchmark;
 		
 		$benchmark -> start( "Running controller" );
-		$this -> data = $r;
-		
-		$this -> get( $r[ 'controller' ] );
-		$this -> call( $r[ 'controller' ], $r[ 'action' ] );
+		$this -> controller = $r[ 'controller' ];
+		$this -> action = $r[ 'action' ];
+
+		$this -> data = array_diff_key( $r, array( 'controller' => '', 'action' => '' ) ); // workaround, any better way?
+
+		$this -> get( $this -> controller );
+		$this -> call( $this -> controller, $this -> action );
 		
 		$benchmark -> end( "Running controller" );
 	}

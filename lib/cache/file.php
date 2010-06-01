@@ -24,7 +24,7 @@ class CacheDriver extends Base {
 	}
 	
 	private function readFromFile() {
-		$f = fopen( CACHE_PATH, "r" );
+		$f = fopen( CACHE_PATH, "w+" );
 		while( $line = fgets( $f, 4096 ) ) {
 			list( $index, $value ) = explode( "=", $line );
 			$this -> cache[ $index ] = unserialize( $value );

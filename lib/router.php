@@ -26,7 +26,7 @@ class Router extends Base {
 		$r = $route[ 'route' ];
 		if( $path[ 0 ] == '' ) array_shift( $path );
 		if( end( $path ) == '' ) array_pop( $path );
-		
+				
 		$i = 0;
 		foreach( $r as $id => $val ) {
 			if( !isset( $path[ $i ] ) ) {
@@ -39,10 +39,11 @@ class Router extends Base {
 				
 			++ $i;
 		}
-				
+
 		foreach( $route[ 'options' ] as $id => $val )
-			$ret[ $id ] = $val;
-				
+			if( !isset( $ret[ $id ] ) )
+				$ret[ $id ] = $val;
+
 		return $ret;
 	}
 	
@@ -66,7 +67,7 @@ class Router extends Base {
 			else 
 				$name .= $route[ $i ];
 		}
-		
+
 		return array( 'route' => $ret, 'options' => $options );
 	}
 

@@ -14,7 +14,7 @@ class Model extends ModelRelation {
 			foreach( $data as $id => $value )
 				$this -> $id = $value;
 		
-		$this -> name = strtolower( get_called_class() );
+		$this -> name = strtolower( get_class( $this ) );
 		$this -> relation = array( 'where' => array(), 'order' => '', 'select' => '*', 'limit' => array(), 'group' => '', 'having' => '' );
 		
 		$this -> init();

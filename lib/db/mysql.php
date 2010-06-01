@@ -9,7 +9,7 @@ class DBDriver extends Base {
 		$benchmark -> start( 'Connecting to database' );
 
 		$this -> conn = @mysql_connect( DB_HOST, DB_USERNAME, DB_PASSWORD ) or die( "Didn't connect to mysql" );
-		mysql_select_db( DB_DATABASE );
+		mysql_select_db( DB_DATABASE ) or die( "Database " . DB_DATABASE . " doesn't exist!" );
 		
 		$benchmark -> end( "Connecting to database" );
 	}

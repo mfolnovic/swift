@@ -1,5 +1,7 @@
 <?php
 
+// this is an example for model
+
 class User extends Model {
 	// here, you make any relationships etc.
 	function init() {
