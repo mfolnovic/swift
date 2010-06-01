@@ -3,6 +3,7 @@
 class ControllerBase extends Base {
 	var $form;
 	var $globals = array();
+	var $flash = array();
 	
 	function __construct() {}
 
@@ -16,6 +17,16 @@ class ControllerBase extends Base {
 		global $view;
 
 		$view -> layout = $layout;
+	}
+
+	function redirect( $url ) {
+		global $router;
+
+		$router -> $route( $url );
+	}
+
+	function flash( $message ) {
+		$this -> flash[] = $message;
 	}
 
 	function __get( $index ) {
