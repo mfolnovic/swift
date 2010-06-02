@@ -9,7 +9,7 @@ $benchmark -> start( "Whole request" );
 $benchmark -> start( "Including library" );
 
 // Load PRF
-$files = array( "helpers", "log", "controller", "controllerBase", "router", "config", "cache", "db", "model", "view" );
+$files = array( "helpers", "log", "file", "controller", "controllerBase", "router", "config", "cache", "db", "model", "view" );
 foreach( $files as $file ) 
 	include LIB_DIR . $file . ".php";
 
