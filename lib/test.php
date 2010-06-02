@@ -35,8 +35,10 @@ class Test extends Base {
 	function printResults() {
 		$last = ''; $i = 0;
 		foreach( $this -> results as $value )  {
-			if( $last != $this -> currentTest ) { $i = 0; echo "Test " . $this -> currentTest . PHP_EOL; $last = $this -> currentTest; }
-			echo "Assert " . ( ++ $i ) . ' : ' . $this -> colorize( $value ? "PASS" : "FAIL", $value ? "[0;32m" : "[0;31m" ) . PHP_EOL;
+//			if( $last != $this -> currentTest ) { $i = 0; $r .= "Test " . $this -> currentTest . PHP_EOL; $last = $this -> 	currentTest; }
+
+			if( $value == 0 )
+				$r .= ( ++ $i ) . ') ' . $this -> colorize( "FAILURE", "[0;31m" ) . PHP_EOL;
 		}
 	}
 
