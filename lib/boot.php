@@ -19,6 +19,7 @@ function __autoload( $class ) {
 
 $benchmark -> end( "Including library" );
 
+include MODEL_DIR . "user.php";
 // Route
 $router -> route( $_SERVER[ "REQUEST_URI" ] );
 
@@ -27,5 +28,16 @@ $benchmark -> start( "Rendering" );
 $view -> renderLayout();
 $benchmark -> end( "Rendering" );
 $benchmark -> end( "Whole request" );
+
+/*$users = new User() -> where( array( 'id' => 'bla' ) ); // Relation
+$users = new User() -> all(); // Array
+$user = new User() -> first(); // Row
+$user -> validates();
+$user -> username = 'bla';
+
+foreach( $users -> all() as $id => $user ) // User => Row
+	echo $user -> username;
+	
+$user = new User( array( 'username' => 'bla' ) ); // Row*/
 
 ?>

@@ -2,6 +2,7 @@
 
 // workaround
 include LIB_DIR . "db/" . DB_DRIVER . ".php";
+include LIB_DIR . "model/row.php";
 
 class DB extends DBDriver {
 	function safe( $str ) {

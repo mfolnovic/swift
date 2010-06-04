@@ -32,7 +32,7 @@ class DBDriver extends Base {
 		$ret = array();
 		
 		while( $row = mysql_fetch_assoc( $r ) )
-			$ret[] = $row;
+			$ret[] = new ModelRow( $row );
 			
 		return $ret;
 	}

@@ -4,6 +4,9 @@
 // TODO: make it yaml
 $files = array( "application" );
 foreach( $files as $file )
-	include CONFIG_DIR . $file . ".php";
+	if( file_exists( CONFIG_DIR . $file . ".php" ) )
+		include CONFIG_DIR . $file . ".php";
+	else
+		die( "Didn't find config $file.php. Probably it exists at $file.php.default." );
 
 ?>
