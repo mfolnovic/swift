@@ -3,6 +3,7 @@
 class Test extends Base {
 	var $results = array();
 	var $currentTest = '';
+	var $currentClass = '';
 
 	function __destruct() {
 		$this -> printResults();
@@ -19,6 +20,7 @@ class Test extends Base {
 	}
 	function run( $file ) {
 		$obj = substr( $file, 0, -4 ) . 'Test';
+		$this -> currentClass = $obj;
 		$case = new $obj;
 		$methods = array_diff( get_class_methods( $case ), get_class_methods( 'TestCase' ) );
 		
@@ -34,12 +36,16 @@ class Test extends Base {
 
 	function printResults() {
 		$last = ''; $i = 0;
+		$s = ""; $r = '';
 		foreach( $this -> results as $value )  {
 //			if( $last != $this -> currentTest ) { $i = 0; $r .= "Test " . $this -> currentTest . PHP_EOL; $last = $this -> 	currentTest; }
 
+			$s .= $value ? '.' : 'F';
 			if( $value == 0 )
-				$r .= ( ++ $i ) . ') ' . $this -> colorize( "FAILURE", "[0;31m" ) . PHP_EOL;
+				$r .= ( ++ $i ) . ') ' . $this -> colorize( "FAILURE", "[0;31m" ) . PHP_EOL . $this -> currentTest . '(' . $this -> currentClass . ')' . PHP_EOL;
 		}
+		
+		echo $s . PHP_EOL . PHP_EOL . $r;
 	}
 
 	function colorize( $test, $color ) {
