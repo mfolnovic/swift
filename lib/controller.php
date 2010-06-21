@@ -1,7 +1,8 @@
 <?php
 
 class Controller extends Base {
-	var $data;
+	var $data, $obj;
+	var $globals = array(), $flash = array();
 	
 	function run( $r ) {
 		global $benchmark;
@@ -9,8 +10,9 @@ class Controller extends Base {
 		$benchmark -> start( "Running controller" );
 		$this -> controller = $r[ 'controller' ];
 		$this -> action = $r[ 'action' ];
-
-		$this -> data = array_diff_key( $r, array( 'controller' => '', 'action' => '' ) ); // workaround, any better way?
+		
+		unset( $r[ 'controller' ], $r[ 'action' ] );
+		$this -> data = $r;
 
 		$this -> get( $this -> controller );
 		$this -> call( $this -> controller, $this -> action );
@@ -21,11 +23,10 @@ class Controller extends Base {
 	private function call( $controller, $action ) {		
 		if( is_callable( array( $controller . 'Controller', $action ) ) ) {
 			$str = $controller . 'Controller';
-			$obj = new $str;
-			$obj -> initObj();
-			$obj -> $action();
-		} else
-			die( "Action not found!" );
+			$this -> obj = new $str;
+			$this -> obj -> initObj();
+			$this -> obj -> $action();
+		}
 	}
 	
 	private function get( $controller ) {
@@ -33,7 +34,17 @@ class Controller extends Base {
 		if( file_exists( $path ) )
 			include $path;
 		else
-			die( "Controller not found" ); // need exceptions...
+			$this -> render404();
+	}
+	
+	function isAjax() {
+		return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
+	}
+	
+	function render404() {
+		ob_clean();
+		include PUBLIC_DIR . "/404.html";
+		exit;
 	}
 }
 

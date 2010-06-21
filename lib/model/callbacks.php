@@ -4,10 +4,9 @@ class ModelCallbacks extends ModelValidations {
 	var $update = array();
 
 	function __set( $name, $value ) {
-		global $db, $model_cache;
+		global $db, $model;
 	
-		$model_cache -> $name = $db -> safe( $value );
-		$this -> update[ $name ] = TRUE; //$db -> safe( $value );
+		$this -> update[ $name ] = $db -> safe( $value );
 		
 		return $this;
 	}

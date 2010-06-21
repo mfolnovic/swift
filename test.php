@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 define( "LIB_DIR", "lib/" );

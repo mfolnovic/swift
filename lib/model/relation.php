@@ -8,8 +8,7 @@ class ModelRelation extends ModelCallbacks {
 	
 		return $this;
 	}
-	
-	
+
 	function order( $by, $dir ) {
 		$this -> relation[ 'order' ] = array( $by, $dir == 'asc' ) ;
 		

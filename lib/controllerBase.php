@@ -1,16 +1,12 @@
 <?php
 
 class ControllerBase extends Base {
-	var $form;
-	var $globals = array();
-	var $flash = array();
-	
-	function __construct() {}
+	var $data;
 
 	function initObj() {
 		global $controller;	
 	
-		$this -> form = &$controller -> data;
+		$this -> data = &$controller -> data;
 	}
 
 	function layout( $layout ) {
@@ -26,15 +22,25 @@ class ControllerBase extends Base {
 	}
 
 	function flash( $message ) {
-		$this -> flash[] = $message;
+		global $controller;	
+	
+		$controller -> flash[] = $message;
+	}
+	
+	function model( $name, $data = array() ) {
+		return new $name( $data );
 	}
 
 	function __get( $index ) {
-		return $this -> globals[ $index ];
+		global $controller;
+		
+		return $controller -> globals[ $index ];
 	}
 
  	function __set( $index, $value ) {
-		$this -> globals[ $index ] = $value;
+	 	global $controller;
+ 		
+		$controller -> globals[ $index ] = $value;
 	}
 };
 

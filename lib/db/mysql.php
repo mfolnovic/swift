@@ -5,11 +5,13 @@ class DBDriver extends Base {
 	var $conn, $last_query, $numrows;
 
 	function __construct() {
-		global $benchmark;
+		global $benchmark, $config;
 		$benchmark -> start( 'Connecting to database' );
+		
+		$opt = $config -> options[ 'database' ][ 'default' ];
 
-		$this -> conn = @mysql_connect( DB_HOST, DB_USERNAME, DB_PASSWORD ) or die( "Didn't connect to mysql" );
-		mysql_select_db( DB_DATABASE ) or die( "Database " . DB_DATABASE . " doesn't exist!" );
+		$this -> conn = @mysql_connect( $opt[ 'host' ], $opt[ 'username' ], $opt[ 'password' ] ) or die( "Didn't connect to mysql" );
+		mysql_select_db( $opt[ 'database' ] ) or die( "Database " . $opt[ 'database' ] . " doesn't exist!" );
 		
 		$benchmark -> end( "Connecting to database" );
 	}
@@ -33,6 +35,8 @@ class DBDriver extends Base {
 		
 		while( $row = mysql_fetch_assoc( $r ) )
 			$ret[] = new ModelRow( $row );
+		
+		mysql_free_result( $r );
 			
 		return $ret;
 	}

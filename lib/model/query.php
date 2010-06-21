@@ -2,13 +2,13 @@
 
 class ModelQuery extends Base {
 	function __get( $name ) {
-		global $db;
+		global $db, $controller;
 	
 		$r = $this -> doQuery();
 		
-		if( $db -> numrows == 0 ) die( "No rows" );
+		if( $db -> numrows == 0 ) $controller -> render404();
 		
-		return $r[ 0 ][ $name ];
+		return $r -> $name;
 	}
 
 	function all() {
@@ -42,11 +42,13 @@ class ModelQuery extends Base {
 		$q = $this  -> constructQuery();
 		$r = $db -> allRows( $db -> query( $q ) );
 		
+		if( count( $r ) == 1 ) $r = $r[ 0 ];
+		
 		return $r;
 	}
 	
 	function constructQuery() {
-		$q = "SELECT " . ( $this -> relation[ 'select' ] ) . " FROM " . ( $this -> name ) . 's' . ( $this -> generateWhere() ) . ( $this -> relation[ "group" ] ) . ( $this -> relation[ 'having' ] ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
+		$q = "SELECT " . ( $this -> relation[ 'select' ] ) . " FROM " . ( $this -> name ) . ( $this -> generateWhere() ) . ( $this -> relation[ "group" ] ) . ( $this -> relation[ 'having' ] ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
 		
 		return $q . ';';
 	}

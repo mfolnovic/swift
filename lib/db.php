@@ -1,7 +1,7 @@
 <?php
 
 // workaround
-include LIB_DIR . "db/" . DB_DRIVER . ".php";
+include LIB_DIR . "db/" . ( $config -> options[ 'database' ][ 'default' ][ 'driver' ] ) . ".php";
 include LIB_DIR . "model/row.php";
 
 class DB extends DBDriver {

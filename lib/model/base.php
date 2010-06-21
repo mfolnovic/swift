@@ -10,10 +10,11 @@ class ModelBase extends ModelRelation {
 	var $name;
 	var $cache = array();
 	
-	function __construct() {
+	function __construct( $data = array() ) {
 		global $model;
 
 		$this -> name = strtolower( get_class( $this ) );
+		$model -> initTable( $this -> name );
 	
 		$this -> relation = array( 'where' => array(), 'order' => '', 'select' => '*', 'limit' => array(), 'group' => '', 'having' => '' );
 		$this -> init();

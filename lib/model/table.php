@@ -2,21 +2,21 @@
 
 class ModelTable {
 	var $cache = array();
+	var $newRow = NULL;
 	
 	function __construct( $array = array() ) {
 		if( !empty( $array ) ) 
-			foreach( $array as $id => $val )
-				$this -> $id = $val;
+			$this -> newRow = new ModelRow( $array );
 	}
 	
-	function __get( $id ) {
-		return $this -> cache[ $id ];
+	function get( $row, $index ) {
+		return $this -> cache[ $row ] -> $index;
 	}
 	
-	function __set( $id, $val ) {
-		$this -> cache[ $id ] = $val;
+	function set( $row, $index, $value ) {
+		$this -> cache[ $row ] -> $index = $value;
 		
-		return $this;
+		return $this -> cache[ $row ];
 	}
 }
 
