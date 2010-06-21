@@ -7,19 +7,19 @@ The goal of this project is to help developers build their web applications in a
 
 Features
 --------------------------------
-- Database backend ( currently only Mysql, but will feature Postgresql and others in the future )
+- database backend ( currently only Mysql, but will feature Postgresql and others in the future )
 - MVC
-- Caching ( objects, only in files now )
+- caching ( caching objects in memcache/files )
+- views ( haml )
 
 In near future:
-- Relationships between models
-- Tests
-- Caching ( page, fragment )
-- Views / Templates
-- Validations
-- Generators
-- I18n
-- Database migrations
+- relationships between models
+- tests
+- caching ( page, fragment )
+- validations
+- generators
+- i18n
+- database migrations
 
 Notice
 --------------------------------
