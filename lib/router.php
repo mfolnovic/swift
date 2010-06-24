@@ -1,76 +1,72 @@
 <?php
 
 class Router extends Base {
-	var $routes, $path;
+	var $routes, $path, $root;
 
 	function route( $path ) {
 		global $controller;
 		
-		if( ( $pos = strpos( $path, "?" ) ) !== FALSE ) $path = substr( $path, 0, $pos );
-	
-		$this -> path = explode( "/", $this -> removePrefix( $path ) );	
-		if( $this -> path[ 0 ] == '' ) array_shift( $this -> path );
-		if( end( $this -> path ) == '' ) array_pop( $this -> path );
+		$path = str_replace( "+", " ", $path );
+		$start = strlen( URL_PREFIX );
+		$end = strpos( $path, "?" ) - 1;
+		if( $end == -1 ) $end = strlen( $path ) - 1;
 
-		foreach( $this -> path as &$value ) 
-			$value = str_replace( "+", " ", $value );
-			
-		foreach( $this -> routes as $route ) {
-			$r = $this -> checkRoute( $route, $this -> path );
-			if( $r != false ) {
-				$controller -> run( $r );
-				return;
-			}
+		while( $start < $end ) {
+			if( $path[ $start ] == '/' ) ++ $start;
+			else if( $path[ $end ] == '/' ) -- $end;
+			else break;
 		}
 		
+		$path = substr( $path, $start, $end - $start + 1 );		
+
+		if( empty( $path ) ) {
+			$controller -> run( $this -> root );
+			return;
+		}
+		
+		$this -> path = explode( "/", $path );	
+
+		foreach( $this -> routes as $route )
+			if( $this -> checkRouteAndRun( $route, $this -> path ) )
+				return;
+
 		$controller -> render404();
 	}
 	
-	function checkRoute( $route, $path ) {
+	function checkRouteAndRun( $route, $path ) {
+		global $controller;
 		$ret = array();
 		
-		$r = $route[ 'route' ];
-				
 		$i = 0;
-		
-		foreach( $r as $id => $val ) {
-			if( !isset( $path[ $i ] ) || ( $val[ 'name' ] != $path[ $i ] && $val[ 'var' ] == 0 ) ) {
-				if( $val[ 'optional' ] ) continue;
-				else return false;
-			} else if( $val[ 'var' ] == 1 )
-				$ret[ $val[ 'name' ] ] = $path[ $i ];
+		foreach( $route[ 0 ] as $val ) {
+			if( !isset( $path[ $i ] ) ) break;
+			
+			if( $val[ 1 ] === false && $val[ 0 ] != $path[ $i ] )
+				return false;
+			else if( $val[ 1 ] === true )
+				$ret[ $val[ 0 ] ] = $path[ $i ];
 			
 			++ $i;
 		}
 		
-		foreach( $route[ 'options' ] as $id => $val )
+		foreach( $route[ 1 ] as $id => $val )
 			if( !isset( $ret[ $id ] ) )
 				$ret[ $id ] = $val;
 
-		return $ret;
+		$controller -> run( $ret );
+		return true;
 	}
 	
 	function parseRoute( $route, $options ) {
-		$name = ''; $optional = 0;
 		$ret = array();
-		
-		for( $i = 0, $len = strlen( $route ); $i < $len; ++ $i ) {
-			if( $route[ $i ] == '/' || $route[ $i ] == ')' ) {
-				if( !empty( $name ) && $name[ 0 ] == '%' && $name[ strlen( $name ) - 1 ] == '%' ) {
-					$var = 1;
-					$name = substr( $name, 1, -1 );
-				} else $var = 0;
+		$route = explode( '/', $route );
+		foreach( $route as $id => $val )
+			if( $val[ 0 ] == '%' )
+				$ret[] = array( substr( $val, 1, -1 ), true );
+			else
+				$ret[] = array( $val, false );
 				
-				$ret[] = array( 'name' => $name, 'optional' => $optional, 'var' => $var );
-				if( $route[ $i ] == ')' ) -- $optional;
-				$name = '';
-			} else if( $route[ $i ] == '(' )
-				++ $optional;
-			else 
-				$name .= $route[ $i ];
-		}
-
-		return array( 'route' => $ret, 'options' => $options );
+		return array( $ret, $options );
 	}
 
 	function addRoute( $route, $options = array() ) {
@@ -78,7 +74,7 @@ class Router extends Base {
 	}
 	
 	function root( $controller, $action ) {
-		$this -> routes[] = array( 'route' => array(), 'options' => array( 'controller' => $controller, 'action' => $action ) );
+		$this -> root = array( 'controller' => $controller, 'action' => $action );
 	}
 	
 	function resource( $name ) {
@@ -87,21 +83,6 @@ class Router extends Base {
 		$this -> routes[] = $this -> parseRoute( "$name/%id%/edit", array( 'action' => 'edit' ) );*/
 		
 		$this -> routes[] = $this -> parseRoute( "$name/(%action%/(%id%))", array( 'controller' => $name, 'action' => 'index' ) );
-	}
-
-	private function removePrefix( $path ) {
-		$str = $_SERVER[ "SCRIPT_NAME" ];
-
-		for( $i = 0, $len = strlen( $str ), $len2 = strlen( $path ); $i < $len && $i < $len2; ++ $i )
-			if( $str[ $i ] != $path[ $i ] ) {
-				if( !defined( "URL_PREFIX" ) )
-					define( "URL_PREFIX", substr( $path, 0, $i - 1 ) );
-				return substr( $path, $i );
-			}
-			
-		if( !defined( "URL_PREFIX" ) )
-			define( "URL_PREFIX", substr( $str, 0, -10 ) ); // remove index.php
-		return '';
 	}
 }
 
