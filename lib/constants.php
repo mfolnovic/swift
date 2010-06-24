@@ -1,9 +1,9 @@
 <?php
 
-apc_load_constants( 'PRF' );
+apc_load_constants( 'PRF' . DIR );
 
 if( !defined( 'LOG_DIR' ) ) {
-	apc_define_constants( 'PRF', array (
+	apc_define_constants( 'PRF' . DIR, array (
 			'LOG_DIR' => DIR . '/log/',
 			'CONFIG_DIR' => DIR . '/config/',
 			'APP_DIR' => DIR . '/app/',

@@ -5,7 +5,7 @@ class Router extends Base {
 
 	function route( $path ) {
 		global $controller;
-		
+
 		$path = str_replace( "+", " ", $path );
 		$start = strlen( URL_PREFIX );
 		$end = strpos( $path, "?" ) - 1;
