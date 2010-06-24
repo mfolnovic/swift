@@ -7,6 +7,9 @@ class Log extends Base {
 	var $handle = null; // file handle
 
 	function __construct( $type, $args ) {
+		global $config;
+		if( !$config -> options[ 'other' ][ 'log' ] ) return;
+	
 		$this -> type = $type;
 		$this -> args = $args;
 
@@ -28,6 +31,7 @@ class Log extends Base {
 	}
 
 	function log( $message ) {
+		if( !$config -> options[ 'other' ][ 'log' ] ) return;
 		fwrite( $this -> handle, $message . PHP_EOL );
 	}
 
