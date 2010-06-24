@@ -1,7 +1,7 @@
 <?php
 
-include "views/haml.php";
-include "views/helpers.php";
+include "view/haml.php";
+include "view/helpers.php";
 
 class View extends ViewHelpers {
 	var $layout = 'application';
