@@ -4,7 +4,7 @@
 class DBDriver extends Base {
 	var $conn, $last_query, $numrows;
 
-	function __construct() {
+	function connect() {
 		global $benchmark, $config;
 //		$benchmark -> start( 'Connecting to database' );
 		
@@ -22,6 +22,7 @@ class DBDriver extends Base {
 	}
 
 	function query( $q ) {
+		if( !$this -> conn ) $this -> connect();
 		$r = mysql_query( $q, $this -> conn );
 		if( is_resource( $r ) ) $this -> numrows = mysql_num_rows( $r );
 		else if( $r === FALSE ) die( "Mysql query: " . mysql_error() );

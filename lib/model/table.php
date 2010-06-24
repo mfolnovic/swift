@@ -7,7 +7,7 @@ class ModelTable {
 	
 	function __construct( $name ) {
 		$this -> name = $name;
-		$this -> getColumns();
+//		$this -> getColumns();
 	}
 	
 	function setRow( $row, $value ) {
