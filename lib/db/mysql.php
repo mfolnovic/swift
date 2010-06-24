@@ -4,6 +4,14 @@
 class DBDriver extends Base {
 	var $conn, $last_query, $numrows;
 
+	function safe( $str ) {
+		if( !$this -> conn ) $this -> connect();
+		if( get_magic_quotes_gpc() ) $str = stripslashes( $string );
+		if( !is_numeric( $str ) ) $str = "'" . mysql_real_escape_string( $str, $this -> conn ) . "'";
+		
+		return $str;
+	}
+	
 	function connect() {
 		global $benchmark, $config;
 //		$benchmark -> start( 'Connecting to database' );

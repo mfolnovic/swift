@@ -5,13 +5,6 @@ include LIB_DIR . "db/" . ( $config -> options[ 'database' ][ 'default' ][ 'driv
 include LIB_DIR . "model/row.php";
 
 class DB extends DBDriver {
-	function safe( $str ) {
-		if( get_magic_quotes_gpc() ) $str = stripslashes( $string );
-		if( !is_numeric( $str ) ) $str = "'" . mysql_real_escape_string( $str ) . "'";
-		
-		return $str;
-	}
-	
 	function insert( $table, $rows, $v ) {
 		if( empty( $rows ) || empty( $v ) ) die( "Nothing specified" );
 		$q = "INSERT INTO $table ( `" . implode( '`,`', $rows ) .'` ) VALUES';
