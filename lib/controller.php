@@ -5,9 +5,6 @@ class Controller extends Base {
 	var $globals = array(), $flash = array();
 	
 	function run( $r ) {
-		global $benchmark;
-		
-		$benchmark -> start( "Running controller" );
 		$this -> controller = $r[ 'controller' ];
 		$this -> action = $r[ 'action' ];
 		
@@ -16,8 +13,6 @@ class Controller extends Base {
 
 		$this -> get( $this -> controller );
 		$this -> call( $this -> controller, $this -> action );
-		
-		$benchmark -> end( "Running controller" );
 	}
 	
 	private function call( $controller, $action ) {		
@@ -32,7 +27,7 @@ class Controller extends Base {
 	private function get( $controller ) {
 		$path = CONTROLLERS_DIR . $controller . ".php";
 		if( file_exists( $path ) )
-			include $path;
+			include_once $path;
 		else
 			$this -> render404();
 	}

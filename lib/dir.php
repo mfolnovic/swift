@@ -12,6 +12,10 @@ class Dir {
 		return $ret;
 		//return array_slice( scandir( $dir ), 2 );
 	}
+	
+	function read( $dir, $file ) {
+		return file_get_contents( $dir . '/' . $file );
+	}
 }
 
 $dir = new Dir;

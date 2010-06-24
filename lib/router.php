@@ -1,19 +1,23 @@
 <?php
 
 class Router extends Base {
-	var $routes;
+	var $routes, $path;
 
 	function route( $path ) {
-		global $controller, $benchmark;
-		$benchmark -> start( "Routing" );
-	
-		$path = $this -> removePrefix( $path );	
-		$path = explode( "/", $path );
+		global $controller;
 		
+		if( ( $pos = strpos( $path, "?" ) ) !== FALSE ) $path = substr( $path, 0, $pos );
+	
+		$this -> path = explode( "/", $this -> removePrefix( $path ) );	
+		if( $this -> path[ 0 ] == '' ) array_shift( $this -> path );
+		if( end( $this -> path ) == '' ) array_pop( $this -> path );
+		
+		foreach( $this -> path as &$value ) 
+			$value = str_replace( "+", " ", $value );
+			
 		foreach( $this -> routes as $route ) {
-			$r = $this -> checkRoute( $route, $path );
+			$r = $this -> checkRoute( $route, $this -> path );
 			if( $r != false ) {
-				$benchmark -> end( "Routing" );
 				$controller -> run( $r );
 				return;
 			}
@@ -26,8 +30,6 @@ class Router extends Base {
 		$ret = array();
 		
 		$r = $route[ 'route' ];
-		if( $path[ 0 ] == '' ) array_shift( $path );
-		if( end( $path ) == '' ) array_pop( $path );
 				
 		$i = 0;
 		
@@ -92,11 +94,13 @@ class Router extends Base {
 
 		for( $i = 0, $len = strlen( $str ), $len2 = strlen( $path ); $i < $len && $i < $len2; ++ $i )
 			if( $str[ $i ] != $path[ $i ] ) {
-				define( "URL_PREFIX", substr( $path, 0, $i - 1 ) );
+				if( !defined( "URL_PREFIX" ) )
+					define( "URL_PREFIX", substr( $path, 0, $i - 1 ) );
 				return substr( $path, $i );
 			}
 			
-		define( "URL_PREFIX", substr( $str, 0, -10 ) ); // remove index.php
+		if( !defined( "URL_PREFIX" ) )
+			define( "URL_PREFIX", substr( $str, 0, -10 ) ); // remove index.php
 		return '';
 	}
 }

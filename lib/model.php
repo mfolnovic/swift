@@ -7,10 +7,11 @@ class Model {
 
 	function initTable( $table ) {
 		if( !isset( $this -> tables[ $table ] ) )
-			$this -> tables[ $table ] = new ModelTable();
+			$this -> tables[ $table ] = new ModelTable( $table );
 	}
 };
 
 $model = new Model;
 
 ?>
+

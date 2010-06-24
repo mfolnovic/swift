@@ -6,7 +6,7 @@ class ControllerBase extends Base {
 	function initObj() {
 		global $controller;	
 	
-		$this -> data = &$controller -> data;
+		$this -> data = array_merge( $controller -> data, $_POST );
 	}
 
 	function layout( $layout ) {
@@ -16,9 +16,11 @@ class ControllerBase extends Base {
 	}
 
 	function redirect( $url ) {
-		global $router;
-
-		$router -> $route( $url );
+		global $router, $controller;
+		
+//		$controller -> headers[ 'X-Redirect' ] = $url;
+		header( "X-Redirect: $url" );
+		$router -> route( $url );
 	}
 
 	function flash( $message ) {
@@ -31,7 +33,7 @@ class ControllerBase extends Base {
 		return new $name( $data );
 	}
 
-	function __get( $index ) {
+	function &__get( $index ) {
 		global $controller;
 		
 		return $controller -> globals[ $index ];

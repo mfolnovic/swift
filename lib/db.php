@@ -35,7 +35,7 @@ class DB extends DBDriver {
 			$q .= ')';
 		}
 	
-	$this -> query( $q );
+		$this -> query( $q );
 	}
 }
 

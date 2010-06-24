@@ -18,13 +18,22 @@ class CacheDriver extends Base {
 	}
 	
 	function __set( $index, $value ) {
-		$this -> conn -> set( $index, $value );
-		
+		$result = $this -> conn -> replace( $index, $value );
+		if( $result == false )
+			$this -> conn -> set( $index, $value );
+			
 		return $this;
 	}
 	
 	function delete( $index ) {
 		$this -> conn -> flush( $index ); 
+	}
+	
+	function push( $index, $what ) {
+		$curr = $this -> $index;
+		if( !is_array( $curr ) ) $curr = array();
+		$curr[] = $what;
+		$this -> $index = $curr;
 	}
 }
 

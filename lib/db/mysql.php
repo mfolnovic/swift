@@ -6,14 +6,14 @@ class DBDriver extends Base {
 
 	function __construct() {
 		global $benchmark, $config;
-		$benchmark -> start( 'Connecting to database' );
+//		$benchmark -> start( 'Connecting to database' );
 		
 		$opt = $config -> options[ 'database' ][ 'default' ];
 
 		$this -> conn = @mysql_connect( $opt[ 'host' ], $opt[ 'username' ], $opt[ 'password' ] ) or die( "Didn't connect to mysql" );
 		mysql_select_db( $opt[ 'database' ] ) or die( "Database " . $opt[ 'database' ] . " doesn't exist!" );
 		
-		$benchmark -> end( "Connecting to database" );
+//		$benchmark -> end( "Connecting to database" );
 	}
 	
 	function __destruct() {
@@ -23,22 +23,14 @@ class DBDriver extends Base {
 
 	function query( $q ) {
 		$r = mysql_query( $q, $this -> conn );
-		
 		if( is_resource( $r ) ) $this -> numrows = mysql_num_rows( $r );
 		else if( $r === FALSE ) die( "Mysql query: " . mysql_error() );
 		
 		return $r;
 	}
 	
-	function allRows( $r ) {
-		$ret = array();
-		
-		while( $row = mysql_fetch_assoc( $r ) )
-			$ret[] = new ModelRow( $row );
-		
-		mysql_free_result( $r );
-			
-		return $ret;
+	function fetchRow( $r ) {
+		return mysql_fetch_assoc( $r );
 	}
 }
 
