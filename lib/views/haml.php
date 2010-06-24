@@ -1,6 +1,10 @@
 <?php
 
 class Haml {
+	var $ommitCloseTag = array( "br", "input", "link", "meta" );
+	var $structures = array( "foreach", "if", "else" );
+	var $currentLine = '';
+
 	function parse( $file ) {
 		global $view, $controller;
 		
@@ -22,44 +26,40 @@ class Haml {
 	
 	function toFile( $parsed ) {
 		global $controller;
-		$tree = array(); $depth = -1; 
+		$tree = array();
 		$depth_offset = 0; // for commands
 		$ret = "<?php global \$controller; ?>"; /*, " . ( !empty( $controller -> globals ) ? '$' : '' ) . implode( ', $', array_keys( $controller -> globals ) ) . "; ?>";*/
 		
 		foreach( $parsed as $line ) {
 			$t = "";
-			for( $i = 0; $i < $line[ 0 ] - $depth_offset; ++ $i ) $t .= "\t";
+			for( $i = 0; $i < $line[ 0 ]; ++ $i ) $t .= "\t";
 			
 			$tag = $line[ 1 ];
 			
-			if( $line[ 0 ] <= $depth ) {
-				for( $i = 0; $i <= $depth - $line[ 0 ] && !empty( $tree ); ++ $i ) {
-//				for( $i = 0; !empty( $tree ) && $tree[ 0 ][ 1 ] >= $line[ 0 ]; ++ $i ) {
-					$curr = array_shift( $tree );
-					if( substr( $curr[ 1 ], -2 ) == '?>' ) -- $depth_offset;
-					if( $i > 0 ) $ret .= "\n" . $curr[ 0 ];
-					$ret .= $curr[ 1 ];
-				}
+			for( $i = 0; !empty( $tree ) && $line[ 0 ] <= $tree[ 0 ][ 2 ]; ++ $i ) {
+				$curr = array_shift( $tree );
+				if( substr( $curr[ 1 ], -2 ) == '?>' ) -- $depth_offset;
+				if( $i > 0 ) $ret .= "\n" . $curr[ 0 ];
+				$ret .= $curr[ 1 ];
 			}
-			
+						
 			if( isset( $tag[ 'command' ] ) ) {
 				$tag[ 'command' ] = trim( $tag[ 'command' ] );
+				$name = substr( $tag[ 'command' ], 0, strpos( $tag[ 'command' ], ' ' ) );
+//				if( in_array( $name, $this -> structures ) ) $tag[ 'command' ] .= ' {';
 				++ $depth_offset;
-				$ret .= "\n" . '<?php ' . $tag[ 'command' ] . " ?>";
-				if( substr( $tag[ 'command' ], -1, 1 ) == '{' ) array_unshift( $tree, array( '', '<?php } ?>' ) );
+				$ret .= "\n$t<?php " . $tag[ 'command' ] . " ?>";
+				if( substr( $tag[ 'command' ], -1, 1 ) == '{' ) array_unshift( $tree, array( '', '<?php } ?>', $line[ 0 ] ) );
 			} else if( isset( $tag[ "tag" ] ) ) {
 				$ret .= "\n$t<" . $tag[ "tag" ] . ( $this -> attributesToHTML( $tag[ 'attributes' ] ) ) . ">";
-				if( !empty( $tag[ "html" ] ) ) $ret .= $tag[ "html" ][ 0 ] == '$' ? "<?php echo " . $tag[ "html" ] . "; ?>" : $tag[ "html" ];
-				array_unshift( $tree, array( $t, '</' . $tag[ "tag" ] . '>' ) );
-			} else $ret .= "\n$t" . ( !empty( $tag[ 'html' ] ) && $tag[ "html" ][ 0 ] == '$' ? "<?php echo " . $tag[ "html" ] . "; ?>" : $tag[ "html" ] );
-					
-			if( !isset( $tag[ 'command' ] ) ) 
-				$depth = $line[ 0 ];
+				if( !empty( $tag[ "html" ] ) ) $ret .= $tag[ "html" ];
+				array_unshift( $tree, array( $t, in_array( $tag[ "tag" ], $this -> ommitCloseTag ) ? '' : '</' . $tag[ "tag" ] . '>', $line[ 0 ] ) );
+			} else $ret .= "\n$t" . $tag[ "html" ];
 		}
 
 		for( $i = 0; !empty( $tree ); ++ $i ) {
 			$curr = array_shift( $tree );
-			if( $i > 0 ) $ret .= "\n" . $curr[ 0 ];
+			if( $i > 0 && count( $curr[ 0 ] ) > 0 ) $ret .= "\n" . $curr[ 0 ];
 			$ret .= $curr[ 1 ];
 		}
 		
@@ -71,11 +71,12 @@ class Haml {
 	function parseLine( $line, $start ) {
 		$ret = array( 'html' => '' ); $pos = 0;
 		$id = ''; $value = '';
-		
-		$line = substr( $line, 0, -1 ) . " ";
-//		$line = preg_replace_callback( '/\$[a-zA-Z.]+/', array( $this, 'parseVar' ), $line );
+		$this -> currentLine = & $line;
 
-		for( $i = $start, $len = strlen( $line ); $i < $len; ++ $i ) {
+		$line = substr( $line, $start, -1 ) . " ";
+		$line = preg_replace_callback( '/\$[a-zA-Z->\[\]\' (]+/', array( $this, 'parseVar' ), $line );
+
+		for( $i = 0, $len = strlen( $line ); $i < $len; ++ $i ) {
 			if( !isset( $ret[ 'tag' ] ) && ( $line[ $i ] == '%' || $line[ $i ] == '.' || $line[ $i ] == '#' ) ) {
 				$pos = strpos( $line, ' ', $i );
 				$tmp = $this -> parseTag( substr( $line, $i, $pos - $i ) );
@@ -90,15 +91,15 @@ class Haml {
 			} else if( $line[ $i ] == ' ' ) {
 				if( $id == '' ) { $value .= ' '; continue; }
 				$ret[ 'tag' ] = $value;
-			} else if( $line[ $i ] == '{' ) {
-				$pos = strpos( $line, '}', $i );
+			} else if( $line[ $i ] == '(' ) {
+				$pos = strpos( $line, ')', $i );
 				if( !isset( $ret[ 'attributes' ] ) ) $ret[ 'attributes' ] = array();
-				$ret[ 'attributes' ] = array_merge( $ret[ 'attributes' ], $this -> parseAttributes( substr( $line, $i, $pos - $i + 1 ) ) );
-				$ret[ 'html' ] .= substr( $line, $pos + 1 );
+				$ret[ 'attributes' ] = array_merge( $ret[ 'attributes' ], $this -> parseAttributes( substr( $line, $i + 1, $pos - $i - 1 ) ) );
+				$ret[ 'html' ] .= trim( substr( $line, $pos + 1 ) );
 				break;
 			} else $value .= $line[ $i ];
 		}
-
+		
 		$value = trim( $value );
 		if( !empty( $value ) ) $ret[ 'html' ] .= $value;
 
@@ -122,7 +123,26 @@ class Haml {
 	}
 	
 	function parseAttributes( $attributes ) {
-		return json_decode( $attributes, true );
+		$attributes = explode( ',', $attributes );
+		
+		$ret = array();
+		foreach( $attributes as $val ) {
+			list( $id, $value ) = explode( ':', $val );
+			$id = trim( $id );
+			$value = trim( $value );
+			
+			if( !isset( $ret[ $id ] ) ) $ret[ $id ] = '';
+			
+			$ret[ $id ] .= ( empty( $ret[ $id ] ) ? '' : ' ' ) . ( $value[ 0 ] == "'" ? substr( $value, 1, -1 ) : $value );
+		}
+		
+		return $ret;
+	}
+	
+	function parseVar( $matches ) {
+		$str = trim( $matches[ 0 ] );
+		if( substr( $str, -1 ) == '(' ) return $str;
+		else return ( $this -> currentLine[ 0 ] == '-' ) ? $str : "<?php echo $str; ?>";
 	}
 
 	function tabs( $str ) {

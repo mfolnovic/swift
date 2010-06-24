@@ -5,6 +5,10 @@ class ViewHelpersView extends ViewHelpersLinks {
 		global $view;
 		$view -> render( null, '_' . $name );
 	}
+	
+	function textilize( $str ) {
+		echo nl2br( $str );
+	}
 }
 
 ?>

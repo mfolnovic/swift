@@ -21,7 +21,7 @@ class ViewHelpersAsset extends Base {
 	
 	function image() {
 		$options = func_get_args();
-		echo "<img src=\"" . $options[ 0 ] . "\">";
+		echo "<img src=\"" . URL_PREFIX . "/public/images/" . $options[ 0 ] . "\">";
 	}
 }
 

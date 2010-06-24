@@ -11,7 +11,7 @@ class View extends ViewHelpers {
 	}
 	
 	function __destruct() {
-		echo ob_get_clean();
+		echo substr( ob_get_clean(), 1 ); // tmp fix
 	}
 	
 	function render( $c = null, $a = null ) {
