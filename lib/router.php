@@ -11,7 +11,7 @@ class Router extends Base {
 		$this -> path = explode( "/", $this -> removePrefix( $path ) );	
 		if( $this -> path[ 0 ] == '' ) array_shift( $this -> path );
 		if( end( $this -> path ) == '' ) array_pop( $this -> path );
-		
+
 		foreach( $this -> path as &$value ) 
 			$value = str_replace( "+", " ", $value );
 			
