@@ -24,12 +24,6 @@ class Controller extends Base {
 		}
 	}
 	
-	private function call2( $controller, $action ) {		
-	}
-	
-	private function get( $controller ) {
-	}
-	
 	function isAjax() {
 		return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
 	}
