@@ -3,12 +3,15 @@
 class ModelQuery extends Base {
 	function __get( $name ) {
 		global $db, $controller;
-	
-		$r = $this -> doQuery();
+
+		$this -> currentDataSet = $this -> doQuery();
+
+		$r = &$this -> currentDataSet;
+		$c = count( $r ); // cache this
+		if( $c == 0 ) $controller -> render404();
+		else if( $c == 1 ) $r = current( $r );
 		
-		if( $db -> numrows == 0 ) $controller -> render404();
-		
-		return $r -> $name;
+		return isset( $r -> $name ) ? $r -> $name : NULL;
 	}
 
 	function all() {
@@ -36,13 +39,33 @@ class ModelQuery extends Base {
 		return $this -> doQuery();
 	}
 	
+	function fetchAll( $r ) {
+		global $model;
+
+		$ret = new ModelTableResult;
+		
+		while( $row = mysql_fetch_assoc( $r ) ) {
+			$row = new ModelRow( $row );
+			$tmp = &$model -> tables[ $this -> name ] -> rows[ $row -> ID ];
+			$tmp = $row; 
+			$ret -> push( $tmp );
+		}
+		
+		mysql_free_result( $r );
+			
+		return $ret;
+	}
+	
 	function doQuery() {
-		global $db;
+		global $db, $log;
+		
+		$this -> newRecord = false;
+		if( !empty( $this -> currentDataSet ) ) return $this -> currentDataSet;
 		
 		$q = $this  -> constructQuery();
-		$r = $db -> allRows( $db -> query( $q ) );
-		
-		if( count( $r ) == 1 ) $r = $r[ 0 ];
+		$r = $this -> fetchAll( $db -> query( $q ) );
+
+//		if( count( $r ) == 1 && abs( $this -> relation[ 'limit' ][ 0 ] - 1 ) == 1 ) $r = current( $r ); // is this always first ? or should I reset pointer ? abs( ... ) so it it's true for 0 & 1, but not for -1 and >1
 		
 		return $r;
 	}
@@ -61,10 +84,10 @@ class ModelQuery extends Base {
 	}
 	
 	function generateLimit() {
-		$l = implode( ',', $this -> relation[ 'limit' ] );
-		if( $l != '' ) $l = ' LIMIT ' . $l;
-		
-		return $l;
+		if( $this -> relation[ 'limit' ][ 0 ] != -1 )
+			return ' LIMIT ' . implode( ',', $this -> relation[ 'limit' ] );
+		else
+			return '';
 	}
 	
 	function generateWhere() {
@@ -72,9 +95,8 @@ class ModelQuery extends Base {
 	
 		$first = true; $ret = '';
 		foreach( $this -> relation[ 'where' ] as $id => $val ) {
-			$ret .= ' ';
-			if( !$first ) { $ret .= "AND "; $first = false; }
-			else $ret .= ' WHERE';
+			if( $ret == '' ) $ret .= ' WHERE ';
+			else $ret .= " AND ";
 			
 			$ret .= '`' . $id . '`' . ( $this -> value( $val ) );
 		}

@@ -11,7 +11,7 @@ class ModelRow {
 		return $this -> row[ $id ];
 	}
 	
-	function __set( $id, $value ) {
+	function __set( $id, $value ) {	
 		$this -> row[ $id ] = $value;
 		
 		return $this;
