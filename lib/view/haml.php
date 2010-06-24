@@ -46,11 +46,10 @@ class Haml {
 						
 			if( isset( $tag[ 'command' ] ) ) {
 				$tag[ 'command' ] = trim( $tag[ 'command' ] );
-				$name = substr( $tag[ 'command' ], 0, strpos( $tag[ 'command' ], ' ' ) );
-//				if( in_array( $name, $this -> structures ) ) $tag[ 'command' ] .= ' {';
+				$name = substr( $tag[ 'command' ], 0, strpos( $tag[ 'command' ], '(' ) );
 				++ $depth_offset;
 				$ret .= "\n$t" . ( $this -> parseCommand( $tag[ 'command' ] ) );
-				if( substr( $tag[ 'command' ], -1, 1 ) == '{' ) array_unshift( $tree, array( '', '<?php } ?>', $line[ 0 ] ) );
+				if( in_array( $name, $this -> structures ) ) { array_unshift( $tree, array( '', '<?php } ?>', $line[ 0 ] ) ); }
 			} else if( isset( $tag[ "tag" ] ) ) {
 				$ret .= "\n$t<" . $tag[ "tag" ] . ( $this -> attributesToHTML( $tag[ 'attributes' ] ) ) . ">";
 				if( !empty( $tag[ "html" ] ) ) $ret .= $tag[ "html" ];
@@ -148,10 +147,12 @@ class Haml {
 
 	function parseCommand( $code ) {
 		$name = trim( substr( $code, 0, strpos( $code, '(' ) ) );
+		$semicolon = in_array( $name, $this -> structures ) ? ' {' : ';';
+
 		if( is_callable( array( 'View', $name ) ) ) {
-			if( strpos( $code, '$' ) !== false ) return '<?php echo $this -> ' . $code . '; ?>';
-			else return eval( 'global $view; return $view -> ' . $code .';' );
-		} else return '<?php ' . $code . ';?>';
+			if( strpos( $code, '$' ) !== false ) return '<?php echo $this -> ' . $code . $semicolon . ' ?>';
+			else return eval( 'global $view; return $view -> ' . $code . $semicolon );
+		} else return '<?php ' . $code . $semicolon . ' ?>';
 	}
 
 	function tabs( $str ) {
