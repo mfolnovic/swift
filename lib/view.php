@@ -31,6 +31,7 @@ class View extends ViewHelpers {
 		list( $dir, $file ) = explode( '/', $file );
 		@mkdir( TMP_DIR . "/views/$dir" );
 		file_put_contents( TMP_DIR . "/views/$dir/$file", $content );
+		apc_compile_file( TMP_DIR . "/views/$dir/$file" );
 	}
 	
 	function renderCached( $file ) {

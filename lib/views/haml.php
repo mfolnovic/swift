@@ -28,7 +28,8 @@ class Haml {
 		global $controller;
 		$tree = array();
 		$depth_offset = 0; // for commands
-		$ret = "<?php global \$controller; ?>"; /*, " . ( !empty( $controller -> globals ) ? '$' : '' ) . implode( ', $', array_keys( $controller -> globals ) ) . "; ?>";*/
+		$ret = ""; 
+		/*"<?php global \$controller; ?>"; /*, " . ( !empty( $controller -> globals ) ? '$' : '' ) . implode( ', $', array_keys( $controller -> globals ) ) . "; ?>";*/
 		
 		foreach( $parsed as $line ) {
 			$t = "";
@@ -48,7 +49,7 @@ class Haml {
 				$name = substr( $tag[ 'command' ], 0, strpos( $tag[ 'command' ], ' ' ) );
 //				if( in_array( $name, $this -> structures ) ) $tag[ 'command' ] .= ' {';
 				++ $depth_offset;
-				$ret .= "\n$t<?php " . $tag[ 'command' ] . " ?>";
+				$ret .= "\n$t" . ( $this -> parseCommand( $tag[ 'command' ] ) );
 				if( substr( $tag[ 'command' ], -1, 1 ) == '{' ) array_unshift( $tree, array( '', '<?php } ?>', $line[ 0 ] ) );
 			} else if( isset( $tag[ "tag" ] ) ) {
 				$ret .= "\n$t<" . $tag[ "tag" ] . ( $this -> attributesToHTML( $tag[ 'attributes' ] ) ) . ">";
@@ -143,6 +144,14 @@ class Haml {
 		$str = trim( $matches[ 0 ] );
 		if( substr( $str, -1 ) == '(' ) return $str;
 		else return ( $this -> currentLine[ 0 ] == '-' ) ? $str : "<?php echo $str; ?>";
+	}
+
+	function parseCommand( $code ) {
+		$name = trim( substr( $code, 0, strpos( $code, '(' ) ) );
+		if( is_callable( array( 'View', $name ) ) ) {
+			if( strpos( $code, '$' ) !== false ) return '<?php echo $this -> ' . $code . '; ?>';
+			else return eval( 'global $view; return $view -> ' . $code .';' );
+		} else return '<?php ' . $code . ';?>';
 	}
 
 	function tabs( $str ) {
