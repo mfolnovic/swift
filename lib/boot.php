@@ -5,28 +5,27 @@
 session_start();
 
 // Load constants
-include "constants.php";
-include "base.php";
-include "helpers.php";
-include "log.php";
-include "dir.php";
-include "controller.php";
-include "controllerBase.php";
-include "router.php";
+include LIB_DIR . "constants.php";
+include LIB_DIR . "base.php";
+include LIB_DIR . "helpers.php";
+include LIB_DIR . "dir.php";
+include LIB_DIR . "router.php";
 
-include "config.php";
+include LIB_DIR . "config.php";
 $config -> loadConfig();
 
-include "cache.php";
-include "db.php";
-include "model.php";
-include "view.php";
+include LIB_DIR . "log.php";
+include LIB_DIR . "controller.php";
+include LIB_DIR . "controllerBase.php";
+include LIB_DIR . "cache.php";
+include LIB_DIR . "db.php";
+include LIB_DIR . "model.php";
+include LIB_DIR . "view.php";
 
 function __autoload( $class ) {
 	include_once MODEL_DIR . strtolower( $class ) . ".php";
 }
 
-include MODEL_DIR . "vijest.php";
 // Route
 $router -> route( $_SERVER[ "REQUEST_URI" ] );
 

@@ -1,5 +1,23 @@
 <?php
 
+apc_load_constants( 'PRF' );
+
+if( !defined( 'LOG_DIR' ) ) {
+	apc_define_constants( 'PRF', array (
+			'LOG_DIR' => DIR . '/log/',
+			'CONFIG_DIR' => DIR . '/config/',
+			'APP_DIR' => DIR . '/app/',
+			'PUBLIC_DIR' => DIR . '/public/',
+			'TMP_DIR' => DIR . '/tmp',
+			'CONTROLLERS_DIR' => DIR . '/app/controllers/',
+			'MODEL_DIR' => DIR . '/app/models/',
+			'VIEWS_DIR' => DIR . '/app/views/',
+			'LOG_ERROR' => 'error', // ?
+		)
+	);
+}
+
+/*
 define( "LOG_DIR", DIR . "/log/" );
 define( "CONFIG_DIR", DIR . "/config/" );
 define( "APP_DIR", DIR . "/app/" );
@@ -11,6 +29,5 @@ define( "MODEL_DIR", APP_DIR . "models/" );
 define( "VIEWS_DIR", APP_DIR . "views/" );
 
 define( "LOG_ERROR", "error" );
-define( "FRAMEWORK_BENCHMARK", true );
-
+*/
 ?>
