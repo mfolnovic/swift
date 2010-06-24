@@ -1,7 +1,6 @@
 <?php
 
 //echo $_SERVER['REQUEST_METHOD'];
-
 session_start();
 
 // Load constants
@@ -17,14 +16,10 @@ $config -> loadConfig();
 include LIB_DIR . "log.php";
 include LIB_DIR . "controller.php";
 include LIB_DIR . "controllerBase.php";
-include LIB_DIR . "cache.php";
-include LIB_DIR . "db.php";
+include LIB_DIR . "cache/" . ( $config -> options[ 'cache' ][ 'driver' ] ) . ".php";
+include LIB_DIR . "db/" . ( $config -> options[ 'database' ][ 'default' ][ 'driver' ] ) . ".php";
 include LIB_DIR . "model.php";
 include LIB_DIR . "view.php";
-
-function __autoload( $class ) {
-	include_once MODEL_DIR . strtolower( $class ) . ".php";
-}
 
 // Route
 $router -> route( $_SERVER[ "REQUEST_URI" ] );

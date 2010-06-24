@@ -30,6 +30,7 @@ class ControllerBase extends Base {
 	}
 	
 	function model( $name, $data = array() ) {
+		include_once MODEL_DIR . strtolower( $name ) . ".php";		
 		return new $name( $data );
 	}
 

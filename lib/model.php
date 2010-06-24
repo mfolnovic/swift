@@ -1,6 +1,5 @@
 <?php
 
-include "model/table.php";
 include "model/tableResult.php";
 //include "model/row.php"; di je includeano to ?
 
@@ -19,9 +18,10 @@ class ModelBase {
 	function __construct( $data = array() ) {
 		global $model;
 		$this -> name = isset( $this -> tableName ) ? $this -> tableName : strtolower( get_class( $this ) );
-		
-		if( !isset( $model -> tables[ $this -> name ] ) )
+
+/*		if( !isset( $model -> tables[ $this -> name ] ) )
 			$model -> tables[ $this -> name ] = new ModelTable( $this -> name );
+*/
 		if( !empty( $data ) ) $this -> currentDataSet = new ModelRow( $data );
 		
 		$this -> newRecord = true;
@@ -35,7 +35,7 @@ class ModelBase {
 	function __get( $name ) {
 		global $db, $controller;
 
-		$this -> currentDataSet = $this -> doQuery();
+//		$this -> currentDataSet = $this -> doQuery();
 
 		$r = &$this -> currentDataSet;
 		$c = count( $r ); // cache this
@@ -70,35 +70,13 @@ class ModelBase {
 		return $this -> doQuery();
 	}
 	
-	function fetchAll( $r ) {
-		global $model;
-
-		$ret = new ModelTableResult;
-		
-		while( $row = mysql_fetch_assoc( $r ) ) {
-			$row = new ModelRow( $row );
-			$tmp = &$model -> tables[ $this -> name ] -> rows[ $row -> ID ];
-			$tmp = $row; 
-			$ret -> push( $tmp );
-		}
-		
-		mysql_free_result( $r );
-			
-		return $ret;
-	}
-	
 	function doQuery() {
 		global $db, $log;
 		
 		$this -> newRecord = false;
 		if( !empty( $this -> currentDataSet ) ) return $this -> currentDataSet;
 		
-		$q = $this  -> constructQuery();
-		$r = $this -> fetchAll( $db -> query( $q ) );
-
-//		if( count( $r ) == 1 && abs( $this -> relation[ 'limit' ][ 0 ] - 1 ) == 1 ) $r = current( $r ); // is this always first ? or should I reset pointer ? abs( ... ) so it it's true for 0 & 1, but not for -1 and >1
-		
-		return $r;
+		return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
 	}
 	
 	function constructQuery() {
@@ -272,6 +250,8 @@ class ModelBase {
 	function having( $what ) {
 		$this -> newRecord = false;
 		$this -> relation[ 'having' ] = ' HAVING ' . $what;
+		
+		return $this;
 	}
 	
 	/* range */
