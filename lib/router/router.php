@@ -3,11 +3,11 @@
 class Router extends Base {
 	var $routes, $path, $root;
 
-	function route( $path ) {
+	function route( $path, $prefixed = true ) {
 		global $controller;
 
 		$path = str_replace( "+", " ", $path );
-		$start = strlen( URL_PREFIX );
+		$start = $prefixed ? strlen( URL_PREFIX ) : 0;
 		$end = strpos( $path, "?" ) - 1;
 		if( $end == -1 ) $end = strlen( $path ) - 1;
 
