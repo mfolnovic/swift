@@ -1,6 +1,6 @@
 <?php
 
-class CacheDriver extends Base {
+class Cache extends Base {
 	var $cache = array();
 	var $changed = false;
 	

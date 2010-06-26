@@ -40,7 +40,7 @@ class ViewHelpers {
 
 	function partial( $name ) {
 		global $view;
-		$view -> render( null, '_' . $name );
+		return $view -> render( null, '_' . $name );
 	}
 	
 	function textilize( $str ) {

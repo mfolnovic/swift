@@ -1,6 +1,6 @@
 <?php
 
-class CacheDriver extends Base {
+class Cache extends Base {
 	var $conn;
 
 	function __construct() {

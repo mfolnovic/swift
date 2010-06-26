@@ -7,8 +7,8 @@ class Haml {
 
 	function parse( $file ) {
 		global $view, $controller;
-		
-		if( !file_exists( VIEWS_DIR . $file ) ) $controller -> render404();
+
+//		if( !file_exists( VIEWS_DIR . $file ) ) $controller -> render404();
 	
 		$f = fopen( VIEWS_DIR . $file, "r" );
 
@@ -21,7 +21,7 @@ class Haml {
 		}
 		
 		$compiled = $this -> toFile( $parsed );
-		$view -> cacheView( $file, $compiled );
+		View::cacheView( $file, $compiled );
 	}
 	
 	function toFile( $parsed ) {
@@ -74,7 +74,7 @@ class Haml {
 		$this -> currentLine = & $line;
 
 		$line = substr( $line, $start, -1 ) . " ";
-		$line = preg_replace_callback( '/\$[a-zA-Z->\[\]\' (]+/', array( $this, 'parseVar' ), $line );
+		$line = preg_replace_callback( '/\$[a-zA-Z->\[\]\' (]+/', array( 'Haml', 'parseVar' ), $line );
 
 		for( $i = 0, $len = strlen( $line ); $i < $len; ++ $i ) {
 			if( !isset( $ret[ 'tag' ] ) && ( $line[ $i ] == '%' || $line[ $i ] == '.' || $line[ $i ] == '#' ) ) {
@@ -150,7 +150,7 @@ class Haml {
 		$semicolon = in_array( $name, $this -> structures ) ? ' {' : ';';
 
 		if( is_callable( array( 'View', $name ) ) ) {
-			if( strpos( $code, '$' ) !== false ) return '<?php echo $this -> ' . $code . $semicolon . ' ?>';
+			if( $name == 'partial' || $name == 'render' || strpos( $code, '$' ) !== false ) return '<?php echo $this -> ' . $code . $semicolon . ' ?>';
 			else return eval( 'global $view; return $view -> ' . $code . $semicolon );
 		} else return '<?php ' . $code . $semicolon . ' ?>';
 	}
