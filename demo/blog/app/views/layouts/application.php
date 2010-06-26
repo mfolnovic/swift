@@ -8,5 +8,5 @@
 		%header
 			%h1 Blog
 		%div#container
-			- $this -> render()
+			- render()
 
