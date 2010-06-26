@@ -20,6 +20,10 @@ class ModelRow {
 		
 		return $this;
 	}
+	
+	function __isset( $id ) {
+		return isset( $this -> row[ $id ] );
+	}
 }
 
 class ModelBase {
@@ -50,7 +54,7 @@ class ModelBase {
 
 	function __get( $name ) {
 		$this -> currentDataSet = $this -> doQuery();
-		return $this -> currentDataSet -> $name;
+		return isset( $this -> currentDataSet -> $name ) ? $this -> currentDataSet -> $name : NULL; 
 	}
 
 	function all() {
