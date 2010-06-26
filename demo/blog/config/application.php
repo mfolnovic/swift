@@ -19,7 +19,7 @@ $config -> options[ 'cache' ] = array(
 
 $config -> options[ 'other' ] = array (
 	'log' => false,
-	'cache_views' => true,
+	'cache_views' => false,
 	'format_date' => 'm.d.y H:i:s'
 );
 
