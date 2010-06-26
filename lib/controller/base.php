@@ -19,8 +19,8 @@ class ControllerBase extends Base {
 		global $router, $controller;
 		
 //		$controller -> headers[ 'X-Redirect' ] = $url;
-		header( "X-Redirect: $url" );
-		$router -> route( $url );
+		header( "X-Redirect: " . URL_PREFIX . "$url" );
+		$router -> route( $url, false );
 	}
 
 	function flash( $message ) {
