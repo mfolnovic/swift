@@ -12,7 +12,6 @@ class Config extends Base {
 
 		foreach( $files as $file )
 			include CONFIG_DIR . $file . ".php";
-			
 	}
 }
 
