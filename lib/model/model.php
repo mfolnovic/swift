@@ -26,23 +26,76 @@ class ModelRow {
 	}
 }
 
+/**
+ * Base model, allows creating ActiveRecord like models
+ * Example:
+ * <code>
+ * // in controller
+ *
+ * // creating new instance of model User
+ * $instanceUser = $this -> model( 'user' );
+ *
+ * // finding a user by username
+ * $user = $this -> model( 'user' ) -> find_by_username( 'username' );
+ *
+ * // creating new user from POST data
+ * $user = $this -> model( 'user', $this -> data ) -> save();
+ *
+ * // updating record from POST data
+ * $user = $this -> model( 'user' ) -> find_by_ID( $this -> data[ "id" ] ) -> values( $this -> data ) -> save();
+ * 
+ * // deleting record
+ * $this -> model( 'user' ) -> find_by_ID( $this -> data[ "id"]  ) -> delete();
+ * 
+ * // using other relations
+ * $user = $this -> model( 'user' ) -> where( "`username` like '%multi%'" ) -> order( 'ID desc' ) -> select( 'username, password' );
+ * // This will create query (but not run, until you want to get any field/row): SELECT username, password FROM user WHERE `username` like '%multi%' ORDER BY `ID` desc;
+ * 
+ * // you can also access attributes
+ * $user = $this -> model( 'user' ) -> first();
+ * echo $user -> username;
+ * </code>
+ *
+ */
+  
 class ModelBase {
+	/**
+	 * Table name
+	 * @var string $name
+	*/
 	var $name;
+
+	/**
+	 * Array containing validations
+	*/
 	var $validations = array();
+	/**
+	 * Array containing rows that should be updated in next save()
+	*/
 	var $update = array();
+	/**
+	 * Contains current relation
+	*/
 	var $relation;
+	/**
+	 * Contains data from last query
+	*/
 	var $currentDataSet = NULL;
 	var $newRecord = false;
-			
-	function __construct( $data = array() ) {
+	/**
+	 * ModelBase constructor
+	 * @param array $newRecord Contains array of data which will be inserted in db when save() is run on the model 
+	*/
+	
+	function __construct( $newRecord = array() ) {
 //		global $model;
 		$this -> name = isset( $this -> tableName ) ? $this -> tableName : strtolower( get_class( $this ) );
 
 /*		if( !isset( $model -> tables[ $this -> name ] ) )
 			$model -> tables[ $this -> name ] = new ModelTable( $this -> name );
 */
-		if( !empty( $data ) ) {
-			$this -> currentDataSet = new ModelRow( $data );
+		if( !empty( $newRecord ) ) {
+			$this -> currentDataSet = new ModelRow( $newRecord );
 			$this -> newRecord = true;
 		}
 		
@@ -52,21 +105,73 @@ class ModelBase {
 		return $this;
 	}
 
+	/**
+	 * Magic method used for getting a attribute
+	 * Example
+	 * <pre>
+	 * // in controller
+	 * $username = $this -> model( 'user' ) -> first() -> username;
+	 * </pre>
+	 * @param string $name Name of attribute to get
+	 */
 	function __get( $name ) {
 		$this -> currentDataSet = $this -> doQuery();
 		return isset( $this -> currentDataSet -> $name ) ? $this -> currentDataSet -> $name : NULL; 
 	}
+	
+	/**
+	 * Magic method used for setting a attribute to value
+	 * Example
+	 * <pre>
+	 * // in controller
+	 * $user = $this -> model( 'user' ) -> first(); // gets first user
+	 * $user -> username = 'foo'; // sets username to 'foo'
+	 * </pre>
+	*/
 
+	function __set( $name, $value ) {
+		global $db, $model;
+	
+		$this -> update[ $name ] = $db -> safe( $value );
+		
+		return $this;
+	}
+	
+	/**
+	 * Magic method used to handle calls like _find_by_username
+	 * @param string $name Name of called function
+	 * @param array $arguments Array of arguments passed to function
+	*/
+	function __call( $name, $arguments ) {
+		global $db;
+		
+		if( substr( $name, 0, 7 ) == 'find_by' ) {
+			$name = substr( $name, 8 );
+			$this -> where( array( $name => $arguments[ 0 ] ) );
+		}
+		
+		return $this;
+	}
+
+	/**
+	 * Used to get all records for current relation
+	*/
 	function all() {
 		return $this -> doQuery( false );
 	}
 	
+	/**
+	 * Used to get first record for current relation
+	*/
 	function first() {
 		$this -> limit( 1 );
 	
 		return $this -> doQuery();
 	}
 	
+	/**
+	 * Used to get last record for current relation
+	*/
 	function last() {
 		$this -> limit( 1 );
 		
@@ -76,12 +181,19 @@ class ModelBase {
 		return $this -> doQuery();
 	}
 	
+	/**
+	 * Same as find_by_id( 5 )
+	*/
 	function find( $id ) {
 		$this -> where( array( 'ID', $id ) );
 		
 		return $this -> doQuery();
 	}
 	
+	/**
+	 * Does query for current relation, and returns array of rows
+	 * @param bool $one_result Tels if query gets only one row, can it just return it, instead of returning array
+	*/
 	function doQuery( $one_result = true ) {
 		global $db, $log;
 		
@@ -102,12 +214,18 @@ class ModelBase {
 		//return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
 	}
 	
+	/**
+	 * Constructs query based on current relation
+	*/
 	function constructQuery() {
 		$q = "SELECT " . ( $this -> relation[ 'select' ] ) . " FROM " . ( $this -> name ) . ( $this -> generateWhere() ) . ( $this -> relation[ "group" ] ) . ( $this -> relation[ 'having' ] ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
 		
 		return $q . ';';
 	}
 	
+	/**
+	 * Generates order by part of query based on current relation
+	*/
 	function generateOrderBy() {
 		$o = $this -> relation[ 'order' ];
 		if( $o != '' ) $o = ' ORDER BY ' . $o[ 0 ] . ' ' . ( $o[ 1 ] ? 'asc' : 'desc' );
@@ -115,13 +233,19 @@ class ModelBase {
 		return $o;
 	}
 	
+	/**
+	 * Generates limit part of query based on current relation
+	*/
 	function generateLimit() {
 		if( $this -> relation[ 'limit' ][ 0 ] != -1 )
 			return ' LIMIT ' . implode( ',', $this -> relation[ 'limit' ] );
 		else
 			return '';
 	}
-	
+
+	/**
+	 * Generates where part of query based on current relation
+	*/
 	function generateWhere() {
 		global $db;
 	
@@ -136,12 +260,6 @@ class ModelBase {
 		return $ret;
 	}
 	
-	function query( $q ) {
-		global $db;
-		
-		return $db -> query( $q );
-	}
-
 	function invalid() {
 		foreach( $this -> validations as $val ) {
 			$field = $val[ 0 ];
@@ -158,14 +276,6 @@ class ModelBase {
 		return $this;
 	}
 
-	function __set( $name, $value ) {
-		global $db, $model;
-	
-		$this -> update[ $name ] = $db -> safe( $value );
-		
-		return $this;
-	}
-	
 	function values( $array ) {
 		$this -> update = array_merge( $array, $this -> update );
 	
@@ -173,8 +283,31 @@ class ModelBase {
 	}
 	
 	function save() {
-		if( $this -> newRecord ) $this -> createRow();
-		else $this -> saveRow();
+		global $db;
+		
+		if( $this -> newRecord ) {
+			$columns = '`' . implode( '`,`', array_keys( $this -> currentDataSet -> row ) ) . '`';
+			$values = '';
+		
+			foreach( $this -> currentDataSet -> row as $id => $val )
+				$values .= ( isset( $values[ 0 ] ) ? ',' : '' ) . ( $db -> safe( $val ) );
+			
+			$db -> query( "INSERT INTO " . ( $this -> name ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
+		}	else {
+			$q = "UPDATE " . ( $this -> name ) . " SET "; 
+			$first = true;
+		
+			foreach( $this -> update as $id => $val ) {
+				if( $id == "id" ) continue; // TEMP
+				if( !$first ) { $q .= ", "; }
+				else $first = false;
+			
+				$q .= '`' . $id . '` = ' . ( $db -> safe( $val ) );
+			}
+		
+			$q .= ( $this -> generateWhere() ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
+			$db -> query( $q );
+		}		
 		
 		return $this;
 	}
@@ -185,49 +318,6 @@ class ModelBase {
 		return $this;
 	}
 	
-	function createRow() {
-		global $db;
-		
-		$columns = '`' . implode( '`,`', array_keys( $this -> currentDataSet -> row ) ) . '`';
-		$values = '';
-		
-		foreach( $this -> currentDataSet -> row as $id => $val )
-			$values .= ( isset( $values[ 0 ] ) ? ',' : '' ) . ( $db -> safe( $val ) );
-			
-		$this -> query( "INSERT INTO " . ( $this -> name ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
-	}
-	
-	function saveRow() {
-		global $db;
-		
-		$q = "UPDATE " . ( $this -> name ) . " SET "; 
-		$first = true;
-		
-		foreach( $this -> update as $id => $val ) {
-			if( $id == "id" ) continue; // TEMP
-			if( !$first ) { $q .= ", "; }
-			else $first = false;
-			
-			$q .= '`' . $id . '` = ' . ( $db -> safe( $val ) );
-		}
-		
-		$q .= ( $this -> generateWhere() ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
-		$db -> query( $q );
-		
-		return $this;
-	}
-	
-	function __call( $name, $arguments ) {
-		global $db;
-		
-		if( substr( $name, 0, 7 ) == 'find_by' ) {
-			$name = substr( $name, 8 );
-			$this -> where( array( $name => $arguments[ 0 ] ) );
-		}
-		
-		return $this;
-	}
-
 	function where( $conditions ) {
 		$this -> newRecord = false;
 		$this -> relation[ 'where' ] = $conditions;

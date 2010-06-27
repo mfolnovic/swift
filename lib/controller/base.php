@@ -3,12 +3,6 @@
 class ControllerBase extends Base {
 	var $data;
 
-	function initObj() {
-		global $controller;	
-	
-		$this -> data = &$controller -> data;
-	}
-
 	function layout( $layout ) {
 		global $view;
 
