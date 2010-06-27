@@ -1,6 +1,10 @@
 <?php
 
 class BlogController extends ControllerBase {
+	function __construct() {
+
+	}
+
 	function index() {
 		$this -> posts = $this -> model( 'post' ) -> order( 'time', 'desc' );
 	}
