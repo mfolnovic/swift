@@ -5,6 +5,7 @@ session_start();
 
 // Load constants
 include LIB_DIR . "constants.php";
+
 include LIB_DIR . "base.php";
 include LIB_DIR . "helpers.php";
 include LIB_DIR . "dir/dir.php";
@@ -25,22 +26,10 @@ include LIB_DIR . "view/view.php";
 $router -> route( $_SERVER[ "REQUEST_URI" ] );
 
 // Render
-
 // TODO: make better way
 if( $controller -> isAjax() )
 	$view -> render();
 else
 	$view -> render( 'layouts', $view -> layout );
-
-/*$users = new User() -> where( array( 'id' => 'bla' ) ); // Relation
-$users = new User() -> all(); // Array
-$user = new User() -> first(); // Row
-$user -> validates();
-$user -> username = 'bla';
-
-foreach( $users -> all() as $id => $user ) // User => Row
-	echo $user -> username;
-	
-$user = new User( array( 'username' => 'bla' ) ); // Row*/
 
 ?>
