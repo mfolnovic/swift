@@ -13,7 +13,7 @@ class Controller extends Base {
 	 * Action name
 	*/
 	var $action;
-	
+	var $globals = array();
 	/**
 	 * Runs a controller
 	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )

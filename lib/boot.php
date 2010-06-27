@@ -1,18 +1,17 @@
 <?php
 
-//echo $_SERVER['REQUEST_METHOD'];
 session_start();
 
-// Load constants
-include LIB_DIR . "constants.php";
-
 include LIB_DIR . "base.php";
+include LIB_DIR . "errors/errors.php";
+
+include LIB_DIR . "constants.php";
 include LIB_DIR . "helpers.php";
 include LIB_DIR . "dir/dir.php";
 include LIB_DIR . "router/router.php";
 
 include LIB_DIR . "config/config.php";
-$config -> loadConfig();
+$config -> load();
 
 include LIB_DIR . "log/log.php";
 include LIB_DIR . "controller/controller.php";
@@ -27,7 +26,7 @@ $router -> route( $_SERVER[ "REQUEST_URI" ] );
 
 // Render
 // TODO: make better way
-if( $controller -> isAjax() )
+if( !$controller -> isAjax() )
 	$view -> render();
 else
 	$view -> render( 'layouts', $view -> layout );

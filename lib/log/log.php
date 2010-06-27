@@ -30,17 +30,17 @@ class Log extends Base {
 		fclose( $this -> handle );
 	}
 
-	function log( $message ) {
+	function write( $message ) {
 		if( !$config -> options[ 'other' ][ 'log' ] ) return;
 		fwrite( $this -> handle, $message . PHP_EOL );
 	}
 
 	function error( $message ) {
-		$this -> log( "[ERROR] $message" );
+		$this -> write( "[ERROR] $message" );
 	}
 
 	function notice( $message ) {
-		$this -> log( "[NOTICE] $message" );
+		$this -> write( "[NOTICE] $message" );
 	}
 }
 

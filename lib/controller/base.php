@@ -1,28 +1,37 @@
 <?php
 
 class ControllerBase extends Base {
+	/**
+	 * Array containing data from $container -> data
+	*/
 	var $data;
 
+	/**
+	 * Used for changing layout
+	 * @param string $layout Name of layout to change to
+	*/
 	function layout( $layout ) {
 		global $view;
 
 		$view -> layout = $layout;
 	}
 
+	/**
+	 * Redirects to $url
+	 * @param string $url Url to redirect to
+	*/
 	function redirect( $url ) {
-		global $router, $controller;
+		global $router;
 		
-//		$controller -> headers[ 'X-Redirect' ] = $url;
 		header( "X-Redirect: " . URL_PREFIX . "$url" );
 		$router -> route( $url, false );
 	}
 
-	function flash( $message ) {
-		global $controller;	
-	
-		$controller -> flash[] = $message;
-	}
-	
+	/**
+	 * Returns instance of model $name, and can also create new row from data $data
+	 * @param string $name Name of model
+	 * @param array $data New row
+	*/
 	function model( $name, $data = array() ) {
 		include_once MODEL_DIR . strtolower( $name ) . ".php";		
 		return new $name( $data );

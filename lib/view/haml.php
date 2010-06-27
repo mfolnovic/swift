@@ -21,7 +21,7 @@ class Haml {
 		}
 		
 		$compiled = $this -> toFile( $parsed );
-		View::cacheView( $file, $compiled );
+		$view -> cacheView( $file, $compiled );
 	}
 	
 	function toFile( $parsed ) {

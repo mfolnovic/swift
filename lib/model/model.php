@@ -33,7 +33,7 @@ class ModelRow {
  * // in controller
  *
  * // creating new instance of model User
- * $instanceUser = $this -> model( 'user' );
+ * $user = $this -> model( 'user' );
  *
  * // finding a user by username
  * $user = $this -> model( 'user' ) -> find_by_username( 'username' );

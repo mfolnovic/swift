@@ -3,9 +3,15 @@
 // Load config files
 
 class Config extends Base {
+	/**
+		Array containing all application options
+	*/
 	var $options = array();
 
-	function loadConfig() {
+	/**
+		Loads application config and routes
+	*/
+	function load() {
 		global $router;
 		
 		$files = array( "application", "routes" );

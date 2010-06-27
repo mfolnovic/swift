@@ -11,7 +11,7 @@ class View extends ViewHelpers {
 	}
 	
 	function __destruct() {
-		echo ob_get_clean();
+		echo substr( ob_get_clean(), 2 );
 	}
 	
 	function render( $c = null, $a = null ) {
@@ -32,7 +32,8 @@ class View extends ViewHelpers {
 	
 	function cacheView( $file, $content ) {
 		list( $dir, $file ) = explode( '/', $file );
-		@mkdir( TMP_DIR . "/views/$dir" );
+		if( !file_exists( TMP_DIR . "/views/$dir" ) )
+			mkdir( TMP_DIR . "/views/$dir" );
 		file_put_contents( TMP_DIR . "/views/$dir/$file", $content );
 		
 		if( extension_loaded( 'apc' ) )	apc_compile_file( TMP_DIR . "/views/$dir/$file" );
