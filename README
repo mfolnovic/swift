@@ -2,7 +2,7 @@ PRF ( PHP - Rails framework )
 --------------------------------
 
 PRF is an open source "port" of Ruby on Rails to PHP.
-The goal of this project is to help developers build their web applications in a MVC pattern, which lets developers write less code.
+The goal of this project is to help developers build their web applications in a MVC pattern, which lets developers write more readable code.
 
 
 Features
@@ -20,6 +20,31 @@ In near future:
 - generators
 - i18n
 - database migrations
+
+Benchmark
+-------------------------------
+Using benchmark suite from http://github.com/joshdavey/framark
+There are some frameworks missing, couldn't make them work...
+
+Document Path:          /framark/projects/baseline-html/index.html
+Requests per second:    3890.70 [#/sec] (mean)
+Document Path:          /framark/projects/baseline-php/index.php
+Requests per second:    2809.07 [#/sec] (mean)
+Document Path:          /framark/projects/codeigniter-1.7.1/index.php
+Requests per second:    419.49 [#/sec] (mean)
+Document Path:          /framark/projects/doo-1.0/app/index.php
+Requests per second:    1052.66 [#/sec] (mean)
+Document Path:          /framark/projects/kohana-2.3.4/index.php
+Requests per second:    261.79 [#/sec] (mean)
+Document Path:          /framark/projects/yii-1.0.7/index.php
+Requests per second:    402.79 [#/sec] (mean)
+Document Path:          /framark/projects/zend-1.8/public/index.php
+Requests per second:    109.30 [#/sec] (mean)
+Document Path:          /framark/projects/PRF/demo/blog/
+Requests per second:    871.31 [#/sec] (mean)
+
+So we are pretty fast, and we'll be even faster soon, when we add some extra caching... 
+And now, I'm more amazed by doophp speed, it really is the fastest framework.
 
 Notice
 --------------------------------
