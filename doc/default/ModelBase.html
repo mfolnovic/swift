@@ -26,7 +26,7 @@
 <p class="description"><p>Example:  <div class="src-code"><ol><li><div class="src-line">&nbsp;<span class="src-comm">//&nbsp;in&nbsp;controller</span></div></li>
 <li><div class="src-line">&nbsp;</div></li>
 <li><div class="src-line">&nbsp;<span class="src-comm">//&nbsp;creating&nbsp;new&nbsp;instance&nbsp;of&nbsp;model&nbsp;User</span></div></li>
-<li><div class="src-line">&nbsp;<span class="src-var">$instanceUser&nbsp;</span>=&nbsp;<span class="src-var">$this&nbsp;</span><span class="src-sym">-&gt;&nbsp;</span><span class="src-id">model</span><span class="src-sym">(&nbsp;</span><span class="src-str">'user'&nbsp;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;<span class="src-var">$user&nbsp;</span>=&nbsp;<span class="src-var">$this&nbsp;</span><span class="src-sym">-&gt;&nbsp;</span><span class="src-id">model</span><span class="src-sym">(&nbsp;</span><span class="src-str">'user'&nbsp;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
 <li><div class="src-line">&nbsp;</div></li>
 <li><div class="src-line">&nbsp;<span class="src-comm">//&nbsp;finding&nbsp;a&nbsp;user&nbsp;by&nbsp;username</span></div></li>
 <li><div class="src-line">&nbsp;<span class="src-var">$user&nbsp;</span>=&nbsp;<span class="src-var">$this&nbsp;</span><span class="src-sym">-&gt;&nbsp;</span><span class="src-id">model</span><span class="src-sym">(&nbsp;</span><span class="src-str">'user'&nbsp;</span><span class="src-sym">)&nbsp;</span><span class="src-sym">-&gt;&nbsp;</span><span class="src-id">find_by_username</span><span class="src-sym">(&nbsp;</span><span class="src-str">'username'&nbsp;</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
@@ -112,7 +112,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																																																																																																																																																				
+																																																																																																																																																																																																																				
 												<div class="method-definition">
 											<span class="method-result">ModelBase</span>
 										<a href="#__construct" title="details" class="method-name">__construct</a>
@@ -126,11 +126,6 @@
 																<div class="method-definition">
 											<span class="method-result">void</span>
 										<a href="#constructQuery" title="details" class="method-name">constructQuery</a>
-										()
-									</div>
-																<div class="method-definition">
-											<span class="method-result">void</span>
-										<a href="#createRow" title="details" class="method-name">createRow</a>
 										()
 									</div>
 																<div class="method-definition">
@@ -210,11 +205,6 @@
 									</div>
 																<div class="method-definition">
 											<span class="method-result">void</span>
-										<a href="#saveRow" title="details" class="method-name">saveRow</a>
-										()
-									</div>
-																<div class="method-definition">
-											<span class="method-result">void</span>
 										<a href="#select" title="details" class="method-name">select</a>
 											(<span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>)
 									</div>
@@ -277,11 +267,12 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$currentDataSet</span>
-			 = <span class="var-default"> NULL</span>			(line <span class="line-number">74</span>)
+			 = <span class="var-default"> NULL</span>			(line <span class="line-number">83</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Contains data from last query</p>
 	
 	
 		
@@ -300,7 +291,7 @@
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">table name</p>
+<p class="short-description">Table name</p>
 	
 	
 		
@@ -314,7 +305,7 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$newRecord</span>
-			 = <span class="var-default"> false</span>			(line <span class="line-number">75</span>)
+			 = <span class="var-default"> false</span>			(line <span class="line-number">84</span>)
 		</span>
 	</div>
 
@@ -332,11 +323,12 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$relation</span>
-						(line <span class="line-number">73</span>)
+						(line <span class="line-number">79</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Contains current relation</p>
 	
 	
 		
@@ -350,11 +342,12 @@
 		<span class="var-title">
 			<span class="var-type">mixed</span>
 			<span class="var-name">$update</span>
-			 = <span class="var-default">array()</span>			(line <span class="line-number">72</span>)
+			 = <span class="var-default">array()</span>			(line <span class="line-number">75</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Array containing rows that should be updated in next save()</p>
 	
 	
 		
@@ -373,7 +366,7 @@
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">array containing</p>
+<p class="short-description">Array containing validations</p>
 	
 	
 		
@@ -400,7 +393,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">Constructor __construct</span> (line <span class="line-number">81</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">90</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -426,7 +419,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">all</span> (line <span class="line-number">150</span>)
+		<span class="method-title">all</span> (line <span class="line-number">159</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -447,7 +440,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">constructQuery</span> (line <span class="line-number">211</span>)
+		<span class="method-title">constructQuery</span> (line <span class="line-number">220</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -464,31 +457,11 @@
 		
 			
 	</div>
-<a name="methodcreateRow" id="createRow"><!-- --></a>
+<a name="methoddelete" id="delete"><!-- --></a>
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">createRow</span> (line <span class="line-number">289</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-	
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			createRow
-		</span>
-				()
-			</div>
-	
-		
-			
-	</div>
-<a name="methoddelete" id="delete"><!-- --></a>
-<div class="evenrow">
-	
-	<div class="method-header">
-		<span class="method-title">delete</span> (line <span class="line-number">283</span>)
+		<span class="method-title">delete</span> (line <span class="line-number">315</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -505,10 +478,10 @@
 			
 	</div>
 <a name="methoddoQuery" id="doQuery"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">doQuery</span> (line <span class="line-number">188</span>)
+		<span class="method-title">doQuery</span> (line <span class="line-number">197</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -531,10 +504,10 @@
 			
 	</div>
 <a name="methodfind" id="find"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">find</span> (line <span class="line-number">178</span>)
+		<span class="method-title">find</span> (line <span class="line-number">187</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -557,10 +530,10 @@
 			
 	</div>
 <a name="methodfirst" id="first"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">first</span> (line <span class="line-number">157</span>)
+		<span class="method-title">first</span> (line <span class="line-number">166</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -578,10 +551,10 @@
 			
 	</div>
 <a name="methodgenerateLimit" id="generateLimit"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">generateLimit</span> (line <span class="line-number">230</span>)
+		<span class="method-title">generateLimit</span> (line <span class="line-number">239</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -599,10 +572,10 @@
 			
 	</div>
 <a name="methodgenerateOrderBy" id="generateOrderBy"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">generateOrderBy</span> (line <span class="line-number">220</span>)
+		<span class="method-title">generateOrderBy</span> (line <span class="line-number">229</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -620,10 +593,10 @@
 			
 	</div>
 <a name="methodgenerateWhere" id="generateWhere"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">generateWhere</span> (line <span class="line-number">240</span>)
+		<span class="method-title">generateWhere</span> (line <span class="line-number">249</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -641,7 +614,7 @@
 			
 	</div>
 <a name="methodgroup" id="group"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">group</span> (line <span class="line-number">356</span>)
@@ -666,7 +639,7 @@
 			
 	</div>
 <a name="methodhaving" id="having"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">having</span> (line <span class="line-number">363</span>)
@@ -691,10 +664,10 @@
 			
 	</div>
 <a name="methodinvalid" id="invalid"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">invalid</span> (line <span class="line-number">254</span>)
+		<span class="method-title">invalid</span> (line <span class="line-number">263</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -711,10 +684,10 @@
 			
 	</div>
 <a name="methodlast" id="last"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">last</span> (line <span class="line-number">166</span>)
+		<span class="method-title">last</span> (line <span class="line-number">175</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -732,7 +705,7 @@
 			
 	</div>
 <a name="methodlimit" id="limit"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">limit</span> (line <span class="line-number">342</span>)
@@ -757,7 +730,7 @@
 			
 	</div>
 <a name="methodoffset" id="offset"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">offset</span> (line <span class="line-number">349</span>)
@@ -782,7 +755,7 @@
 			
 	</div>
 <a name="methodorder" id="order"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">order</span> (line <span class="line-number">328</span>)
@@ -810,10 +783,10 @@
 			
 	</div>
 <a name="methodsave" id="save"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">save</span> (line <span class="line-number">276</span>)
+		<span class="method-title">save</span> (line <span class="line-number">285</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -822,26 +795,6 @@
 		<span class="method-result">void</span>
 		<span class="method-name">
 			save
-		</span>
-				()
-			</div>
-	
-		
-			
-	</div>
-<a name="methodsaveRow" id="saveRow"><!-- --></a>
-<div class="oddrow">
-	
-	<div class="method-header">
-		<span class="method-title">saveRow</span> (line <span class="line-number">301</span>)
-	</div> 
-	
-	<!-- ========== Info from phpDoc block ========= -->
-	
-	<div class="method-signature">
-		<span class="method-result">void</span>
-		<span class="method-name">
-			saveRow
 		</span>
 				()
 			</div>
@@ -878,7 +831,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">validates_format_of</span> (line <span class="line-number">264</span>)
+		<span class="method-title">validates_format_of</span> (line <span class="line-number">273</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -940,7 +893,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">values</span> (line <span class="line-number">270</span>)
+		<span class="method-title">values</span> (line <span class="line-number">279</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -990,7 +943,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">__call</span> (line <span class="line-number">136</span>)
+		<span class="method-title">__call</span> (line <span class="line-number">145</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1019,7 +972,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">__get</span> (line <span class="line-number">108</span>)
+		<span class="method-title">__get</span> (line <span class="line-number">117</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1047,7 +1000,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">__set</span> (line <span class="line-number">123</span>)
+		<span class="method-title">__set</span> (line <span class="line-number">132</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1081,7 +1034,7 @@
 
 
 	<p class="notes" id="credit">
-		Documentation generated on Sun, 27 Jun 2010 13:02:47 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Sun, 27 Jun 2010 14:48:01 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>
