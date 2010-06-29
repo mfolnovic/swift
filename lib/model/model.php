@@ -70,7 +70,11 @@ class ModelBase {
 	*/
 	var $validations = array();
 	/**
-	 * Array containing rows that should be updated in next save()
+	 * Array containing all errors during validation
+	*/
+	var $errors = array();
+	/**
+	 * Array containing names of columns that were updated
 	*/
 	var $update = array();
 	/**
@@ -260,25 +264,30 @@ class ModelBase {
 		return $ret;
 	}
 	
-	function invalid() {
-		foreach( $this -> validations as $val ) {
-			$field = $val[ 0 ];
-			if( preg_match( $val[ 1 ], $this -> $field ) )
-				return true;
+	function valid( $row ) {
+		foreach( $this -> validations as $field => $validations ) {
+			$val = $row[ $field ];
+			foreach( $validations as $validation ) {
+				if( call_user_func_array( array( $this, 'validation_' . $validation[ 'rule' ] ), array( $val ) ) === false ) {
+					$this -> errors[] = array( $field, $validation[ 'message' ] );
+					return false;
+				}
+			}
 		}
 		
-		return false;
+		return true;
 	}
-
-	function validates_format_of( $field, $regex, $message = '', $on = '' ) {
-		$this -> validations[] = array( $field, $regex, $message, $on );
-		
-		return $this;
+	
+	function validation_required( $val ) {
+		return !empty( $val );
 	}
 
 	function values( $array ) {
-		$this -> update = array_merge( $array, $this -> update );
-	
+		// this is slow, coult be faster
+		foreach( $array as $id => $val ) {
+			$this -> currentDataSet[ $id ] = $val;
+			$this -> update[ $id ] = & $this -> currentDataSet[ $id ];
+		}
 		return $this;
 	}
 	
@@ -286,6 +295,7 @@ class ModelBase {
 		global $db;
 		
 		if( $this -> newRecord ) {
+			if( !$this -> valid( $this -> currentDataSet -> row ) ) return $this;			
 			$columns = '`' . implode( '`,`', array_keys( $this -> currentDataSet -> row ) ) . '`';
 			$values = '';
 		
@@ -294,15 +304,16 @@ class ModelBase {
 			
 			$db -> query( "INSERT INTO " . ( $this -> name ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
 		}	else {
+			if( !$this -> valid( $this -> update ) ) return $this;			
 			$q = "UPDATE " . ( $this -> name ) . " SET "; 
 			$first = true;
 		
-			foreach( $this -> update as $id => $val ) {
+			foreach( $this -> update as $id ) {
 				if( $id == "id" ) continue; // TEMP
 				if( !$first ) { $q .= ", "; }
 				else $first = false;
 			
-				$q .= '`' . $id . '` = ' . ( $db -> safe( $val ) );
+				$q .= '`' . $id . '` = ' . ( $db -> safe( $this -> currentDataSet -> row[ $id ] ) );
 			}
 		
 			$q .= ( $this -> generateWhere() ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
