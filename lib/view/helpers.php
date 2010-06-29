@@ -5,7 +5,7 @@ class ViewHelpers {
 		$ret = '';
 		
 		foreach( func_get_args() as $val )
-			$ret .= "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "/public/javascripts/$val\"></script>\n";
+			$ret .= "<script type=\"text/javascript\" src=\"/" . URL_PREFIX . "public/javascripts/$val\"></script>\n";
 			
 		return $ret; // but would like to use return instead
 	}	
@@ -14,14 +14,14 @@ class ViewHelpers {
 		$ret = '';
 		
 		foreach( func_get_args() as $val )
-			$ret .= "<link href=\"" . URL_PREFIX . "/public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">\n";
+			$ret .= "<link href=\"/" . URL_PREFIX . "public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">\n";
 			
 		return $ret;
 	}
 	
 	function image( $image ) {
 //		$options = func_get_args();
-		return "<img src=\"" . URL_PREFIX . "/public/images/" . $image . "\">";
+		return "<img src=\"/" . URL_PREFIX . "public/images/" . $image . "\">";
 	}
 
 	function format_time( $timestamp ) {
@@ -35,7 +35,7 @@ class ViewHelpers {
 	}
 
 	function link( $title, $href ) {
-		return '<a href="' . URL_PREFIX . '/' . str_replace( " ", "+", $href ) . '">' . $title . '</a>';
+		return '<a href="/' . URL_PREFIX . str_replace( " ", "+", $href ) . '">' . $title . '</a>';
 	}
 
 	function partial( $name ) {

@@ -11,7 +11,8 @@ class View extends ViewHelpers {
 	}
 	
 	function __destruct() {
-		echo substr( ob_get_clean(), 2 );
+//		echo substr( ob_get_clean(), 2 );
+		echo ob_get_clean();
 	}
 	
 	function render( $c = null, $a = null ) {
@@ -30,7 +31,7 @@ class View extends ViewHelpers {
 		include TMP_DIR . '/views/' . $path;
 	}
 	
-	function cacheView( $file, $content ) {
+	function _cacheView( $file, $content ) {
 		list( $dir, $file ) = explode( '/', $file );
 		if( !file_exists( TMP_DIR . "/views/$dir" ) )
 			mkdir( TMP_DIR . "/views/$dir" );
