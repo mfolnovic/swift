@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <?php
 
-define( "DIR", getcwd() );
 define( "LIB_DIR", "lib/" );
 
 include LIB_DIR . "base.php";
