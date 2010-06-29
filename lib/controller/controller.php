@@ -4,39 +4,36 @@ class Controller extends Base {
 	/**
 	 * Array containing $_POST + URL data
 	*/
-	var $data;
+	var $data = array();
 	/**
 	 * Controller name
 	*/
-	var $controller;
+	var $controller = NULL;
 	/**
 	 * Action name
 	*/
-	var $action;
+	var $action = NULL;
 	var $globals = array();
 	/**
 	 * Runs a controller
 	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )
 	*/
-	function run( $r ) {
-		$this -> controller = $controller = $r[ 'controller' ];
-		$this -> action = $action = $r[ 'action' ];
-		
-		unset( $r[ 'controller' ], $r[ 'action' ] );
-		$this -> data = array_merge( $_POST, $r );
+	function run() {
+		$this -> data = array_merge( $_POST, $this -> data );
 
-		$path = CONTROLLERS_DIR . $controller . ".php";
+		$path = CONTROLLERS_DIR . $this -> controller . ".php";
 		if( file_exists( $path ) )
 			include_once $path;
 		else
 			$this -> render404();
 
-		$controllerName = $controller . 'Controller';
-		if( is_callable( array( $controllerName, $action ) ) ) {
+		$controllerName = $this -> controller . 'Controller';
+		$actionName = $this -> action;
+		if( is_callable( array( $controllerName, $this -> action ) ) ) {
 			$obj = new $controllerName;
-			$obj -> data = & $this -> data;
-			$obj -> $action();
-		}
+			$obj -> data = & $this -> data; // workaround
+			$obj -> $actionName();
+		} 
 	}
 	
 	/** 

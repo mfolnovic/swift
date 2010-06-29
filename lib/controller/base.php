@@ -21,9 +21,17 @@ class ControllerBase extends Base {
 	 * @param string $url Url to redirect to
 	*/
 	function redirect( $url ) {
-		global $router;
+		global $router, $controller;
 		
 		header( "X-Redirect: " . URL_PREFIX . "$url" );
+		$this -> data = array();
+		$router -> route( $url, false );
+		$controller -> run();
+	}
+	
+	function render( $url ) {
+		global $router;
+
 		$router -> route( $url, false );
 	}
 
