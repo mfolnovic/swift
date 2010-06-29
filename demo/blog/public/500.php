@@ -7,5 +7,5 @@
 <th>#<th>File<th>Line<th>Called
 <?php foreach( $backtrace as $id => $row ) { ?>
 <tr><td><?php echo $id; ?><td><?php echo isset( $row[ "file" ] ) ? $row[ "file" ] : ''; ?><td><?php echo isset( $row[ "line" ] ) ? $row[ 'line' ] : ''; ?><td><?php echo isset( $row[ "function" ] ) ? $row[ "function" ] : ""; ?>
-<? } ?>
+<?php } ?>
 </table>
