@@ -24,11 +24,10 @@ include LIB_DIR . "view/view.php";
 // Route
 $router -> route( $_SERVER[ "REQUEST_URI" ] );
 
+// Run controller
+$controller -> run();
+
 // Render
-// TODO: make better way
-if( !$controller -> isAjax() )
-	$view -> render();
-else
-	$view -> render( 'layouts', $view -> layout );
+$view -> render( 'layouts', $view -> layout );
 
 ?>
