@@ -11,7 +11,7 @@ class Router extends Base {
 		$end = strpos( $path, "?" ) - 1;
 		if( $end == -1 ) $end = strlen( $path ) - 1;
 
-		while( $start < $end ) {
+		while( $start <= $end ) {
 			if( $path[ $start ] == '/' ) ++ $start;
 			else if( $path[ $end ] == '/' ) -- $end;
 			else break;
@@ -24,6 +24,8 @@ class Router extends Base {
 			$controller -> action = $this -> root[ 'action' ];
 			return;
 		}
+		
+		echo $path;exit;
 		
 		$this -> path = explode( "/", $path );	
 
