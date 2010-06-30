@@ -1,7 +1,5 @@
 <?php
 
-define( 'URL_PREFIX', '/PRF/demo/blog/' );
-
 global $config;
 $config -> options[ 'database' ] = array(
 	'default' => array(
@@ -20,7 +18,9 @@ $config -> options[ 'cache' ] = array(
 $config -> options[ 'other' ] = array (
 	'log' => false,
 	'cache_views' => false,
-	'format_date' => 'm.d.y H:i:s'
+	'cache_config' => false,
+	'format_date' => 'm.d.y H:i:s',
+	'url_prefix' => '/PRF/demo/blog/'
 );
 
 ?>
