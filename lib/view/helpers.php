@@ -6,7 +6,7 @@ class ViewHelpers {
 		$ret = '';
 		
 		foreach( func_get_args() as $val )
-			$ret .= "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/$val\"></script>\n";
+			$ret .= "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/$val\"></script>";
 			
 		return $ret; // but would like to use return instead
 	}	
@@ -16,7 +16,7 @@ class ViewHelpers {
 		$ret = '';
 		
 		foreach( func_get_args() as $val )
-			$ret .= "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">\n";
+			$ret .= "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
 			
 		return $ret;
 	}
