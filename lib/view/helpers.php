@@ -31,7 +31,7 @@ class ViewHelpers {
 	}
 
 	function form( $url, $options = array() ) {
-		return array( "<form action=\"$url\">", "</form>" );
+		return array( "<form action=\"/" . URL_PREFIX . "$url\">", "</form>" );
 	}
 
 	function link( $title, $href ) {

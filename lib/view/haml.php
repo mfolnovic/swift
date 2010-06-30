@@ -11,7 +11,6 @@ class Haml {
 //		if( !file_exists( VIEWS_DIR . $file ) ) $controller -> render404();
 	
 		$f = fopen( VIEWS_DIR . $file, "r" );
-
 		$curr_depth = -1;
 		$parsed = array();
 		while( $line = fgets( $f ) ) {
@@ -19,7 +18,7 @@ class Haml {
 			$depth = $this -> tabs( $line ); // should optimize this
 			$parsed[] = array( $depth, $this -> parseLine( $line, $depth ) );
 		}
-		
+
 		$compiled = $this -> toFile( $parsed );
 		$view -> _cacheView( $file, $compiled );
 	}
@@ -33,14 +32,14 @@ class Haml {
 		
 		foreach( $parsed as $line ) {
 			$t = "";
-			for( $i = 0; $i < $line[ 0 ]; ++ $i ) $t .= "\t";
+//			for( $i = 0; $i < $line[ 0 ]; ++ $i ) $t .= "\t";
 			
 			$tag = $line[ 1 ];
 			
 			for( $i = 0; !empty( $tree ) && $line[ 0 ] <= $tree[ 0 ][ 2 ]; ++ $i ) {
 				$curr = array_shift( $tree );
 				if( substr( $curr[ 1 ], -2 ) == '?>' ) -- $depth_offset;
-				if( $i > 0 ) $ret .= "\n" . $curr[ 0 ];
+				if( $i > 0 ) $ret .= $curr[ 0 ];
 				$ret .= $curr[ 1 ];
 			}
 						
@@ -48,22 +47,24 @@ class Haml {
 				$tag[ 'command' ] = trim( $tag[ 'command' ] );
 				$name = substr( $tag[ 'command' ], 0, strpos( $tag[ 'command' ], '(' ) );
 				++ $depth_offset;
-				$ret .= "\n$t" . ( $this -> parseCommand( $tag[ 'command' ] ) );
+				$ret .= "$t" . ( $this -> parseCommand( $tag[ 'command' ] ) );
 				if( in_array( $name, $this -> structures ) ) { array_unshift( $tree, array( '', '<?php } ?>', $line[ 0 ] ) ); }
 			} else if( isset( $tag[ "tag" ] ) ) {
-				$ret .= "\n$t<" . $tag[ "tag" ] . ( $this -> attributesToHTML( $tag[ 'attributes' ] ) ) . ">";
+				$ret .= "$t<" . $tag[ "tag" ] . ( $this -> attributesToHTML( $tag[ 'attributes' ] ) ) . ">";
 				if( !empty( $tag[ "html" ] ) ) $ret .= $tag[ "html" ];
 				array_unshift( $tree, array( $t, in_array( $tag[ "tag" ], $this -> ommitCloseTag ) ? '' : '</' . $tag[ "tag" ] . '>', $line[ 0 ] ) );
-			} else $ret .= "\n$t" . $tag[ "html" ];
+			} else if( !empty( $tag[ 'html' ] ) )
+				$ret .= "$t" . $tag[ "html" ];
+				
 		}
 
 		for( $i = 0; !empty( $tree ); ++ $i ) {
 			$curr = array_shift( $tree );
-			if( $i > 0 && count( $curr[ 0 ] ) > 0 ) $ret .= "\n" . $curr[ 0 ];
+			if( $i > 0 && count( $curr[ 0 ] ) > 0 && !empty( $curr[ 0 ] ) ) $ret .= "\n" . $curr[ 0 ];
 			$ret .= $curr[ 1 ];
 		}
 		
-		$ret .= "\n"; // final newline
+//		$ret .= "\n"; // final newline
 		
 		return $ret;
 	}
@@ -124,7 +125,7 @@ class Haml {
 	
 	function parseAttributes( $attributes ) {
 		$attributes = explode( ',', $attributes );
-		
+
 		$ret = array();
 		foreach( $attributes as $val ) {
 			list( $id, $value ) = explode( ':', $val );

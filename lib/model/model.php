@@ -388,4 +388,3 @@ class ModelBase {
 $model = new Model;
 
 ?>
-
