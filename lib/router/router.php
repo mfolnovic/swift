@@ -4,10 +4,10 @@ class Router extends Base {
 	var $routes, $path, $root;
 
 	function route( $path, $prefixed = true ) {
-		global $controller;
+		global $controller, $config;
 
 		$path = str_replace( "+", " ", $path );
-		$start = $prefixed ? strlen( URL_PREFIX ) : 0;
+		$start = 0; 
 		$end = strpos( $path, "?" ) - 1;
 		if( $end == -1 ) $end = strlen( $path ) - 1;
 
@@ -16,6 +16,8 @@ class Router extends Base {
 			else if( $path[ $end ] == '/' ) -- $end;
 			else break;
 		}
+		
+		if( $prefixed ) $start += strlen( $config -> options[ 'other' ][ 'url_prefix' ] );
 		
 		$path = substr( $path, $start, $end - $start + 1 );		
 
