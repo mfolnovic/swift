@@ -86,6 +86,9 @@ class ModelBase {
 	*/
 	var $currentDataSet = NULL;
 	var $newRecord = false;
+	var $dropAndCreateTable = false; // used for automatic creating table
+	var $schema = array();
+	
 	/**
 	 * ModelBase constructor
 	 * @param array $newRecord Contains array of data which will be inserted in db when save() is run on the model 
@@ -98,6 +101,8 @@ class ModelBase {
 /*		if( !isset( $model -> tables[ $this -> name ] ) )
 			$model -> tables[ $this -> name ] = new ModelTable( $this -> name );
 */
+
+		if( $this -> dropAndCreateTable ) $this -> dropAndCreateTable();
 		if( !empty( $newRecord ) ) {
 			$this -> currentDataSet = new ModelRow( $newRecord );
 			$this -> newRecord = true;
@@ -321,9 +326,36 @@ class ModelBase {
 	}
 	
 	function delete() {
-		$this -> query( "DELETE FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) );
+		global $db;
+		$db -> query( "DELETE FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) );
+	}
 	
-		return $this;
+	function dropAndCreateTable() {
+		global $db;
+		
+		$db -> query( "DROP TABLE IF EXISTS " . $this -> tableName );
+		
+		$q = "CREATE TABLE " . $this -> tableName . " (";
+		$first = true;
+		foreach( $this -> schema as $field => $desc ) {
+			if( !$first ) $q .= ',';
+			
+			$q .= '`' . $field . '` ' . $desc[ 'type' ];
+			if( isset( $desc[ 'size' ] ) ) $q .= '(' . $desc[ 'size' ] . ')';
+			if( isset( $desc[ 'default' ] ) ) $q .= ' DEFAULT ' . $desc[ 'default' ];
+			if( isset( $desc[ 'auto_increment' ] ) ) $q .= ' AUTO_INCREMENT';
+			$first = false;
+		}
+		
+		foreach( $this -> schema_keys as $field => $type ) {
+			$q .= ',';
+			if( $type == 'primary' ) $q .= "PRIMARY KEY (`$field`)";
+			// add support for other types of keys
+			$first = false;
+		}
+		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
+		
+		$db -> query( $q );
 	}
 	
 	function where( $conditions ) {
