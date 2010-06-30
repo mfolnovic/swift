@@ -5,6 +5,13 @@ class ControllerBase extends Base {
 	 * Array containing data from $container -> data
 	*/
 	var $data;
+	var $before_filter = array();
+	
+	function __construct() {
+		// running before filers
+		foreach( $this -> before_filter as $func )
+			call_user_func( array( $this, $func ) );
+	}
 
 	/**
 	 * Used for changing layout

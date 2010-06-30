@@ -1,6 +1,6 @@
 <?php
 
-class BlogController extends ControllerBase {
+class BlogController extends ApplicationController {
 	function __construct() {
 
 	}

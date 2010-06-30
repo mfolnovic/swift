@@ -14,8 +14,8 @@ include LIB_DIR . "config/config.php";
 $config -> load();
 
 include LIB_DIR . "log/log.php";
-include LIB_DIR . "controller/controller.php";
 include LIB_DIR . "controller/base.php";
+include LIB_DIR . "controller/controller.php";
 include LIB_DIR . "cache/" . ( $config -> options[ 'cache' ][ 'driver' ] ) . ".php";
 include LIB_DIR . "db/" . ( $config -> options[ 'database' ][ 'default' ][ 'driver' ] ) . ".php";
 include LIB_DIR . "model/model.php";

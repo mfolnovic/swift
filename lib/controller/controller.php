@@ -1,5 +1,7 @@
 <?php
 
+include CONTROLLERS_DIR . "application.php"; // loading ApplicationController
+
 class Controller extends Base {
 	/**
 	 * Array containing $_POST + URL data
@@ -34,13 +36,6 @@ class Controller extends Base {
 			$obj -> data = & $this -> data; // workaround
 			$obj -> $actionName();
 		} 
-	}
-	
-	/** 
-	 * Tests if ajax is active
-	*/
-	function isAjax() {
-		return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
 	}
 	
 	/**
