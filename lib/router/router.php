@@ -25,18 +25,16 @@ class Router extends Base {
 			return;
 		}
 		
-		echo $path;exit;
-		
 		$this -> path = explode( "/", $path );	
 
 		foreach( $this -> routes as $route )
-			if( $this -> checkRouteAndRun( $route, $this -> path ) )
+			if( $this -> checkRoute( $route, $this -> path ) )
 				return;
 
 		$controller -> render404();
 	}
 	
-	function checkRouteAndRun( $route, $path ) {
+	function checkRoute( $route, $path ) {
 		global $controller;
 		$ret = array();
 		
