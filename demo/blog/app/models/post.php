@@ -15,9 +15,6 @@ class Post extends ModelBase {
 	);
 	
 	var $dropAndCreateTable = false;
-	
-	function init() {
-	}
 }
 
 ?>
