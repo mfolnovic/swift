@@ -25,7 +25,7 @@ class Router extends Base {
 			return;
 		}
 		
-		$this -> path = explode( "/", $path );	
+		$this -> path = explode( "/", $path );
 
 		foreach( $this -> routes as $route )
 			if( $this -> checkRoute( $route, $this -> path ) )
