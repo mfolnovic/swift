@@ -61,9 +61,9 @@ class ModelRow {
 class ModelBase {
 	/**
 	 * Table name
-	 * @var string $name
+	 * @var string $tableName
 	*/
-	var $name;
+	var $tableName;
 
 	/**
 	 * Array containing validations
@@ -93,7 +93,7 @@ class ModelBase {
 	
 	function __construct( $newRecord = array() ) {
 //		global $model;
-		$this -> name = isset( $this -> tableName ) ? $this -> tableName : strtolower( get_class( $this ) );
+		if( empty( $this -> tableName ) ) $this -> tableName = strtolower( get_class( $this ) );
 
 /*		if( !isset( $model -> tables[ $this -> name ] ) )
 			$model -> tables[ $this -> name ] = new ModelTable( $this -> name );
@@ -223,7 +223,7 @@ class ModelBase {
 	 * Constructs query based on current relation
 	*/
 	function constructQuery() {
-		$q = "SELECT " . ( $this -> relation[ 'select' ] ) . " FROM " . ( $this -> name ) . ( $this -> generateWhere() ) . ( $this -> relation[ "group" ] ) . ( $this -> relation[ 'having' ] ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
+		$q = "SELECT " . ( $this -> relation[ 'select' ] ) . " FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) . ( $this -> relation[ "group" ] ) . ( $this -> relation[ 'having' ] ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
 		
 		return $q . ';';
 	}
@@ -298,11 +298,11 @@ class ModelBase {
 			foreach( $this -> currentDataSet -> row as $id => $val )
 				$values .= ( isset( $values[ 0 ] ) ? ',' : '' ) . ( $db -> safe( $val ) );
 			
-			$db -> query( "INSERT INTO " . ( $this -> name ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
+			$db -> query( "INSERT INTO " . ( $this -> tableName ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
 		}	else {
 			if( !$this -> valid( $this -> update ) ) return $this;			
 
-			$q = "UPDATE " . ( $this -> name ) . " SET "; 
+			$q = "UPDATE " . ( $this -> tableName ) . " SET "; 
 			$first = true;
 			
 			foreach( $this -> update as $id => $val ) {
@@ -321,7 +321,7 @@ class ModelBase {
 	}
 	
 	function delete() {
-		$this -> query( "DELETE FROM " . ( $this -> name ) . ( $this -> generateWhere() ) );
+		$this -> query( "DELETE FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) );
 	
 		return $this;
 	}
