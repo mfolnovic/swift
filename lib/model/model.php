@@ -119,7 +119,7 @@ class ModelBase {
 	 * @param string $name Name of attribute to get
 	 */
 	function __get( $name ) {
-		$this -> currentDataSet = $this -> doQuery();
+		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> doQuery();
 		return isset( $this -> currentDataSet -> $name ) ? $this -> currentDataSet -> $name : NULL; 
 	}
 	
@@ -135,8 +135,11 @@ class ModelBase {
 
 	function __set( $name, $value ) {
 		global $db, $model;
-	
-		$this -> update[ $name ] = $db -> safe( $value );
+
+		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> doQuery(); // temporary
+		$this -> currentDataSet -> $name = $value;
+
+		$this -> update[ $name ] = $value;//& $this -> currentDataSet -> row[ $name ];
 		
 		return $this;
 	}
@@ -202,8 +205,6 @@ class ModelBase {
 		global $db, $log;
 		
 		$this -> newRecord = false;
-		if( !empty( $this -> currentDataSet ) ) return $this -> currentDataSet;
-
 		$this -> currentDataSet = array();
 		$res = $db -> query( $this -> constructQuery() );
 		for( $i = 0; $row = $res -> fetch_assoc(); ++ $i ) {
@@ -211,9 +212,9 @@ class ModelBase {
 			$this -> currentDataSet[] = new ModelRow( $row );
 		}
 		
-		if( $i == 1 && $one_result ) $this -> currentDataSet = current( $this -> currentDataSet );
-		
 		$res -> free_result();
+		if( $i == 1 && $one_result ) $this -> currentDataSet = $this -> currentDataSet[ 0 ];
+
 		return $this -> currentDataSet;
 		//return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
 	}
@@ -265,17 +266,12 @@ class ModelBase {
 	}
 	
 	function valid( $row ) {
-		foreach( $this -> validations as $field => $validations ) {
-			$val = $row[ $field ];
-			foreach( $validations as $validation ) {
-				if( call_user_func_array( array( $this, 'validation_' . $validation[ 'rule' ] ), array( $val ) ) === false ) {
+		foreach( $this -> validations as $field => $validations )
+			foreach( $validations as $validation )
+				if( call_user_func_array( array( $this, 'validation_' . $validation[ 'rule' ] ), array( $row[ $field ] ) ) === false )
 					$this -> errors[] = array( $field, $validation[ 'message' ] );
-					return false;
-				}
-			}
-		}
 		
-		return true;
+		return empty( $this -> errors );
 	}
 	
 	function validation_required( $val ) {
@@ -283,19 +279,19 @@ class ModelBase {
 	}
 
 	function values( $array ) {
-		// this is slow, coult be faster
-		foreach( $array as $id => $val ) {
-			$this -> currentDataSet[ $id ] = $val;
-			$this -> update[ $id ] = & $this -> currentDataSet[ $id ];
-		}
+		foreach( $array as $id => $val )
+			$this -> $id = $val;
+
 		return $this;
 	}
 	
 	function save() {
 		global $db;
 		
+
 		if( $this -> newRecord ) {
 			if( !$this -> valid( $this -> currentDataSet -> row ) ) return $this;			
+			
 			$columns = '`' . implode( '`,`', array_keys( $this -> currentDataSet -> row ) ) . '`';
 			$values = '';
 		
@@ -305,15 +301,16 @@ class ModelBase {
 			$db -> query( "INSERT INTO " . ( $this -> name ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
 		}	else {
 			if( !$this -> valid( $this -> update ) ) return $this;			
+
 			$q = "UPDATE " . ( $this -> name ) . " SET "; 
 			$first = true;
-		
-			foreach( $this -> update as $id ) {
+			
+			foreach( $this -> update as $id => $val ) {
 				if( $id == "id" ) continue; // TEMP
 				if( !$first ) { $q .= ", "; }
 				else $first = false;
 			
-				$q .= '`' . $id . '` = ' . ( $db -> safe( $this -> currentDataSet -> row[ $id ] ) );
+				$q .= '`' . $id . '` = ' . ( $db -> safe( $val ) );
 			}
 		
 			$q .= ( $this -> generateWhere() ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
