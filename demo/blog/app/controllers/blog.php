@@ -10,7 +10,7 @@ class BlogController extends ApplicationController {
 	}
 	
 	function show() {
-		$this -> post = $this -> model( 'post' ) -> find_by_ID( $this -> data[ "id" ] );
+		$this -> post = $this -> model( 'post' ) -> find_by_id( $this -> data[ "id" ] );
 	}
 	
 	function new_form() { // can't use new
@@ -24,11 +24,11 @@ class BlogController extends ApplicationController {
 	}
 	
 	function edit() {
-		$this -> post = $this -> model( 'post' ) -> find_by_ID( $this -> data[ "id" ] );
+		$this -> post = $this -> model( 'post' ) -> find_by_id( $this -> data[ "id" ] );
 	}
 	
 	function update() {
-		$this -> post = $this -> model( 'post' ) -> find_by_ID( $this -> data[ "id" ] ) -> values( $this -> data ) -> save();
+		$this -> post = $this -> model( 'post' ) -> find_by_id( $this -> data[ "id" ] ) -> values( $this -> data ) -> save();
 
 		if( empty( $this -> post -> errors ) )
 			$this -> redirect( 'blog/show/' . $this -> data[ "id" ] );
@@ -37,7 +37,7 @@ class BlogController extends ApplicationController {
 	}
 	
 	function delete() {
-		$this -> model( 'post' ) -> find_by_ID( $this -> data[ "id" ] ) -> delete();
+		$this -> model( 'post' ) -> find_by_id( $this -> data[ "id" ] ) -> delete();
 		
 		$this -> redirect( '/blog/index' );
 	}
