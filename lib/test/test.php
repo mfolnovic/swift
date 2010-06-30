@@ -18,6 +18,7 @@ class Test extends Base {
 			$this -> run( $file );
 		}
 	}
+	
 	function run( $file ) {
 		$obj = substr( $file, 0, -4 ) . 'Test';
 		$this -> currentClass = $obj;

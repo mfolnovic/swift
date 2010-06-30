@@ -6,9 +6,9 @@ define( "LIB_DIR", "lib/" );
 
 include LIB_DIR . "base.php";
 include LIB_DIR . "constants.php";
-include LIB_DIR . "dir.php";
-include LIB_DIR . "testCase.php";
-include LIB_DIR . "test.php";
+include LIB_DIR . "dir/dir.php";
+include LIB_DIR . "test/testCase.php";
+include LIB_DIR . "test/test.php";
 
 $test -> load( "tests/" );
 
