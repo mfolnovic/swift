@@ -28,9 +28,12 @@ class BlogController extends ControllerBase {
 	}
 	
 	function update() {
-		$this -> model( 'post' ) -> find_by_ID( $this -> data[ "id" ] ) -> values( $this -> data ) -> save();
+		$this -> post = $this -> model( 'post' ) -> find_by_ID( $this -> data[ "id" ] ) -> values( $this -> data ) -> save();
 
-		$this -> redirect( '/blog/index' );
+		if( empty( $this -> post -> errors ) )
+			$this -> redirect( 'blog/show/' . $this -> data[ "id" ] );
+		else 
+			$this -> render( 'blog/edit' );
 	}
 	
 	function delete() {

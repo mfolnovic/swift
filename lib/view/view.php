@@ -25,9 +25,9 @@ class View extends ViewHelpers {
 
 		if( !file_exists( TMP_DIR . "/views/$path" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
 			$haml -> parse( $path );
-			
+
 		extract( $controller -> globals );
-		
+
 		include TMP_DIR . '/views/' . $path;
 	}
 	
