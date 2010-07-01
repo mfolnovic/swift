@@ -2,12 +2,14 @@
 
 class Errors extends Base {
 	function error( $number, $message, $file, $line ) {
-		ob_clean();
-		$backtrace = debug_backtrace();
+		if( error_reporting() ) {
+			ob_clean();
+			$backtrace = debug_backtrace();
 		
-		include PUBLIC_DIR . "500.php";
+			include PUBLIC_DIR . "500.php";
 		
-		exit;
+			exit;
+		}
 	}
 }
 
