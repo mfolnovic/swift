@@ -102,7 +102,7 @@ class ModelBase {
 		if( empty( $this -> tableName ) ) $this -> tableName = strtolower( get_class( $this ) );
 		$this -> link = & $db -> connections[ $this -> connection ];
 
-		if( $this -> dropAndCreateTable ) $this -> dropAndCreateTable();
+		if( $this -> dropAndCreateTable ) $this -> link -> dropAndCreateTable( $this );
 		if( !empty( $newRecord ) ) {
 			$this -> currentDataSet = new ModelRow( $newRecord );
 			$this -> newRecord = true;

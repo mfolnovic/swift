@@ -17,13 +17,16 @@ class Ldap extends Base {
 	}
 	
 	function bindAdmin() {
-		@ldap_bind( $this -> conn, 'uid=' . $this -> options[ 'username' ] . ',' . $this -> options[ 'dn' ], $this -> options[ 'password' ] );
+		ldap_bind( $this -> conn, 'cn=' . $this -> options[ 'username' ] . ',' . $this -> options[ 'dn' ], $this -> options[ 'password' ] );
 	}
 	
-	function doQuery( &$model ) {
+	function doQuery( &$model, $options = array() ) {
 		if( !$this -> conn ) $this -> connect();
 
+		$model -> currentDataSet = array();
+
 		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $this -> generateConditions( $model ) );
+		if( $res === false ) return $model -> currentDataSet;
 		$entries = ldap_get_entries( $this -> conn, $res );
 		
 		for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
@@ -39,6 +42,8 @@ class Ldap extends Base {
 			$model -> currentDataSet[] = new ModelRow( $entry );
 		}
 		
+		if( !isset( $options[ 0 ] ) && $entries[ 'count' ] == 1 ) $model -> currentDataSet = $model -> currentDataSet[ 0 ];
+		
 		return $model -> currentDataSet;
 	}
 	
@@ -46,14 +51,31 @@ class Ldap extends Base {
 		if( empty( $model -> relation[ 'where' ] ) ) return '(uid=*)';
 		
 		$where = '';
-		foreach( $model -> relation[ 'where' ] as $field => $value )
-			$where .= "($field=$value)";
+		foreach( $model -> relation[ 'where' ] as $field => $value ) {
+			if( is_numeric( $field ) ) $where .= "($value)";
+			else $where .= "($field=$value)";
+		}
 		
 		return $where;
 	}
 	
-	function authenticate( $username, $password ) {
-		return !empty( $username ) && !empty( $password ) && @ldap_bind( $this -> conn, "uid=$username,{$this -> options['dn']}", $password ) == true;
+	function save( &$model ) {
+		if( !$this -> conn ) $this -> connect();
+
+		if( $model -> newRecord ) {
+			print_r( $model -> currentDataSet );
+		} else {
+			$result = $this -> doQuery( $model );
+			ldap_modify( $this -> conn, $result -> dn, $model -> update );
+		}
+		
+		return $model;
+	}
+	
+	function authenticate( $model, $data ) {
+		if( !$this -> conn ) $this -> connect();
+	
+		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, "uid={$data[0]},{$this -> options['dn']}", $data[ 1 ] ) == true;
 	}
 }
 

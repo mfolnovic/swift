@@ -130,12 +130,12 @@ class Mysql extends Base {
 		$this -> link -> query( "DELETE FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) );
 	}
 	
-	function dropAndCreateTable() {
-		$this -> link -> query( "DROP TABLE IF EXISTS " . $this -> tableName );
+	function dropAndCreateTable( &$model ) {
+		$this -> query( "DROP TABLE IF EXISTS " . $model -> tableName );
 		
-		$q = "CREATE TABLE " . $this -> tableName . " (";
+		$q = "CREATE TABLE " . $model -> tableName . " (";
 		$first = true;
-		foreach( $this -> schema as $field => $desc ) {
+		foreach( $model -> schema as $field => $desc ) {
 			if( !$first ) $q .= ',';
 			
 			$q .= '`' . $field . '` ' . $desc[ 'type' ];
@@ -145,7 +145,7 @@ class Mysql extends Base {
 			$first = false;
 		}
 		
-		foreach( $this -> schema_keys as $field => $type ) {
+		foreach( $model -> schema_keys as $field => $type ) {
 			$q .= ',';
 			if( $type == 'primary' ) $q .= "PRIMARY KEY (`$field`)";
 			// add support for other types of keys
@@ -153,7 +153,7 @@ class Mysql extends Base {
 		}
 		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
 		
-		$this -> link -> query( $q );
+		$this -> query( $q );
 	}
 	
 	/* range */
