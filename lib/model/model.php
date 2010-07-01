@@ -39,7 +39,7 @@ class ModelRow {
  * $user = $this -> model( 'user' ) -> find_by_username( 'username' );
  *
  * // creating new user from POST data
- * $user = $this -> model( 'user', $this -> data ) -> save();
+ * $user = $this -> model( 'user', $this -> data[ 'user' ] ) -> save();
  *
  * // updating record from POST data
  * $user = $this -> model( 'user' ) -> find_by_ID( $this -> data[ "id" ] ) -> values( $this -> data ) -> save();
@@ -88,19 +88,19 @@ class ModelBase {
 	var $newRecord = false;
 	var $dropAndCreateTable = false; // used for automatic creating table
 	var $schema = array();
-	
+	var $connection = 'default';
+	var $link = NULL;
+		
 	/**
 	 * ModelBase constructor
 	 * @param array $newRecord Contains array of data which will be inserted in db when save() is run on the model 
 	*/
 	
 	function __construct( $newRecord = array() ) {
-//		global $model;
+		global $db;
+		
 		if( empty( $this -> tableName ) ) $this -> tableName = strtolower( get_class( $this ) );
-
-/*		if( !isset( $model -> tables[ $this -> name ] ) )
-			$model -> tables[ $this -> name ] = new ModelTable( $this -> name );
-*/
+		$this -> link = & $db -> connections[ $this -> connection ];
 
 		if( $this -> dropAndCreateTable ) $this -> dropAndCreateTable();
 		if( !empty( $newRecord ) ) {
@@ -109,8 +109,6 @@ class ModelBase {
 		}
 		
 		$this -> relation = array( 'where' => array(), 'order' => '', 'select' => '*', 'limit' => array( 0 => -1 ), 'group' => '', 'having' => '' );
-		$this -> init();
-		
 		return $this;
 	}
 
@@ -124,7 +122,7 @@ class ModelBase {
 	 * @param string $name Name of attribute to get
 	 */
 	function __get( $name ) {
-		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> doQuery();
+		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> link -> doQuery( $this );
 		return isset( $this -> currentDataSet -> $name ) ? $this -> currentDataSet -> $name : NULL; 
 	}
 	
@@ -139,9 +137,9 @@ class ModelBase {
 	*/
 
 	function __set( $name, $value ) {
-		global $db, $model;
+		global $model;
 
-		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> doQuery(); // temporary
+		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> link -> doQuery( $this ); // temporary
 		$this -> currentDataSet -> $name = $value;
 
 		$this -> update[ $name ] = $value;//& $this -> currentDataSet -> row[ $name ];
@@ -155,11 +153,11 @@ class ModelBase {
 	 * @param array $arguments Array of arguments passed to function
 	*/
 	function __call( $name, $arguments ) {
-		global $db;
-		
 		if( substr( $name, 0, 7 ) == 'find_by' ) {
 			$name = substr( $name, 8 );
 			$this -> where( array( $name => $arguments[ 0 ] ) );
+		} else {
+			return call_user_func_array( array( $this -> link, $name ), array( &$this, $arguments ) );
 		}
 		
 		return $this;
@@ -169,7 +167,7 @@ class ModelBase {
 	 * Used to get all records for current relation
 	*/
 	function all() {
-		return $this -> doQuery( false );
+		return $this -> link -> doQuery( $this, false );
 	}
 	
 	/**
@@ -178,7 +176,7 @@ class ModelBase {
 	function first() {
 		$this -> limit( 1 );
 	
-		return $this -> doQuery();
+		return $this -> link -> doQuery( $this );
 	}
 	
 	/**
@@ -190,7 +188,7 @@ class ModelBase {
 		$o = $this -> relation[ 'order' ];
 		$this -> order( $o[ 0 ], !$o[ 1 ] );
 		
-		return $this -> doQuery();
+		return $this -> link -> doQuery( $this );
 	}
 	
 	/**
@@ -199,77 +197,9 @@ class ModelBase {
 	function find( $id ) {
 		$this -> where( array( 'ID', $id ) );
 		
-		return $this -> doQuery();
+		return $this -> link -> doQuery( $this );
 	}
-	
-	/**
-	 * Does query for current relation, and returns array of rows
-	 * @param bool $one_result Tels if query gets only one row, can it just return it, instead of returning array
-	*/
-	function doQuery( $one_result = true ) {
-		global $db, $log;
 		
-		$this -> newRecord = false;
-		$this -> currentDataSet = array();
-		$res = $db -> query( $this -> constructQuery() );
-		for( $i = 0; $row = $res -> fetch_assoc(); ++ $i ) {
-//			$tmp = &$model -> tables[ $this -> name ] -> rows[ $row -> ID ];
-			$this -> currentDataSet[] = new ModelRow( $row );
-		}
-		
-		$res -> free_result();
-		if( $i == 1 && $one_result ) $this -> currentDataSet = $this -> currentDataSet[ 0 ];
-
-		return $this -> currentDataSet;
-		//return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
-	}
-	
-	/**
-	 * Constructs query based on current relation
-	*/
-	function constructQuery() {
-		$q = "SELECT " . ( $this -> relation[ 'select' ] ) . " FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) . ( $this -> relation[ "group" ] ) . ( $this -> relation[ 'having' ] ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
-		
-		return $q . ';';
-	}
-	
-	/**
-	 * Generates order by part of query based on current relation
-	*/
-	function generateOrderBy() {
-		$o = $this -> relation[ 'order' ];
-		if( $o != '' ) $o = ' ORDER BY ' . $o[ 0 ] . ' ' . ( $o[ 1 ] ? 'asc' : 'desc' );
-		
-		return $o;
-	}
-	
-	/**
-	 * Generates limit part of query based on current relation
-	*/
-	function generateLimit() {
-		if( $this -> relation[ 'limit' ][ 0 ] != -1 )
-			return ' LIMIT ' . implode( ',', $this -> relation[ 'limit' ] );
-		else
-			return '';
-	}
-
-	/**
-	 * Generates where part of query based on current relation
-	*/
-	function generateWhere() {
-		global $db;
-	
-		$first = true; $ret = '';
-		foreach( $this -> relation[ 'where' ] as $id => $val ) {
-			if( $ret == '' ) $ret .= ' WHERE ';
-			else $ret .= " AND ";
-			
-			$ret .= '`' . $id . '`' . ( $this -> value( $val ) );
-		}
-		
-		return $ret;
-	}
-	
 	function valid( $row ) {
 		foreach( $this -> validations as $field => $validations )
 			foreach( $validations as $validation )
@@ -288,74 +218,6 @@ class ModelBase {
 			$this -> $id = $val;
 
 		return $this;
-	}
-	
-	function save() {
-		global $db;
-		
-
-		if( $this -> newRecord ) {
-			if( !$this -> valid( $this -> currentDataSet -> row ) ) return $this;			
-			
-			$columns = '`' . implode( '`,`', array_keys( $this -> currentDataSet -> row ) ) . '`';
-			$values = '';
-		
-			foreach( $this -> currentDataSet -> row as $id => $val )
-				$values .= ( isset( $values[ 0 ] ) ? ',' : '' ) . ( $db -> safe( $val ) );
-			
-			$db -> query( "INSERT INTO " . ( $this -> tableName ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
-		}	else {
-			if( !$this -> valid( $this -> update ) ) return $this;			
-
-			$q = "UPDATE " . ( $this -> tableName ) . " SET "; 
-			$first = true;
-			
-			foreach( $this -> update as $id => $val ) {
-				if( $id == "id" ) continue; // TEMP
-				if( !$first ) { $q .= ", "; }
-				else $first = false;
-			
-				$q .= '`' . $id . '` = ' . ( $db -> safe( $val ) );
-			}
-		
-			$q .= ( $this -> generateWhere() ) . ( $this -> generateOrderBy() ) . ( $this -> generateLimit() );
-			$db -> query( $q );
-		}		
-		
-		return $this;
-	}
-	
-	function delete() {
-		global $db;
-		$db -> query( "DELETE FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) );
-	}
-	
-	function dropAndCreateTable() {
-		global $db;
-		
-		$db -> query( "DROP TABLE IF EXISTS " . $this -> tableName );
-		
-		$q = "CREATE TABLE " . $this -> tableName . " (";
-		$first = true;
-		foreach( $this -> schema as $field => $desc ) {
-			if( !$first ) $q .= ',';
-			
-			$q .= '`' . $field . '` ' . $desc[ 'type' ];
-			if( isset( $desc[ 'size' ] ) ) $q .= '(' . $desc[ 'size' ] . ')';
-			if( isset( $desc[ 'default' ] ) ) $q .= ' DEFAULT ' . $desc[ 'default' ];
-			if( isset( $desc[ 'auto_increment' ] ) ) $q .= ' AUTO_INCREMENT';
-			$first = false;
-		}
-		
-		foreach( $this -> schema_keys as $field => $type ) {
-			$q .= ',';
-			if( $type == 'primary' ) $q .= "PRIMARY KEY (`$field`)";
-			// add support for other types of keys
-			$first = false;
-		}
-		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
-		
-		$db -> query( $q );
 	}
 	
 	function where( $conditions ) {
@@ -405,15 +267,6 @@ class ModelBase {
 		$this -> relation[ 'having' ] = ' HAVING ' . $what;
 		
 		return $this;
-	}
-	
-	/* range */
-	protected function value( $o ) {
-		global $db;
-		
-		if( !is_array( $o ) ) return " = " . $db -> safe( $o );
-		else if( isset( $o[ 1 ] ) ) return " IN ( " . implode( ',' ) . " )";
-		else return " = " . $o[ 0 ];
 	}
 };
 
