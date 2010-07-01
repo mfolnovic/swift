@@ -30,7 +30,7 @@ class ControllerBase extends Base {
 	function redirect( $url ) {
 		global $router, $controller, $config;
 		
-		header( "X-Redirect: " . $config -> options[ 'other' ][ 'url_prefix' ] . "$url" );
+		header( "X-Redirect: " . ( isAjax() ? '' : $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url" );
 		$this -> data = array();
 		$router -> route( $url, false );
 		$controller -> run();
