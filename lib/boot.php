@@ -18,6 +18,8 @@ include LIB_DIR . "controller/base.php";
 include LIB_DIR . "controller/controller.php";
 include LIB_DIR . "cache/" . ( $config -> options[ 'cache' ][ 'driver' ] ) . ".php";
 include LIB_DIR . "db/" . ( $config -> options[ 'database' ][ 'default' ][ 'driver' ] ) . ".php";
+include LIB_DIR . "ldap/ldap.php";
+exit;
 include LIB_DIR . "model/model.php";
 include LIB_DIR . "view/view.php";
 
