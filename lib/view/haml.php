@@ -1,7 +1,7 @@
 <?php
 
 class Haml {
-	var $ommitCloseTag = array( "br", "input", "link", "meta" );
+	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr' );
 	var $structures = array( "foreach", "if", "else" );
 	var $currentLine = '';
 
@@ -55,7 +55,6 @@ class Haml {
 				array_unshift( $tree, array( $t, in_array( $tag[ "tag" ], $this -> ommitCloseTag ) ? '' : '</' . $tag[ "tag" ] . '>', $line[ 0 ] ) );
 			} else if( !empty( $tag[ 'html' ] ) )
 				$ret .= "$t" . $tag[ "html" ];
-				
 		}
 
 		for( $i = 0; !empty( $tree ); ++ $i ) {
@@ -63,8 +62,6 @@ class Haml {
 			if( $i > 0 && count( $curr[ 0 ] ) > 0 && !empty( $curr[ 0 ] ) ) $ret .= "\n" . $curr[ 0 ];
 			$ret .= $curr[ 1 ];
 		}
-		
-//		$ret .= "\n"; // final newline
 		
 		return $ret;
 	}
@@ -75,8 +72,8 @@ class Haml {
 		$this -> currentLine = & $line;
 
 		$line = substr( $line, $start, -1 ) . " ";
-		$line = preg_replace_callback( '/\$[a-zA-Z->\[\]\' (]+/', array( 'Haml', 'parseVar' ), $line );
-
+		$line = preg_replace_callback( '/\$[a-zA-Z->_\[\]\' (]+/', array( 'Haml', 'parseVar' ), $line );
+		
 		for( $i = 0, $len = strlen( $line ); $i < $len; ++ $i ) {
 			if( !isset( $ret[ 'tag' ] ) && ( $line[ $i ] == '%' || $line[ $i ] == '.' || $line[ $i ] == '#' ) ) {
 				$pos = strpos( $line, ' ', $i );

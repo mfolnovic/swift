@@ -21,10 +21,16 @@ class ViewHelpers {
 		return $ret;
 	}
 	
-	function image( $image ) {
+	function favicon( $icon ) {
+		global $config;
+		return '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . '/images/favicon.ico">';
+	}
+	
+	function image( $image, $options = array() ) {
 		global $config;
 //		$options = func_get_args();
-		return "<img src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/images/" . $image . "\">";
+		$options = $this -> attributes( $options );
+		return "<img src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/images/" . $image . "\" $options>";
 	}
 
 	function format_time( $timestamp ) {
@@ -50,6 +56,16 @@ class ViewHelpers {
 	
 	function textilize( $str ) {
 		echo nl2br( $str );
+	}
+	
+	protected function attributes( $array ) {
+		$ret = '';
+		foreach( $array as $id => $val ) {
+			if( $ret != '' ) $ret .= ' ';
+			$ret .= "$id=\"$val\"";
+		}
+		
+		return $ret;
 	}
 }
 
