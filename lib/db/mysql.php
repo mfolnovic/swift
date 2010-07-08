@@ -82,13 +82,17 @@ class Mysql extends Base {
 		$model -> newRecord = false;
 		$model -> currentDataSet = array();
 		$res = $this -> query( $this -> constructQuery( $model ) );
+		
+		$id = array();
 		for( $i = 0; $row = $res -> fetch_assoc(); ++ $i ) {
 //			$tmp = &$model -> tables[ $this -> name ] -> rows[ $row -> ID ];
-			$model -> currentDataSet[] = new ModelRow( $row );
+			$model -> currentDataSet[ $row[ 'id' ] ] = new ModelRow( $row );
+			$id[] = $row[ "id" ];
 		}
 		
 		$res -> free_result();
-		if( $i == 1 && $one_result ) $model -> currentDataSet = $model -> currentDataSet[ 0 ];
+		$this -> handleAssociations( $model, $id );
+		if( $i == 1 && $one_result ) $model -> currentDataSet = current( $model -> currentDataSet );
 
 		return $model -> currentDataSet;
 		//return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
@@ -156,11 +160,33 @@ class Mysql extends Base {
 		$this -> query( $q );
 	}
 	
+	function handleAssociations( &$model, $ids ) {
+		foreach( $model -> relation[ 'includes' ] as $name )
+			$this -> handleAssociation( $model, $name, $ids );
+			
+		return $this;
+	}
+	
+	function handleAssociation( &$model, $name, $ids ) {
+		$association = $model -> hasMany[ $name ]; // temporary
+		$className = $association[ 'model' ];
+		
+		include_once MODEL_DIR . $className . ".php";
+		$tmp = new $className;
+		$tmp = $tmp -> where( array( $association[ 'foreignkey' ] => $ids ) );
+
+		foreach( $ids as $id )
+			$model -> currentDataSet[ $id ] -> row[ $name ] = new $className;
+		
+		foreach( $tmp -> all() as $id => $row )
+			$model -> currentDataSet[ $id ] -> row[ $name ] -> currentDataSet[ $id ] = $row;
+	}
+	
 	/* range */
 	protected function value( $o ) {
 		if( !is_array( $o ) ) return " = " . $this -> safe( $o );
-		else if( isset( $o[ 1 ] ) ) return " IN ( " . implode( ',' ) . " )";
-		else return " = " . $o[ 0 ];
+		else return " IN ( " . implode( ',', $o ) . " )";
+//		else return " = " . $this -> safe( $o[ 0 ] );
 	}
 }
 

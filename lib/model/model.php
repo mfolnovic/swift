@@ -11,7 +11,7 @@ class ModelRow {
 		$this -> row = $row;
 	}
 	
-	function __get( $id ) {
+	function &__get( $id ) {
 		return $this -> row[ $id ];
 	}
 	
@@ -90,6 +90,8 @@ class ModelBase {
 	var $schema = array();
 	var $connection = 'default';
 	var $link = NULL;
+	var $hasMany = array();
+	var $hasOne = array();
 		
 	/**
 	 * ModelBase constructor
@@ -108,7 +110,7 @@ class ModelBase {
 			$this -> newRecord = true;
 		}
 		
-		$this -> relation = array( 'where' => array(), 'order' => '', 'select' => '*', 'limit' => array( 0 => -1 ), 'group' => '', 'having' => '' );
+		$this -> relation = array( 'where' => array(), 'order' => '', 'select' => '*', 'limit' => array( 0 => -1 ), 'group' => '', 'having' => '', 'includes' => array() );
 		return $this;
 	}
 
@@ -123,7 +125,9 @@ class ModelBase {
 	 */
 	function __get( $name ) {
 		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> link -> doQuery( $this );
-		return isset( $this -> currentDataSet -> $name ) ? $this -> currentDataSet -> $name : NULL; 
+		if( isset( $this -> currentDataSet -> $name ) ) return $this -> currentDataSet -> $name;
+		
+		return NULL;
 	}
 	
 	/**
@@ -266,6 +270,11 @@ class ModelBase {
 		$this -> newRecord = false;
 		$this -> relation[ 'having' ] = ' HAVING ' . $what;
 		
+		return $this;
+	}
+	
+	function includes() {
+		$this -> relation[ 'includes' ] = array_merge( $this -> relation[ 'includes' ], func_get_args() );
 		return $this;
 	}
 };
