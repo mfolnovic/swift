@@ -6,11 +6,16 @@ class ControllerBase extends Base {
 	*/
 	var $data;
 	var $before_filter = array();
+	var $config;
 	
 	function __construct() {
+		global $config;
+	
 		// running before filers
 		foreach( $this -> before_filter as $func )
 			call_user_func( array( $this, $func ) );
+
+		$this -> config = & $config -> options;
 	}
 
 	/**
