@@ -87,6 +87,7 @@ class ModelBase {
 	var $currentDataSet = NULL;
 	var $newRecord = false;
 	var $dropAndCreateTable = false; // used for automatic creating table
+	var $relationChanged = false;
 	var $schema = array();
 	var $connection = 'default';
 	var $link = NULL;
@@ -124,7 +125,7 @@ class ModelBase {
 	 * @param string $name Name of attribute to get
 	 */
 	function __get( $name ) {
-		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> link -> doQuery( $this );
+		if( empty( $this -> currentDataSet ) ) $this -> currentDataSet = $this -> link -> doQuery( $this, array( true ) );
 		if( isset( $this -> currentDataSet -> $name ) ) return $this -> currentDataSet -> $name;
 		
 		return NULL;
@@ -171,7 +172,7 @@ class ModelBase {
 	 * Used to get all records for current relation
 	*/
 	function all() {
-		return $this -> link -> doQuery( $this, false );
+		return $this -> link -> doQuery( $this, array( false ) );
 	}
 	
 	/**
@@ -179,8 +180,8 @@ class ModelBase {
 	*/
 	function first() {
 		$this -> limit( 1 );
-	
-		return $this -> link -> doQuery( $this );
+
+		return $this -> link -> doQuery( $this, array( true ) );
 	}
 	
 	/**
@@ -192,7 +193,7 @@ class ModelBase {
 		$o = $this -> relation[ 'order' ];
 		$this -> order( $o[ 0 ], !$o[ 1 ] );
 		
-		return $this -> link -> doQuery( $this );
+		return $this -> link -> doQuery( $this, array( true ) );
 	}
 	
 	/**
@@ -226,6 +227,7 @@ class ModelBase {
 	
 	function where( $conditions ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'where' ] = $conditions;
 	
 		return $this;
@@ -233,6 +235,7 @@ class ModelBase {
 
 	function order( $by, $dir ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'order' ] = array( $by, $dir == 'asc' ) ;
 		
 		return $this;
@@ -240,6 +243,7 @@ class ModelBase {
 	
 	function select( $fields ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'select' ] = $fields;
 		
 		return $this;
@@ -247,6 +251,7 @@ class ModelBase {
 	
 	function limit( $by ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'limit' ][ 0 ] = $by;
 		
 		return $this;
@@ -254,6 +259,7 @@ class ModelBase {
 	
 	function offset( $by ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'limit' ][ 1 ] = $by;
 		
 		return $this;
@@ -261,6 +267,7 @@ class ModelBase {
 	
 	function group( $by ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'group' ] = ' GROUP BY ' . $by;
 		
 		return $this;
@@ -268,14 +275,57 @@ class ModelBase {
 	
 	function having( $what ) {
 		$this -> newRecord = false;
+		$this -> relationChanged = true;
 		$this -> relation[ 'having' ] = ' HAVING ' . $what;
 		
 		return $this;
 	}
 	
 	function includes() {
+		$this -> relationChanged = true;
 		$this -> relation[ 'includes' ] = array_merge( $this -> relation[ 'includes' ], func_get_args() );
 		return $this;
+	}
+
+	function handleAssociations() {
+		foreach( $this -> relation[ 'includes' ] as $name )
+			$this -> handleAssociation( $name );
+
+		return $this;
+	}
+	
+	function handleAssociation( $name ) {
+		if( isset( $this -> hasMany[ $name ] ) ) { $association = &$this -> hasMany[ $name ]; $type = 'hasMany'; }
+		else if( isset( $this -> hasOne[ $name ] ) ) { $association = &$this -> hasOne[ $name ]; $type = 'hasOne'; }
+		
+		$className = $association[ 'model' ];
+		$ids = array(); $allids = array();
+		$primaryKey = isset( $association[ 'primaryKey' ] ) ? $association[ 'primaryKey' ] : 'id';
+		$foreignKey = isset( $association[ 'foreignKey' ] ) ? $association[ 'foreignKey' ] : 'id';
+
+		foreach( $this -> currentDataSet as $id => $row ) {
+			if( !isset( $ids[ $row -> $primaryKey ] ) ) $ids[ $row -> $primaryKey ] = array( $id );
+			else $ids[ $row -> $primaryKey ][] = $id;
+			
+			$allids[] = $id;
+		}
+		
+		
+		include_once MODEL_DIR . $className . ".php";
+		$model = new $className;
+		$model = $model -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
+	
+		foreach( $allids as $rowid )
+			$this -> currentDataSet[ $rowid ] -> $name = new $className;
+			
+		foreach( $model -> all() as $id => $row ) {
+			$assocID = $row -> $foreignKey;
+			foreach( $ids[ $assocID ] as $dataID ) {
+				$tmp = &$this -> currentDataSet[ $dataID ] -> row[ $name ] -> currentDataSet;
+				if( $type == 'hasMany' ) $tmp = &$tmp[ $id ];
+				$tmp = $row;
+			}
+		}
 	}
 };
 
