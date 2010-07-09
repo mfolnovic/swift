@@ -78,7 +78,9 @@ class Mysql extends Base {
 	 * Does query for current relation, and returns array of rows
 	 * @param bool $one_result Tels if query gets only one row, can it just return it, instead of returning array
 	*/
-	function doQuery( &$model, $one_result = true ) {
+	function doQuery( &$model, $options = array( false ) ) {
+		if( $model -> currentDataSet !== null && $model -> relationChanged ) return $model -> currentDataSet;
+		
 		$model -> newRecord = false;
 		$model -> currentDataSet = array();
 		$res = $this -> query( $this -> constructQuery( $model ) );
@@ -87,12 +89,11 @@ class Mysql extends Base {
 		for( $i = 0; $row = $res -> fetch_assoc(); ++ $i ) {
 //			$tmp = &$model -> tables[ $this -> name ] -> rows[ $row -> ID ];
 			$model -> currentDataSet[ $row[ 'id' ] ] = new ModelRow( $row );
-			$id[] = $row[ "id" ];
 		}
 		
 		$res -> free_result();
-		$this -> handleAssociations( $model, $id );
-		if( $i == 1 && $one_result ) $model -> currentDataSet = current( $model -> currentDataSet );
+		$model -> handleAssociations();
+		if( $i == 1 && $options[ 0 ] ) { reset( $model -> currentDataSet ); $model -> currentDataSet = current( $model -> currentDataSet ); }
 
 		return $model -> currentDataSet;
 		//return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
@@ -158,28 +159,6 @@ class Mysql extends Base {
 		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
 		
 		$this -> query( $q );
-	}
-	
-	function handleAssociations( &$model, $ids ) {
-		foreach( $model -> relation[ 'includes' ] as $name )
-			$this -> handleAssociation( $model, $name, $ids );
-			
-		return $this;
-	}
-	
-	function handleAssociation( &$model, $name, $ids ) {
-		$association = $model -> hasMany[ $name ]; // temporary
-		$className = $association[ 'model' ];
-		
-		include_once MODEL_DIR . $className . ".php";
-		$tmp = new $className;
-		$tmp = $tmp -> where( array( $association[ 'foreignkey' ] => $ids ) );
-
-		foreach( $ids as $id )
-			$model -> currentDataSet[ $id ] -> row[ $name ] = new $className;
-		
-		foreach( $tmp -> all() as $id => $row )
-			$model -> currentDataSet[ $id ] -> row[ $name ] -> currentDataSet[ $id ] = $row;
 	}
 	
 	/* range */
