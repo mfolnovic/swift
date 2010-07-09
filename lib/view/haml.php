@@ -3,175 +3,203 @@
 class Haml {
 	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr' );
 	var $structures = array( "foreach", "if", "else" );
-	var $currentLine = '';
-
-	function parse( $file ) {
-		global $view, $controller;
-
-//		if( !file_exists( VIEWS_DIR . $file ) ) $controller -> render404();
-	
-		$f = fopen( VIEWS_DIR . $file, "r" );
-		$curr_depth = -1;
-		$parsed = array();
-		while( $line = fgets( $f ) ) {
-			if( $line[ 0 ] == '#' ) continue;
-			$depth = $this -> tabs( $line ); // should optimize this
-			$parsed[] = array( $depth, $this -> parseLine( $line, $depth ) );
+	var $line;
+	var $parsed;
+	var $tree;
+		
+	function parse( $from, $to ) {
+		$fileFrom = fopen( $from, "r" );
+		$fileTo = fopen( $to, "w" );
+		$this -> parsed = '';
+		$this -> tree = array();
+		
+		while( $this -> line = fgets( $fileFrom ) )
+			$this -> parseLine();
+			
+		while( !empty( $this -> tree ) ) {
+			$curr = array_shift( $this -> tree );
+			$this -> parsed .= $curr[ 1 ];
 		}
-
-		$compiled = $this -> toFile( $parsed );
-		$view -> _cacheView( $file, $compiled );
+			
+		fwrite( $fileTo, $this -> parsed );
+//		var_dump( $this -> parsed );
+			
+		fclose( $fileFrom );
+		fclose( $fileTo );
 	}
 	
-	function toFile( $parsed ) {
-		global $controller;
-		$tree = array();
-		$depth_offset = 0; // for commands
-		$ret = ""; 
-		/*"<?php global \$controller; ?>"; /*, " . ( !empty( $controller -> globals ) ? '$' : '' ) . implode( ', $', array_keys( $controller -> globals ) ) . "; ?>";*/
+	function parseLine() {
+		$ret = '';
+		$line = & $this -> line; // for easier typing
+		$line = ' ' . substr( $line, 0, -1 ); // remove newline
+		$size = strlen( $line );
 		
-		foreach( $parsed as $line ) {
-			$t = "";
-//			for( $i = 0; $i < $line[ 0 ]; ++ $i ) $t .= "\t";
-			
-			$tag = $line[ 1 ];
-			
-			for( $i = 0; !empty( $tree ) && $line[ 0 ] <= $tree[ 0 ][ 2 ]; ++ $i ) {
-				$curr = array_shift( $tree );
-				if( substr( $curr[ 1 ], -2 ) == '?>' ) -- $depth_offset;
-				if( $i > 0 ) $ret .= $curr[ 0 ];
-				$ret .= $curr[ 1 ];
-			}
-						
-			if( isset( $tag[ 'command' ] ) ) {
-				$tag[ 'command' ] = trim( $tag[ 'command' ] );
-				$name = substr( $tag[ 'command' ], 0, strpos( $tag[ 'command' ], '(' ) );
-				++ $depth_offset;
-				$ret .= "$t" . ( $this -> parseCommand( $tag[ 'command' ] ) );
-				if( in_array( $name, $this -> structures ) ) { array_unshift( $tree, array( '', '<?php } ?>', $line[ 0 ] ) ); }
-			} else if( isset( $tag[ "tag" ] ) ) {
-				$ret .= "$t<" . $tag[ "tag" ] . ( $this -> attributesToHTML( $tag[ 'attributes' ] ) ) . ">";
-				if( !empty( $tag[ "html" ] ) ) $ret .= $tag[ "html" ];
-				array_unshift( $tree, array( $t, in_array( $tag[ "tag" ], $this -> ommitCloseTag ) ? '' : '</' . $tag[ "tag" ] . '>', $line[ 0 ] ) );
-			} else if( !empty( $tag[ 'html' ] ) )
-				$ret .= "$t" . $tag[ "html" ];
-		}
+		$data = array( 'tag' => 'div', 'attributes' => array(), 'html' => '' );
+		if( $size == 1 ) return;
+		if( $line[ 1 ] == '#' ) return;
 
-		for( $i = 0; !empty( $tree ); ++ $i ) {
-			$curr = array_shift( $tree );
-			if( $i > 0 && count( $curr[ 0 ] ) > 0 && !empty( $curr[ 0 ] ) ) $ret .= "\n" . $curr[ 0 ];
-			$ret .= $curr[ 1 ];
+		// count tabs
+		for( $tabs = 1; $tabs < $size && $line[ $tabs ] == "\t"; ++ $tabs );
+		while( !empty( $this -> tree ) && $tabs <= $this -> tree[ 0 ][ 0 ] ) {
+			$curr = array_shift( $this -> tree );
+			$this -> parsed .= $curr[ 1 ];
 		}
 		
-		return $ret;
-	}
-
-	function parseLine( $line, $start ) {
-		$ret = array( 'html' => '' ); $pos = 0;
-		$id = ''; $value = '';
-		$this -> currentLine = & $line;
-
-		$line = substr( $line, $start, -1 ) . " ";
-		$line = preg_replace_callback( '/\$[a-zA-Z->_\[\]\' (]+/', array( 'Haml', 'parseVar' ), $line );
+		if( substr( $line, $tabs, 3 ) == '!!!' ) {
+			$this -> parsed .= "<!DOCTYPE html>";
+			return;
+		}
 		
-		for( $i = 0, $len = strlen( $line ); $i < $len; ++ $i ) {
-			if( !isset( $ret[ 'tag' ] ) && ( $line[ $i ] == '%' || $line[ $i ] == '.' || $line[ $i ] == '#' ) ) {
-				$pos = strpos( $line, ' ', $i );
-				$tmp = $this -> parseTag( substr( $line, $i, $pos - $i ) );
-				$ret[ 'tag' ] = $tmp[ 'tag' ]; unset( $tmp[ 'tag' ] );
+		if( $tabs == $size ) return;
+		
+		if( $line[ $tabs ] == '-' ) {
+			$rest = trim( substr( $line, $tabs + 1 ) );
+			$command = substr( $rest, 0, strpos( $rest, '(' ) );
+			$structure = in_array( $command, $this -> structures );
+			$this -> parsed .= "<?php " . $this -> parseFunctions( $rest ) . ( $structure ? " { " : ";" ) . " ?>";
+			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
+			return;
+		}
+
+		// parse tag
+		$type = ''; $str = '';
+		for( $i = $tabs; $i < $size; ++ $i ) {
+			$symbol = $line[ $i ] == '%' || $line[ $i ] == '#' || $line[ $i ] == '.' || $line[ $i ] == ' ';
+			if( $line[ $i ] == '\\' ) { ++ $i; $symbol = false; }
+			if( !$symbol ) $str .= $line[ $i ]; 
+			if( $symbol || $i + 1 == $size ) {
+				if( $type != '' ) {
+					if( $type == '%' ) $data[ 'tag' ] = $str;
+					else if( $type == '#' ) $this -> pushValue( $data[ 'attributes' ], 'id', $str );
+					else if( $type == '.' ) $this -> pushValue( $data[ 'attributes' ], 'class', $str );
+				} else $data[ 'html' ] .= $str;
 				
-				if( !isset( $ret[ 'attributes' ] ) ) $ret[ 'attributes' ] = array();
-				$ret[ 'attributes' ] = array_merge( $ret[ 'attributes' ], $tmp );
-				$i = $pos - 1;
-			} else if( $line[ $i ] == '-' && empty( $ret[ 'tag' ] ) ) {
-				return array( 'command' => substr( $line, $i + 1 ) );
-				break;
-			} else if( $line[ $i ] == ' ' ) {
-				if( $id == '' ) { $value .= ' '; continue; }
-				$ret[ 'tag' ] = $value;
-			} else if( $line[ $i ] == '(' ) {
-				$pos = strpos( $line, ')', $i );
-				if( !isset( $ret[ 'attributes' ] ) ) $ret[ 'attributes' ] = array();
-				$ret[ 'attributes' ] = array_merge( $ret[ 'attributes' ], $this -> parseAttributes( substr( $line, $i + 1, $pos - $i - 1 ) ) );
-				$ret[ 'html' ] .= trim( substr( $line, $pos + 1 ) );
-				break;
-			} else $value .= $line[ $i ];
+				$type = $line[ $i ];
+				$str = '';
+				
+				if( $line[ $i ] == ' ' ) { $i ++; break; }
+			}
 		}
 		
-		$value = trim( $value );
-		if( !empty( $value ) ) $ret[ 'html' ] .= $value;
-
-		return $ret;
-	}
-	
-	function parseTag( $tag ) {
-		$ret = array(); $id = 'bla'; $val = '';
-		$tag .= '%';
-		for( $i = 0, $n = strlen( $tag ); $i < $n; ++ $i ) {
-			if( $tag[ $i ] == '#' ) { $ret[ $id ] = $val; $id = 'id'; $val = ''; }
-			else if( $tag[ $i ] == '.' ) { $ret[ $id ] = $val; $id = 'class'; $val = ''; }
-			else if( $tag[ $i ] == '%' ) { $ret[ $id ] = $val; $id = 'tag'; $val = ''; }
-			else $val .= $tag[ $i ];
-		}
+		$pos = $i;
+		// parse attributes
+		$attributesStart = strpos( $line, "{", $i );
+		$attributesEnd = strpos( $line, "}", $i );
 		
-		if( !isset( $ret[ 'tag' ] ) ) $ret[ 'tag' ] = 'div';
-
-		unset( $ret[ "bla" ] );
-		return $ret;		
-	}
-	
-	function parseAttributes( $attributes ) {
-		$attributes = explode( ',', $attributes );
-
-		$ret = array();
-		foreach( $attributes as $val ) {
-			list( $id, $value ) = explode( ':', $val );
-			$id = trim( $id );
-			$value = trim( $value );
+		if( $attributesStart !== FALSE && $attributesEnd !== FALSE ) {
+			$attributes = trim( substr( $line, $attributesStart + 1, $attributesEnd - $attributesStart - 1 ) );
+			$pos += $attributesEnd - $attributesStart + 1;
 			
-			if( !isset( $ret[ $id ] ) ) $ret[ $id ] = '';
+			$status = 1;
+			for( $i = 0, $attributesLen = strlen( $attributes ); $i < $attributesLen; ++ $i ) {
+				for( ; $attributes[ $i ] == ' '; ++ $i );
+				if( $attributes[ $i ] == ':' && $status ) {
+					$end = strpos( $attributes, '=>', $i );
+					$index = trim( substr( $attributes, $i + 1, $end - $i - 1 ) );
+					for( $i = $end + 2; $attributes[ $i + 1 ] == ','; ++ $i );
+				} else {
+					$char = $attributes[ $i ];
+					$is_string = $char == "'" || $char == '"';
+					if( $is_string ) {
+						$start = $i + 1;
+						$end = strpos( $attributes, $char, $i + 1 );
+						if( $end === false ) $end = $attributesLen;
+					} else {
+						$start = $i; $cnt = 0;
+						for( $end = $i + 1; $end < $attributesLen; ++ $end ) {
+							if( $attributes[ $end ] == '(' ) ++ $cnt;
+							else if( $attributes[ $end ] == ')' ) -- $cnt;
+							else if( $status && $attributes[ $end ] == '=' && $attributes[ $end + 1 ] == '>' && $cnt == 0 ) break;
+							else if( !$status && $attributes[ $end ] == ',' && $cnt == 0 ) break;
+						}
+					}
+					
+					$tmp = trim( substr( $attributes, $start, $end - $start ) );
+					if( !$is_string ) $tmp = "<?php echo $tmp; ?>";
+					$i = $end + 1;
+					
+					if( $status ) { $index = $tmp; $i += 2; }
+					else $value = $tmp;
+					
+					if( !$status ) $this -> pushValue( $data[ 'attributes' ], $index, $this -> parseFunctions( $value ) );
+				}
+
+				$status = !$status;
+			}
+		}
+		$data[ 'html' ] .= trim( substr( $line, $pos ) );
+
+		$this -> parsed .= "<{$data[ 'tag' ] }" . $this -> attributesToHTML( $data[ 'attributes' ] ) . ">" . $this -> parseHtml( $data[ "html" ] );
+		array_unshift( $this -> tree, array( $tabs, in_array( $data[ 'tag' ], $this -> ommitCloseTag ) ? "" : "</{$data[ 'tag' ]}>" ) );
+	}
+	
+	function pushValue( &$data, $attr, $value ) {
+		if( !isset( $data[ $attr ] ) ) $data[ $attr ] = '';
+		if( $data[ $attr ] != '' ) $data[ $attr ] .= ',';
+		$data[ $attr ] .= $value;
+	}
+	
+	function parseFunctions( $string ) {
+		$last = 0;
+		while( ( $end = strpos( $string, '(', $last ) ) !== false ) {
+			$broke = false; $start = $lastpos = $end;
+			for( $tmp = $end; $tmp > $last; -- $tmp ) {
+				if( $string[ $tmp ] == ' ' ) { $lastpos = $tmp + 1; $broke --; }
+				else if( $string[ $tmp ] == ',' ) -- $broke;
+				else if( $string[ $tmp ] == '>' && $string[ $tmp - 1 ] == '-' ) { $lastpos = $tmp; $broke = 2; }
+				else if( $broke < 0 ) { $tmp = $lastpos; break; }
+			}
+			$start = $tmp;
+			$str = trim( substr( $string, $start, $end - $start ) );
 			
-			$ret[ $id ] .= ( empty( $ret[ $id ] ) ? '' : ' ' ) . ( $value[ 0 ] == "'" ? substr( $value, 1, -1 ) : $value );
+			if( method_exists( 'View', $str ) ) {
+				$newstr = '$this -> ' . $str;
+				if( !$this -> between( $string, $end, '(', ')' ) ) $newstr = 'echo ' . $newstr;
+				$string = substr_replace( $string, $newstr , $start, $end - $start );
+				$end += 14;
+			}
+			
+			$last = $end + 1;
+		}
+		return $string;		
+	}
+	
+	function between( $string, $pos, $start, $end ) {
+		$startLen = strlen( $start );
+		$endLen = strlen( $end );
+		$cnt = 0;
+		for( $i = 0; $i < $pos; ++ $i )
+			if( substr( $string, $i, $startLen ) == $start ) ++ $cnt;
+			else if( substr( $string, $i, $endLen ) == $end ) -- $cnt;
+
+		return $cnt > 0;
+	}
+	
+	function parseHtml( $string ) {
+		$ret = ''; $phpOpen = false;
+		for( $i = 0, $len = strlen( $string ); $i < $len; ++ $i ) {
+			if( substr( $string, $i, 5 ) == "<?php" ) $phpOpen = true;
+			else if( substr( $string, $i, 2 ) == "?>" ) $phpOpen = false;
+			
+			if( $string[ $i ] == '$' ) {
+				preg_match( '/[a-zA-Z->_\[\]\' ]+/', $string, $matches, null, $i + 1 );
+				$str = "echo \${$matches[0]};";
+				if( !$phpOpen ) $str = "<?php $str ?>";
+				$length = strlen( $matches[ 0 ] );
+				$string = substr_replace( $string, $str, $i, $length + 1 );
+				$i += strlen( $str ) - $length;
+			}
 		}
 		
-		return $ret;
+		return $string;
 	}
 	
-	function parseVar( $matches ) {
-		$str = trim( $matches[ 0 ] );
-		if( substr( $str, -1 ) == '(' ) return $str;
-		else return ( $this -> currentLine[ 0 ] == '-' ) ? $str : "<?php echo $str; ?>";
-	}
-
-	function parseCommand( $code ) {
-		$name = trim( substr( $code, 0, strpos( $code, '(' ) ) );
-		$semicolon = in_array( $name, $this -> structures ) ? ' {' : ';';
-
-		if( is_callable( array( 'View', $name ) ) ) {
-			if( $name == 'partial' || $name == 'render' || strpos( $code, '$' ) !== false ) return '<?php echo $this -> ' . $code . $semicolon . ' ?>';
-			else return eval( 'global $view; return $view -> ' . $code . $semicolon );
-		} else return '<?php ' . $code . $semicolon . ' ?>';
-	}
-
-	function tabs( $str ) {
-		for( $i = 0; $str[ $i ] == "\t"; ++ $i ) {
-			if( !isset( $str[ $i + 2 ] ) )
-				return 0;
-		}
-		return $i;
-	}
-	
-	function attributesToHTML( $attrs ) {
+	function attributesToHTML( &$attrs ) {
 		$ret = '';
 		foreach( $attrs as $id => $val )
 			$ret .= " $id=\"$val\"";
-		
+                
 		return $ret;
-	}
-
-	private function isAlpha( $char ) {
-		$char = strtolower( $char );
-		return $char >= "a" && $char <= "z";
 	}
 }
 
