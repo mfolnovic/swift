@@ -6,8 +6,9 @@ class Ldap extends Base {
 
 	function connect() {
 		$this -> conn = ldap_connect( $this -> options[ 'host' ], $this -> options[ 'port' ] );
-		
+
 		ldap_set_option( $this -> conn, LDAP_OPT_PROTOCOL_VERSION, 3 );
+		ldap_set_option( $this -> conn, LDAP_OPT_REFERRALS, 0 );
 		$this -> bindAdmin();
 	}
 	
@@ -17,18 +18,21 @@ class Ldap extends Base {
 	}
 	
 	function bindAdmin() {
-		ldap_bind( $this -> conn, 'cn=' . $this -> options[ 'username' ] . ',' . $this -> options[ 'dn' ], $this -> options[ 'password' ] );
+//		ldap_bind( $this -> conn, 'cn=' . $this -> options[ 'username' ] . ',' . $this -> options[ 'dn' ], $this -> options[ 'password' ] );
+		ldap_bind( $this -> conn, $this -> options[ 'username' ], $this -> options[ 'password' ] );
 	}
 	
-	function doQuery( &$model, $options = array() ) {
+	function doQuery( &$model, $options = array( false ) ) {
+		if( $model -> currentDataSet !== null && $model -> relationChanged ) return $model -> currentDataSet;
 		if( !$this -> conn ) $this -> connect();
 
 		$model -> currentDataSet = array();
 
 		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $this -> generateConditions( $model ) );
+
 		if( $res === false ) return $model -> currentDataSet;
 		$entries = ldap_get_entries( $this -> conn, $res );
-		
+
 		for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
 			$entry = array();
 			foreach( $entries[ $i ] as $id => $val ) {
@@ -41,9 +45,9 @@ class Ldap extends Base {
 			}
 			$model -> currentDataSet[] = new ModelRow( $entry );
 		}
-		
-		if( !isset( $options[ 0 ] ) && $entries[ 'count' ] == 1 ) $model -> currentDataSet = $model -> currentDataSet[ 0 ];
-		
+			
+		if( $options[ 0 ] && $entries[ 'count' ] == 1 ) $model -> currentDataSet = $model -> currentDataSet[ 0 ];
+
 		return $model -> currentDataSet;
 	}
 	
@@ -52,10 +56,13 @@ class Ldap extends Base {
 		
 		$where = '';
 		foreach( $model -> relation[ 'where' ] as $field => $value ) {
-			if( is_numeric( $field ) ) $where .= "($value)";
-			else $where .= "($field=$value)";
+			if( !is_array( $value ) ) $value = array( $value );
+			foreach( $value as $val ) {
+				if( is_numeric( $field ) ) $where .= "($val)";
+				else $where .= "($field=$val)";
+			}
 		}
-		
+
 		return $where;
 	}
 	
