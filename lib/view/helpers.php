@@ -8,7 +8,7 @@ class ViewHelpers {
 		foreach( func_get_args() as $val )
 			$ret .= "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/$val\"></script>";
 			
-		return $ret; // but would like to use return instead
+		return $ret;
 	}	
 	
 	function stylesheet() {
