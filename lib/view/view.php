@@ -24,7 +24,7 @@ class View extends ViewHelpers {
 		$path = "$c/$a.php";
 
 		if( !file_exists( TMP_DIR . "/views/$path" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
-			$haml -> parse( $path );
+			$haml -> parse( VIEWS_DIR . $path, TMP_DIR . "/views/$path" );
 
 		extract( $controller -> globals );
 
