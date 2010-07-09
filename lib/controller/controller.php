@@ -16,6 +16,10 @@ class Controller extends Base {
 	*/
 	var $action = NULL;
 	var $globals = array();
+	
+	function __construct() {
+		$this -> globals[ 'current_time' ] = time();
+	}
 	/**
 	 * Runs a controller
 	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )
