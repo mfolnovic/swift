@@ -1,7 +1,7 @@
 <?php
 
 class Haml {
-	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr' );
+	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr', "li" );
 	var $structures = array( "foreach", "if", "else" );
 	var $line;
 	var $parsed;
@@ -58,6 +58,7 @@ class Haml {
 			$structure = in_array( $command, $this -> structures );
 			$this -> parsed .= "<?php " . $this -> parseFunctions( $rest ) . ( $structure ? " { " : ";" ) . " ?>";
 			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
+			if( method_exists( 'View', $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo $this -> ' . $command . 'End(); ?>' ) );
 			return;
 		}
 
@@ -135,7 +136,7 @@ class Haml {
 	
 	function pushValue( &$data, $attr, $value ) {
 		if( !isset( $data[ $attr ] ) ) $data[ $attr ] = '';
-		if( $data[ $attr ] != '' ) $data[ $attr ] .= ',';
+		if( $data[ $attr ] != '' ) $data[ $attr ] .= ' ';
 		$data[ $attr ] .= $value;
 	}
 	

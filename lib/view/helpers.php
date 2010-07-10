@@ -23,7 +23,7 @@ class ViewHelpers {
 	
 	function favicon( $icon ) {
 		global $config;
-		return '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . '/images/favicon.ico">';
+		return '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . 'public/images/favicon.ico">';
 	}
 	
 	function image( $image, $options = array() ) {
@@ -41,8 +41,12 @@ class ViewHelpers {
 
 	function form( $url, $options = array() ) {
 		global $config;
-		return array( "<form action=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url\">", "</form>" );
+		return "<form action=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url\" " . $this -> attributes( $options ) . ">";
 	}
+	
+	function formEnd() {
+		return "</form>";
+	}	
 
 	function link( $title, $href ) {
 		global $config;
