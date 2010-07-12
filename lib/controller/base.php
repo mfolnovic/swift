@@ -56,6 +56,16 @@ class ControllerBase extends Base {
 		include_once MODEL_DIR . strtolower( $name ) . ".php";		
 		return new $name( $data );
 	}
+	
+	function controller() { 
+		global $controller; 
+		return $controller -> controller; 
+	}
+	
+	function action() {
+		global $controller;
+		return $controller -> action;
+	}
 
 	function &__get( $index ) {
 		global $controller;
@@ -67,6 +77,12 @@ class ControllerBase extends Base {
 	 	global $controller;
  		
 		$controller -> globals[ $index ] = $value;
+	}
+	
+	function __isset( $index ) {
+		global $controller;
+	
+		return isset( $controller -> globals[ $index ] );
 	}
 };
 
