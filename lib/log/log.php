@@ -31,6 +31,8 @@ class Log extends Base {
 	}
 
 	function write( $message ) {
+		global $config;
+		
 		if( !$config -> options[ 'other' ][ 'log' ] ) return;
 		fwrite( $this -> handle, $message . PHP_EOL );
 	}
