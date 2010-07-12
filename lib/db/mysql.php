@@ -110,6 +110,7 @@ class Mysql extends Base {
 				$values .= ( isset( $values[ 0 ] ) ? ',' : '' ) . ( $this -> safe( $val ) );
 			
 			$this -> query( "INSERT INTO " . ( $model -> tableName ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
+			$model -> id = $this -> conn -> insert_id;
 		}	else {
 			if( !$model -> valid( $model -> update ) ) return $model;			
 
