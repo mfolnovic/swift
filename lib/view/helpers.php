@@ -3,22 +3,30 @@
 class ViewHelpers {
 	function javascript() {
 		global $config;
-		$ret = '';
+		$args = func_get_args();
 		
-		foreach( func_get_args() as $val )
-			$ret .= "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/$val\"></script>";
-			
-		return $ret;
+		if( file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
+			return "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/all.js\"></script>";
+		else {
+			$ret = '';
+			foreach( $args as $val )
+				$ret .= "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/$val\"></script>";
+			return $ret;
+		}
 	}	
 	
 	function stylesheet() {
 		global $config;
-		$ret = '';
+		if( file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
+			return "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/all.css\" rel=\"stylesheet\" type=\"text/css\">";
+		else {
+			$ret = '';
 		
-		foreach( func_get_args() as $val )
-			$ret .= "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
+			foreach( func_get_args() as $val )
+				$ret .= "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
 			
-		return $ret;
+			return $ret;
+		}
 	}
 	
 	function favicon( $icon ) {
