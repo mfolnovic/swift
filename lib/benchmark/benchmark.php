@@ -9,7 +9,7 @@ class Benchmark extends Base {
 	
 	function end( $name ) {
 		global $log;
-		$log -> log( "[Benchmark] $name: " . round( ( microtime() - $this -> times[ $name ] ), 4 ) . " seconds!" );
+		$log -> write( "[Benchmark] $name: " . round( ( microtime() - $this -> times[ $name ] ), 4 ) . " seconds!" );
 	}
 }
 
