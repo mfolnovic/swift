@@ -22,7 +22,6 @@ class Haml {
 		}
 			
 		fwrite( $fileTo, $this -> parsed );
-//		var_dump( $this -> parsed );
 			
 		fclose( $fileFrom );
 		fclose( $fileTo );
@@ -34,7 +33,7 @@ class Haml {
 		$line = ' ' . substr( $line, 0, -1 ); // remove newline
 		$size = strlen( $line );
 		
-		$data = array( 'tag' => 'div', 'attributes' => array(), 'html' => '' );
+		$data = array( 'tag' => '', 'attributes' => array(), 'html' => '' );
 		if( $size == 1 ) return;
 		if( $line[ 1 ] == '#' ) return;
 
@@ -61,31 +60,34 @@ class Haml {
 			if( method_exists( 'View', $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo $this -> ' . $command . 'End(); ?>' ) );
 			return;
 		}
-
+		
+		$pos = $tabs;
 		// parse tag
-		$type = ''; $str = '';
-		for( $i = $tabs; $i < $size; ++ $i ) {
-			$symbol = $line[ $i ] == '%' || $line[ $i ] == '#' || $line[ $i ] == '.' || $line[ $i ] == ' ';
-			if( $line[ $i ] == '\\' ) { ++ $i; $symbol = false; }
-			if( !$symbol ) $str .= $line[ $i ]; 
-			if( $symbol || $i + 1 == $size ) {
-				if( $type != '' ) {
-					if( $type == '%' ) $data[ 'tag' ] = $str;
-					else if( $type == '#' ) $this -> pushValue( $data[ 'attributes' ], 'id', $str );
-					else if( $type == '.' ) $this -> pushValue( $data[ 'attributes' ], 'class', $str );
-				} else $data[ 'html' ] .= $str;
+		if( $line[ $pos ] == '%' || $line[ $pos ] == '#' || $line[ $pos ] == '.' ) {
+			$data[ 'tag' ] = 'div'; // default tag
+			$type = ''; $str = '';
+			for( $pos = $tabs; $pos < $size; ++ $pos ) {
+				$symbol = $line[ $pos ] == '%' || $line[ $pos ] == '#' || $line[ $pos ] == '.' || $line[ $pos ] == ' ';
+				if( $line[ $pos ] == '\\' ) { ++ $pos; $symbol = false; }
+				if( !$symbol ) $str .= $line[ $pos ]; 
+				if( $symbol || $pos + 1 == $size ) {
+					if( $type != '' ) {
+						if( $type == '%' ) $data[ 'tag' ] = $str;
+						else if( $type == '#' ) $this -> pushValue( $data[ 'attributes' ], 'id', $str );
+						else if( $type == '.' ) $this -> pushValue( $data[ 'attributes' ], 'class', $str );
+					} else $data[ 'html' ] .= $str;
 				
-				$type = $line[ $i ];
-				$str = '';
+					$type = $line[ $pos ];
+					$str = '';
 				
-				if( $line[ $i ] == ' ' ) { $i ++; break; }
+					if( $line[ $pos ] == ' ' ) { $pos ++; break; }
+				}
 			}
 		}
 		
-		$pos = $i;
 		// parse attributes
-		$attributesStart = strpos( $line, "{", $i );
-		$attributesEnd = strpos( $line, "}", $i );
+		$attributesStart = strpos( $line, "{", $pos );
+		$attributesEnd = strpos( $line, "}", $pos );
 		
 		if( $attributesStart !== FALSE && $attributesEnd !== FALSE ) {
 			$attributes = trim( substr( $line, $attributesStart + 1, $attributesEnd - $attributesStart - 1 ) );
@@ -124,14 +126,16 @@ class Haml {
 					
 					if( !$status ) $this -> pushValue( $data[ 'attributes' ], $index, $this -> parseFunctions( $value ) );
 				}
-
+				
 				$status = !$status;
 			}
 		}
 		$data[ 'html' ] .= trim( substr( $line, $pos ) );
-
-		$this -> parsed .= "<{$data[ 'tag' ] }" . $this -> attributesToHTML( $data[ 'attributes' ] ) . ">" . $this -> parseHtml( $data[ "html" ] );
-		array_unshift( $this -> tree, array( $tabs, in_array( $data[ 'tag' ], $this -> ommitCloseTag ) ? "" : "</{$data[ 'tag' ]}>" ) );
+		if( !empty( $data[ 'tag' ] ) ) {
+			$this -> parsed .= "<{$data[ 'tag' ] }" . $this -> attributesToHTML( $data[ 'attributes' ] ) . ">";
+			array_unshift( $this -> tree, array( $tabs, in_array( $data[ 'tag' ], $this -> ommitCloseTag ) ? "" : "</{$data[ 'tag' ]}>" ) );
+		}
+		$this -> parsed .= $this -> parseHtml( $data[ "html" ] );
 	}
 	
 	function pushValue( &$data, $attr, $value ) {
@@ -162,7 +166,7 @@ class Haml {
 			
 			$last = $end + 1;
 		}
-		return $string;		
+		return $string;
 	}
 	
 	function between( $string, $pos, $start, $end ) {
