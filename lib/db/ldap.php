@@ -23,12 +23,17 @@ class Ldap extends Base {
 	}
 	
 	function doQuery( &$model, $options = array( false ) ) {
+		global $cache, $config;
 		if( $model -> currentDataSet !== null && $model -> relationChanged ) return $model -> currentDataSet;
-		if( !$this -> conn ) $this -> connect();
 
 		$model -> currentDataSet = array();
-
-		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $this -> generateConditions( $model ) );
+		$q = $this -> generateConditions( $model );
+		
+		$from_cache = $cache -> get( $q );
+		if( $from_cache !== false ) return $from_cache;
+		
+		if( !$this -> conn ) $this -> connect();
+		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
 
 		if( $res === false ) return $model -> currentDataSet;
 		$entries = ldap_get_entries( $this -> conn, $res );
@@ -48,7 +53,7 @@ class Ldap extends Base {
 			
 		if( $options[ 0 ] && $entries[ 'count' ] == 1 ) $model -> currentDataSet = $model -> currentDataSet[ 0 ];
 
-		return $model -> currentDataSet;
+		return $cache -> set( $q, $model -> currentDataSet, $config -> options[ 'ldap' ][ 'cache' ] );
 	}
 	
 	function generateConditions( &$model ) {
