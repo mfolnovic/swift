@@ -1,9 +1,9 @@
 <?php
 
 class Router extends Base {
-	var $routes, $path, $root;
+	var $routes, $path, $root, $continueRouting;
 
-	function route( $path, $prefixed = true ) {
+	function route( $path, $prefixed = true, $runController = true ) {
 		global $controller, $config;
 
 		$path = str_replace( "+", " ", $path );
@@ -24,22 +24,24 @@ class Router extends Base {
 		if( empty( $path ) ) {
 			$controller -> controller = $this -> root[ 'controller' ];
 			$controller -> action = $this -> root[ 'action' ];
+			$controller -> run();
 			return;
 		}
 		
 		$this -> path = explode( "/", $path );
 
 		foreach( $this -> routes as $route )
-			if( $this -> checkRoute( $route, $this -> path ) )
+			if( $this -> checkRoute( $route, $this -> path, $runController ) )
 				return;
 
 		$controller -> render404();
 	}
 	
-	function checkRoute( $route, $path ) {
+	function checkRoute( $route, $path, $runController ) {
 		global $controller;
 		$ret = array();
 		
+		$this -> continueRouting = false;
 		$i = 0;
 		foreach( $route[ 0 ] as $val ) {
 			if( !isset( $path[ $i ] ) ) break;
@@ -62,7 +64,8 @@ class Router extends Base {
 		unset( $ret[ 'controller' ], $ret[ 'action' ] );
 		$controller -> data = array_merge( $controller -> data, $ret );
 		
-		return true;
+		if( $runController ) $controller -> run();
+		return !$this -> continueRouting;
 	}
 	
 	function parseRoute( $route, $options ) {

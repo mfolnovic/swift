@@ -25,9 +25,6 @@ include LIB_DIR . "view/view.php";
 // Route
 $router -> route( $_SERVER[ "REQUEST_URI" ] );
 
-// Run controller
-$controller -> run();
-
 // Render
 $view -> render( 'layouts', $view -> layout );
 

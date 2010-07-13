@@ -35,6 +35,7 @@ class Controller extends Base {
 
 		$controllerName = $this -> controller . 'Controller';
 		$actionName = $this -> action;
+		
 		if( is_callable( array( $controllerName, $this -> action ) ) ) {
 			$obj = new $controllerName;
 			$obj -> data = & $this -> data; // workaround

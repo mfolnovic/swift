@@ -66,6 +66,11 @@ class ControllerBase extends Base {
 		global $controller;
 		return $controller -> action;
 	}
+	
+	function notFound() {
+		global $router;
+		$router -> continueRouting = true;
+	}
 
 	function &__get( $index ) {
 		global $controller;
