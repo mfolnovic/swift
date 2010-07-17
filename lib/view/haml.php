@@ -8,6 +8,9 @@ class Haml {
 	var $tree;
 		
 	function parse( $from, $to ) {
+		if( !file_exists( dirname( $to ) ) )
+			mkdir( dirname( $to ) );
+
 		$fileFrom = fopen( $from, "r" );
 		$fileTo = fopen( $to, "w" );
 		$this -> parsed = '';
