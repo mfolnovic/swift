@@ -5,25 +5,32 @@ class ViewHelpers {
 		global $config;
 		$args = func_get_args();
 		
-		if( file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
-			return "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/all.js\"></script>";
+		$opt = & $config -> options[ 'other' ];
+		$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
+		
+		if( $version != '' && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
+			return "<script type=\"text/javascript\" src=\"/{$opt[ 'url_prefix' ]}all$version.js\"></script>";
 		else {
 			$ret = '';
 			foreach( $args as $val )
-				$ret .= "<script type=\"text/javascript\" src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/javascripts/$val\"></script>";
+				$ret .= "<script type=\"text/javascript\" src=\"/{$opt[ 'url_prefix' ]}$val\"></script>";
 			return $ret;
 		}
 	}	
 	
 	function stylesheet() {
 		global $config;
-		if( file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
-			return "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/all.css\" rel=\"stylesheet\" type=\"text/css\">";
+
+		$opt = & $config -> options[ 'other' ];
+		$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
+		
+		if( $version != '' && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
+			return "<link href=\"/{$opt[ 'url_prefix' ]}all$version.css\" rel=\"stylesheet\" type=\"text/css\">";
 		else {
 			$ret = '';
 		
 			foreach( func_get_args() as $val )
-				$ret .= "<link href=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
+				$ret .= "<link href=\"/{$opt[ 'url_prefix' ]}$val\" rel=\"stylesheet\" type=\"text/css\">";
 			
 			return $ret;
 		}
@@ -31,14 +38,14 @@ class ViewHelpers {
 	
 	function favicon( $icon ) {
 		global $config;
-		return '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . 'public/images/favicon.ico">';
+		return '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . 'favicon.ico">';
 	}
 	
 	function image( $image, $options = array() ) {
 		global $config;
 //		$options = func_get_args();
 		$options = $this -> attributes( $options );
-		return "<img src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "public/images/" . $image . "\" $options>";
+		return "<img src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . $image . "\" $options>";
 	}
 
 	function format_time( $timestamp ) {
