@@ -15,10 +15,12 @@ $config -> load();
 
 include LIB_DIR . "log/log.php";
 include LIB_DIR . "benchmark/benchmark.php";
+include LIB_DIR . "image/image.php";
 include LIB_DIR . "controller/base.php";
 include LIB_DIR . "controller/controller.php";
 include LIB_DIR . "cache/" . ( $config -> options[ 'cache' ][ 'driver' ] ) . ".php";
 include LIB_DIR . "db/db.php";
+include LIB_DIR . "model/base.php";
 include LIB_DIR . "model/model.php";
 include LIB_DIR . "view/view.php";
 
