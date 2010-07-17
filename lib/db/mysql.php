@@ -28,8 +28,7 @@ class Mysql extends Base {
 	function query( $q ) {
 		if( !$this -> conn ) $this -> connect();
 
-		global $log;
-		$log -> write( $q );
+		global $log; $log -> write( $q );
 		return $this -> conn -> query( $q );
 	}
 
@@ -38,18 +37,14 @@ class Mysql extends Base {
 	*/
 	function generateWhere( &$model ) {
 		$ret = '';
-		foreach( $model -> relation[ 'where' ] as $id => $val ) {
-			if( $ret == '' ) $ret .= ' WHERE ';
-			else $ret .= " AND ";
-			
-			$ret .= '`' . $id . '`' . ( $this -> value( $val ) );
-		}
-		
+		foreach( $model -> relation[ 'where' ] as $id => $val )
+			$ret .= ( $ret == '' ? ' WHERE ' : ' AND ' ) . '`' . $id . '`' . $this -> value( $val );
 		return $ret;
 	}
 	
 	/**
 		Generates parts of query: limit, groupby, order
+		TODO
 	*/
 	function generateExtra( &$model ) {
 		return '';
@@ -77,70 +72,6 @@ class Mysql extends Base {
 		}
 	}
 
-	function save( &$model ) {
-		if( $model -> newRecord ) {
-			if( !$model -> valid( $model -> currentDataSet -> row ) ) return $model;	
-			
-			$columns = '`' . implode( '`,`', array_keys( $model -> currentDataSet -> row ) ) . '`';
-			$values = '';
-		
-			foreach( $model -> currentDataSet -> row as $id => $val )
-				$values .= ( isset( $values[ 0 ] ) ? ',' : '' ) . ( $this -> safe( $val ) );
-			
-			$this -> query( "INSERT INTO " . ( $model -> tableName ) . " ( " . $columns . " ) VALUES ( " . $values . " )" );
-			$model -> id = $this -> conn -> insert_id;
-		}	else {
-			if( !$model -> valid( $model -> update ) ) return $model;			
-
-			$q = "UPDATE " . ( $model -> tableName ) . " SET "; 
-			$first = true;
-			
-			foreach( $model -> update as $id => $val ) {
-				if( $id == "id" ) continue; // TEMP
-				if( !$first ) { $q .= ", "; }
-				else $first = false;
-			
-				$q .= '`' . $id . '` = ' . ( $this -> safe( $val ) );
-			}
-		
-			$q .= ( $this -> generateWhere( $model ) ) . ( $this -> generateOrderBy( $model ) ) . ( $this -> generateLimit( $model ) );
-			$this -> query( $q );
-		}		
-		
-		return $model;
-	}
-	
-	function delete() {
-		$this -> link -> query( "DELETE FROM " . ( $this -> tableName ) . ( $this -> generateWhere() ) );
-	}
-	
-	function dropAndCreateTable( &$model ) {
-		$this -> query( "DROP TABLE IF EXISTS " . $model -> tableName );
-		
-		$q = "CREATE TABLE " . $model -> tableName . " (";
-		$first = true;
-		foreach( $model -> schema as $field => $desc ) {
-			if( !$first ) $q .= ',';
-			
-			$q .= '`' . $field . '` ' . $desc[ 'type' ];
-			if( isset( $desc[ 'size' ] ) ) $q .= '(' . $desc[ 'size' ] . ')';
-			if( isset( $desc[ 'default' ] ) ) $q .= ' DEFAULT ' . $desc[ 'default' ];
-			if( isset( $desc[ 'auto_increment' ] ) ) $q .= ' AUTO_INCREMENT';
-			$first = false;
-		}
-		
-		foreach( $model -> schema_keys as $field => $type ) {
-			$q .= ',';
-			if( $type == 'primary' ) $q .= "PRIMARY KEY (`$field`)";
-			// add support for other types of keys
-			$first = false;
-		}
-		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
-		
-		$this -> query( $q );
-	}
-	
-	/* range */
 	protected function value( $o ) {
 		if( !is_array( $o ) ) return " = " . $this -> safe( $o );
 		else return " IN ( " . implode( ',', $o ) . " )"; // sql injection!!
