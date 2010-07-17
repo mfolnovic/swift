@@ -8,6 +8,7 @@ class Mysql extends Base {
 	var $options;
 
 	function safe( $str ) {
+		if( $str[ 0 ] == '`' ) return $str;
 		if( !$this -> conn ) $this -> connect();
 		if( get_magic_quotes_gpc() ) $str = stripslashes( $string );
 		if( !is_numeric( $str ) ) $str = "'" . mysqli_real_escape_string( $this -> conn, $str ) . "'";
@@ -20,50 +21,23 @@ class Mysql extends Base {
 	}
 	
 	function __destruct() {
-		if( !$this -> conn ) return;
-		$this -> conn -> close();
+		if( $this -> conn ) 
+			$this -> conn -> close();
 	}
 
 	function query( $q ) {
 		if( !$this -> conn ) $this -> connect();
-		
-		return $this -> conn -> query( $q );
-	}
 
-	/**
-	 * Constructs query based on current relation
-	*/
-	function constructQuery( &$model ) {
-		$q = "SELECT " . ( $model -> relation[ 'select' ] ) . " FROM " . ( $model -> tableName ) . ( $this -> generateWhere( $model ) ) . ( $model -> relation[ "group" ] ) . ( $model -> relation[ 'having' ] ) . ( $this -> generateOrderBy( $model ) ) . ( $this -> generateLimit( $model ) );
-		
-		return $q . ';';
-	}
-	
-	/**
-	 * Generates order by part of query based on current relation
-	*/
-	function generateOrderBy( &$model ) {
-		$o = $model -> relation[ 'order' ];
-		if( $o != '' ) $o = ' ORDER BY ' . $o[ 0 ] . ' ' . ( $o[ 1 ] ? 'asc' : 'desc' );
-		
-		return $o;
-	}
-	
-	/**
-	 * Generates limit part of query based on current relation
-	*/
-	function generateLimit( &$model ) {
-		if( $model -> relation[ 'limit' ][ 0 ] != -1 )
-			return ' LIMIT ' . implode( ',', $model -> relation[ 'limit' ] );
-		else
-			return '';
+		global $log;
+		$log -> write( $q );
+		return $this -> conn -> query( $q );
 	}
 
 	/**
 	 * Generates where part of query based on current relation
 	*/
 	function generateWhere( &$model ) {
-		$first = true; $ret = '';
+		$ret = '';
 		foreach( $model -> relation[ 'where' ] as $id => $val ) {
 			if( $ret == '' ) $ret .= ' WHERE ';
 			else $ret .= " AND ";
@@ -75,28 +49,32 @@ class Mysql extends Base {
 	}
 	
 	/**
-	 * Does query for current relation, and returns array of rows
-	 * @param bool $one_result Tels if query gets only one row, can it just return it, instead of returning array
+		Generates parts of query: limit, groupby, order
 	*/
-	function doQuery( &$model, $options = array( false ) ) {
-		if( $model -> currentDataSet !== null && $model -> relationChanged ) return $model -> currentDataSet;
+	function generateExtra( &$model ) {
+		return '';
+	}
+	
+	/**
+	 * Does query for current relation, and returns array of rows
+	*/
+	function select( &$base ) {
+		global $model;
+		$base -> resultSet = array();
+		$table = &$model -> tables[ $base -> tableName ];
 		
-		$model -> newRecord = false;
-		$model -> currentDataSet = array();
-		$res = $this -> query( $this -> constructQuery( $model ) );
-		
-		$id = array();
-		for( $i = 0; $row = $res -> fetch_assoc(); ++ $i ) {
-//			$tmp = &$model -> tables[ $this -> name ] -> rows[ $row -> ID ];
-			$model -> currentDataSet[ $row[ 'id' ] ] = new ModelRow( $row );
-		}
-		
-		$res -> free_result();
-		$model -> handleAssociations();
-		if( $i == 1 && $options[ 0 ] ) { reset( $model -> currentDataSet ); $model -> currentDataSet = current( $model -> currentDataSet ); }
+		$relation = &$base -> relation;
+		if( empty( $relation[ 'select' ] ) ) $select = '*';
+		else $select = 'id,' . implode( ',', $relation[ 'select' ] );
 
-		return $model -> currentDataSet;
-		//return $this -> currentDataSet = new ModelTableResult( $db -> query( $this -> constructQuery() ) );
+		$res = $this -> query( "SELECT " . $select . " FROM " . $base -> tableName . $this -> generateWhere( $base ) . $this -> generateExtra( $base ) . ';' );
+
+		for( $i = 0; $i < $res -> num_rows; ++ $i ) {
+			$row = $res -> fetch_assoc();
+			$table[ $row[ 'id' ] ] = new ModelRow( $row );
+			
+			$base -> resultSet[ $row[ 'id' ] ] = &$table[ $row[ 'id' ] ];
+		}
 	}
 
 	function save( &$model ) {
@@ -165,7 +143,7 @@ class Mysql extends Base {
 	/* range */
 	protected function value( $o ) {
 		if( !is_array( $o ) ) return " = " . $this -> safe( $o );
-		else return " IN ( " . implode( ',', $o ) . " )";
+		else return " IN ( " . implode( ',', $o ) . " )"; // sql injection!!
 //		else return " = " . $this -> safe( $o[ 0 ] );
 	}
 }
