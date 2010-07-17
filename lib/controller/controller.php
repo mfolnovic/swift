@@ -25,13 +25,17 @@ class Controller extends Base {
 	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )
 	*/
 	function run() {
+		global $router;
+	
 		$this -> data = array_merge( $_POST, $this -> data );
 
 		$path = CONTROLLERS_DIR . $this -> controller . ".php";
 		if( file_exists( $path ) )
 			include_once $path;
-		else
-			$this -> render404();
+		else {
+			$router -> continueRouting = true;
+			return;
+		}
 
 		$controllerName = $this -> controller . 'Controller';
 		$actionName = $this -> action;
@@ -40,7 +44,7 @@ class Controller extends Base {
 			$obj = new $controllerName;
 			$obj -> data = & $this -> data; // workaround
 			$obj -> $actionName();
-		} 
+		}
 	}
 	
 	/**
