@@ -10,7 +10,6 @@ class Mysql extends Base {
 	function safe( $str ) {
 		if( $str[ 0 ] == '`' ) return $str;
 		if( !$this -> conn ) $this -> connect();
-		if( get_magic_quotes_gpc() ) $str = stripslashes( $string );
 		if( !is_numeric( $str ) ) $str = "'" . mysqli_real_escape_string( $this -> conn, $str ) . "'";
 		
 		return $str;
