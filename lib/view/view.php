@@ -5,6 +5,7 @@ include "helpers.php";
 
 class View extends ViewHelpers {
 	var $layout = 'application';
+	var $render = true;
 	
 	function __construct() {
 		ob_start( 'gz_handler' );	
@@ -16,6 +17,7 @@ class View extends ViewHelpers {
 	}
 	
 	function render( $c = null, $a = null ) {
+		if( !$this -> render ) return;
 		global $haml, $config, $controller;
 	
 		if( $c == null ) $c = $controller -> controller;

@@ -36,15 +36,19 @@ class ControllerBase extends Base {
 		global $router, $controller, $config;
 		
 		header( "X-Redirect: " . ( isAjax() ? '' : $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url" );
-		$this -> data = array();
-		$router -> route( $url, false );
-		$controller -> run();
+		if( !isAjax() ) header( "Location:/{$config -> options[ 'other' ][ 'url_prefix' ]}$url" );
+		else {
+			$this -> data = array();
+			$router -> route( $url, false );
+			$controller -> run();
+		}
 	}
 	
 	function render( $url ) {
-		global $router;
-
-		$router -> route( $url, false );
+		global $router, $view;
+		
+		if( $url === false ) $view -> render = false;
+		else $router -> route( $url, false );
 	}
 
 	/**
@@ -53,8 +57,7 @@ class ControllerBase extends Base {
 	 * @param array $data New row
 	*/
 	function model( $name, $data = array() ) {
-		include_once MODEL_DIR . strtolower( $name ) . ".php";		
-		return new $name( $data );
+		return $GLOBALS[ 'model' ] -> create( $name, $data );
 	}
 	
 	function controller() { 
