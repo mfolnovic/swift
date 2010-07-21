@@ -22,20 +22,21 @@ class Ldap extends Base {
 		ldap_bind( $this -> conn, $this -> options[ 'username' ], $this -> options[ 'password' ] );
 	}
 	
-	function doQuery( &$model, $options = array( false ) ) {
-		global $cache, $config;
-		if( $model -> currentDataSet !== null && $model -> relationChanged ) return $model -> currentDataSet;
+	function select( &$base ) {
+		global $cache, $config, $model, $benchmark, $log;
 
-		$model -> currentDataSet = array();
-		$q = $this -> generateConditions( $model );
-		
+		$table = &$model -> tables[ $base -> tableName ];
+		$base -> resultSet = array();
+		$q = $this -> generateConditions( $base );
+
 		$from_cache = $cache -> get( $q );
-		if( $from_cache !== false ) return $from_cache;
+//		if( $from_cache !== false ) { $log -> write( "[CACHE]: $q" ); return $from_cache; }
 		
+		$benchmark -> start( "[LDAP $q]" );
 		if( !$this -> conn ) $this -> connect();
 		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
 
-		if( $res === false ) return $model -> currentDataSet;
+		if( $res === false ) return $base -> resultSet;
 		$entries = ldap_get_entries( $this -> conn, $res );
 
 		for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
@@ -48,16 +49,16 @@ class Ldap extends Base {
 					$entry[ $id ] = $val;
 				}
 			}
-			$model -> currentDataSet[] = new ModelRow( $entry );
-		}
-			
-		if( $options[ 0 ] && $entries[ 'count' ] == 1 ) $model -> currentDataSet = $model -> currentDataSet[ 0 ];
 
-		return $cache -> set( $q, $model -> currentDataSet, $config -> options[ 'ldap' ][ 'cache' ] );
+			$table[ $i ] = new ModelRow( $entry );
+			$base -> resultSet[ $i ] = &$table[ $i ];
+		}
+		$benchmark -> end( "[LDAP $q]" );
+		$cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
 	}
 	
 	function generateConditions( &$model ) {
-		if( empty( $model -> relation[ 'where' ] ) ) return '(uid=*)';
+		if( empty( $model -> relation[ 'where' ] ) ) return '(webid=*)';
 		
 		$where = '';
 		foreach( $model -> relation[ 'where' ] as $field => $value ) {
@@ -71,23 +72,23 @@ class Ldap extends Base {
 		return $where;
 	}
 	
-	function save( &$model ) {
+	function save( &$base ) {
+		global $cache;
 		if( !$this -> conn ) $this -> connect();
 
-		if( $model -> newRecord ) {
-			print_r( $model -> currentDataSet );
+		if( $base -> newRecord ) {
+			print_r( $base -> currentDataSet );
 		} else {
-			$result = $this -> doQuery( $model );
-			ldap_modify( $this -> conn, $result -> dn, $model -> update );
+			$this -> select( $base );
+			$cache -> delete( $this -> generateConditions( $base ) );
+			ldap_modify( $this -> conn, $base -> dn, $base -> update );
 		}
-		
-		return $model;
 	}
 	
-	function authenticate( $model, $data ) {
+	function authenticate( &$base, $data ) {
 		if( !$this -> conn ) $this -> connect();
-	
-		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, "uid={$data[0]},{$this -> options['dn']}", $data[ 1 ] ) == true;
+
+ 		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0], $data[ 1 ] ) == true;
 	}
 }
 

@@ -17,6 +17,7 @@ class Mysql extends Base {
 	
 	function connect() {
 		$this -> conn = new mysqli( $this -> options[ 'host' ], $this -> options[ 'username' ], $this -> options[ 'password' ], $this -> options[ 'database' ] );
+		$this -> conn -> set_charset( 'utf8' );
 	}
 	
 	function __destruct() {
@@ -27,8 +28,10 @@ class Mysql extends Base {
 	function query( $q ) {
 		if( !$this -> conn ) $this -> connect();
 
-		global $log; $log -> write( $q );
-		return $this -> conn -> query( $q );
+		global $benchmark; $benchmark -> start( "[SQL $q]" );
+		$r = $this -> conn -> query( $q );
+		$benchmark -> end( "[SQL $q]" );
+		return $r;
 	}
 
 	/**
@@ -54,7 +57,10 @@ class Mysql extends Base {
 	*/
 	function select( &$base ) {
 		global $model;
+		if( $base -> relationChanged === false ) return;
+		
 		$base -> resultSet = array();
+		$base -> relationChanged = false;
 		$table = &$model -> tables[ $base -> tableName ];
 		
 		$relation = &$base -> relation;
@@ -69,6 +75,66 @@ class Mysql extends Base {
 			
 			$base -> resultSet[ $row[ 'id' ] ] = &$table[ $row[ 'id' ] ];
 		}
+		
+		$base -> handleAssociations();
+	}
+	
+	function save( &$base ) {
+		if( !empty( $base -> newRecord ) ) {
+			global $model;
+			// insert into
+			$columns = '';
+			$values = '';
+
+			foreach( $base -> newRecord as $id => $val ) {
+				$columns.= ( $values == '' ? '' : ',' ) . '`' . $id . '`';
+				$values .= ( $values == '' ? '' : ',' ) . $this -> safe( $val );
+			}
+			
+			$this -> query( "INSERT INTO {$base -> tableName} ($columns) VALUES ($values)" );
+			$base -> newRecord -> id = $this -> conn -> insert_id;
+			
+			$table = &$model -> tables[ $base -> tableName ];
+			$table[ $base -> newRecord -> id ] = $base -> newRecord;
+			$base -> resultSet[ $base -> newRecord -> id ] = & $table[ $base -> newRecord -> id ];
+			$base -> newRecord = false;
+		} else {
+			$set = '';
+			foreach( $base -> update as $id => $val ) 
+				$set .= ( $set == '' ? '' : ',' ) . "`$id`=" . $this -> safe( $val );
+
+			$this -> query( "UPDATE {$base -> tableName} SET $set " . $this -> generateWhere( $base ) );
+		}
+	}
+	
+	function delete( &$base ) {
+		$this -> query( "DELETE FROM {$base -> tableName}" . $this -> generateWhere( $base ) );
+	}
+
+	function dropAndCreateTable( &$model ) {
+		$this -> query( "DROP TABLE IF EXISTS " . $model -> tableName );
+		
+		$q = "CREATE TABLE " . $model -> tableName . " (";
+		$first = true;
+		foreach( $model -> schema as $field => $desc ) {
+			if( !$first ) $q .= ',';
+			
+			$q .= '`' . $field . '` ' . $desc[ 'type' ];
+			if( isset( $desc[ 'size' ] ) ) $q .= '(' . $desc[ 'size' ] . ')';
+			if( isset( $desc[ 'default' ] ) ) $q .= ' DEFAULT ' . $desc[ 'default' ];
+			if( isset( $desc[ 'auto_increment' ] ) ) $q .= ' AUTO_INCREMENT';
+			$first = false;
+		}
+		
+		foreach( $model -> schema_keys as $field => $type ) {
+			$q .= ',';
+			if( $type == 'primary' ) $q .= "PRIMARY KEY (`$field`)";
+			// add support for other types of keys
+			$first = false;
+		}
+		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
+		
+		$this -> query( $q );
 	}
 
 	protected function value( $o ) {
