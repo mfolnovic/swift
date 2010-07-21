@@ -43,9 +43,11 @@ class ViewHelpers {
 	
 	function image( $image, $options = array() ) {
 		global $config;
+		if( strpos( $image, '/' ) === false ) $image = "images/$image";
 //		$options = func_get_args();
+		$opt = & $config -> options[ 'other' ];
 		$options = $this -> attributes( $options );
-		return "<img src=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . $image . "\" $options>";
+		return "<img src=\"/{$opt['url_prefix']}/$image\" $options>";
 	}
 
 	function format_time( $timestamp ) {
@@ -63,9 +65,10 @@ class ViewHelpers {
 		return "</form>";
 	}	
 
-	function link( $title, $href ) {
+	function link( $title, $href, $options = array() ) {
 		global $config;
-		return '<a href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . str_replace( " ", "+", $href ) . '">' . $title . '</a>';
+		$options = $this -> attributes( $options );
+		return '<a href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
 	}
 
 	function partial( $name ) {
