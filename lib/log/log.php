@@ -6,9 +6,9 @@ class Log extends Base {
 
 	var $handle = null; // file handle
 
-	function __construct( $type, $args ) {
+	function init( $type, $args ) {
 		global $config;
-
+		
 		if( !$config -> options[ 'other' ][ 'log' ] ) return;
 		$this -> type = $type;
 		$this -> args = $args;
@@ -46,6 +46,6 @@ class Log extends Base {
 	}
 }
 
-$log = new Log( "file", "application" );
+$log = new Log;
 
 ?>
