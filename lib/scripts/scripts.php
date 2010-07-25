@@ -4,7 +4,10 @@ class Scripts extends Base {
 	function call( $arguments ) {
 		if( empty( $arguments ) ) { $this -> help(); return; }
 	
-		include LIB_DIR . "scripts/{$arguments[0]}.php";
+		$name = array_shift( $arguments );
+		include LIB_DIR . "scripts/$name.php";
+		$className = ucfirst( $name ) . "Script";
+		$className::run();
 	}
 	
 	function help() {
@@ -12,8 +15,9 @@ class Scripts extends Base {
 		
 		echo "Available commands:" . PHP_EOL;
 		$files = $dir -> files( LIB_DIR . "scripts/" );
-		for( $i = 0, $cnt = count( $files ); $i < $cnt; $i += 2 )
-			echo "\t" . $files[ $i ] . PHP_EOL;
+		for( $i = 0, $cnt = count( $files ); $i < $cnt; ++ $i )
+			if( !is_dir( LIB_DIR . "scripts/" . $files[ $i ] ) && $files[ $i ] != 'scripts.php' )
+				echo "\t" . substr( $files[ $i ], 0, -4 ) . PHP_EOL;
 	}
 }
 

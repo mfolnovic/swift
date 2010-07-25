@@ -1,6 +1,6 @@
 <?php
 
-class Cache extends Base {
+class Cache_file extends Base {
 	var $cache = array();
 	var $changed = false;
 	
@@ -12,12 +12,12 @@ class Cache extends Base {
 		$this -> writeToFile();
 	}
 
-	function __set( $index, $value ) {
+	function set( $index, $value ) {
 		$this -> cache[ $index ] = $value;
 		$this -> changed = true;
 	}
 	
-	function __get( $index ) {
+	function get( $index ) {
 		if( !$this -> read ) $this -> readFromFile();
 		
 		return $this -> cache[ $index ];

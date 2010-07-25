@@ -10,6 +10,9 @@ class Haml {
 	function parse( $from, $to ) {
 		if( !file_exists( dirname( $to ) ) )
 			mkdir( dirname( $to ) );
+			
+		if( !file_exists( $from ) )
+			die( "Template doesn't exist!" );
 
 		$fileFrom = fopen( $from, "r" );
 		$fileTo = fopen( $to, "w" );
@@ -18,12 +21,12 @@ class Haml {
 		
 		while( $this -> line = fgets( $fileFrom ) )
 			$this -> parseLine();
-			
+		
 		while( !empty( $this -> tree ) ) {
 			$curr = array_shift( $this -> tree );
 			$this -> parsed .= $curr[ 1 ];
 		}
-			
+		
 		fwrite( $fileTo, $this -> parsed );
 			
 		fclose( $fileFrom );

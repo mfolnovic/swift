@@ -1,6 +1,6 @@
 <?php
 
-class Cache extends Base {
+class Cache_apc extends Base {
 	static function set( $index, $value ) {
 		apc_store( $index, $value );
 		
@@ -19,7 +19,5 @@ class Cache extends Base {
 		return apc_exists( $index );
 	}
 }
-
-$cache = new Cache;
 
 ?>

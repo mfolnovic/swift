@@ -1,6 +1,6 @@
 <?php
 
-class Cache extends Base {
+class Cache_memcache extends Base {
 	var $conn;
 
 	function __construct() {
@@ -13,11 +13,11 @@ class Cache extends Base {
 		memcache_close( $this -> conn );
 	}
 	
-	function __get( $index ) {
+	function get( $index ) {
 		return $this -> conn -> get( $index );
 	}
 	
-	function __set( $index, $value ) {
+	function set( $index, $value ) {
 		$result = $this -> conn -> replace( $index, $value );
 		if( $result == false )
 			$this -> conn -> set( $index, $value );

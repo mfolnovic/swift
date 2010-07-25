@@ -1,13 +1,16 @@
 <?php
 
 class TestCase {
-	var $test;
-
-	function __construct() {}
 	function assert( $result, $message = '' ) {
-		global $test;
-
-		$test -> addResult( $result, $message );
+		TestSuite::getInstance() -> addResult( $result, $message );
+	}
+	
+	function assertEqual( $first, $second, $message = '' ) {
+		$instance = TestSuite::getInstance();
+		$instance -> first = $first;
+		$instance -> second = $second;
+		
+		$instance -> addResult( $first == $second, $message );
 	}
 }
 	

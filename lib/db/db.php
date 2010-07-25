@@ -3,7 +3,7 @@
 class DB extends Base {
 	var $connections = array();
 	
-	function __construct() {
+	function init() {
 		global $config;
 		
 		foreach( $config -> options[ 'database' ] as $name => $options ) {

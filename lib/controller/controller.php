@@ -1,7 +1,5 @@
 <?php
 
-include CONTROLLERS_DIR . "application.php"; // loading ApplicationController
-
 class Controller extends Base {
 	/**
 	 * Array containing $_POST + URL data
@@ -28,6 +26,8 @@ class Controller extends Base {
 		global $router;
 	
 		$this -> data = array_merge( $_POST, $this -> data );
+
+		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
 
 		$path = CONTROLLERS_DIR . $this -> controller . ".php";
 		if( file_exists( $path ) )
