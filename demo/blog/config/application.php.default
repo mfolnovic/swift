@@ -5,22 +5,25 @@ $config -> options[ 'database' ] = array(
 	'default' => array(
 		'host' => 'localhost',
 		'username' => 'root',
-		'password' => 'pass',
+		'password' => '',
 		'database' => 'blog',
 		'driver' => 'mysql' 
 	)
 );
 
 $config -> options[ 'cache' ] = array(
-	'driver' => 'apc'
+	'apc' => array( 
+		'driver' => 'apc'
+	)
 );
 
 $config -> options[ 'other' ] = array (
 	'log' => false,
 	'cache_views' => false,
-	'cache_config' => false,
+	'cache_config' => true,
 	'format_date' => 'm.d.y H:i:s',
-	'url_prefix' => '/PRF/demo/blog/'
+	'url_prefix' => 'projects/PRF/demo/blog/',
+	'static_version' => false
 );
 
 ?>
