@@ -9,7 +9,8 @@ class Haml {
 		
 	function parse( $from, $to ) {
 		if( !file_exists( dirname( $to ) ) )
-			mkdir( dirname( $to ) );
+			if( @mkdir( dirname( $to ) ) === false )
+				trigger_error( "chmod 777 -R tmp/ in directory where your site is!" );
 			
 		if( !file_exists( $from ) )
 			die( "Template doesn't exist!" );
