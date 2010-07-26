@@ -5,12 +5,13 @@ class TestCase {
 		TestSuite::getInstance() -> addResult( $result, $message );
 	}
 	
-	function assertEqual( $first, $second, $message = '' ) {
+	function assertEqual( $actual, $expected, $message = '' ) {
 		$instance = TestSuite::getInstance();
-		$instance -> first = $first;
-		$instance -> second = $second;
+
+		$instance -> actual = $actual;
+		$instance -> expected = $expected;
 		
-		$instance -> addResult( $first == $second, $message );
+		$instance -> addResult( $actual == $expected, $message );
 	}
 }
 	
