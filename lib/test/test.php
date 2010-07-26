@@ -74,7 +74,7 @@ class TestSuite extends Base {
 		if( $this -> counts[ 0 ] > 0 )
 			echo $this -> colorize( "There were {$this -> counts[ 0 ]} failures:", "[37;41m" ) . PHP_EOL;
 		else
-			echo $this -> colorize( "Everything OK!", "[0;42m" ) . PHP_EOL;
+			echo $this -> colorize( "Everything OK (" . count( $this -> results ) ." asserts)!", "[0;42m" ) . PHP_EOL;
 			
 		echo $r;
 	}
