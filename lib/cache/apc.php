@@ -5,8 +5,8 @@ class Cache_Apc extends Base {
 
 	}
 
-	function set( $index, $value ) {
-		apc_store( $index, $value );
+	function set( $index, $value, $ttl = 0 ) {
+		apc_store( $index, $value, $ttl );
 		
 		return $value;
 	}
