@@ -5,6 +5,7 @@ class TestSuite extends Base {
 	var $currentTest = '';
 	var $currentClass = '';
 	var $vars = array();
+	var $counts = array( 0 => 0, 1 => 0 );
 	static $instance = NULL;
 	
 	function __destruct() {
@@ -52,6 +53,7 @@ class TestSuite extends Base {
 	}
 
 	function addResult( $result, $message ) {
+		$this -> counts[ $result ] ++;
 		$this -> results[] = array( $result, $this -> currentClass, $this -> currentTest, $this -> parseMessage( $message ) );
 	}
 
@@ -60,17 +62,25 @@ class TestSuite extends Base {
 	
 		$last = ''; $i = 0;
 		$s = ""; $r = '';
+
 		foreach( $this -> results as $value )  {
 			$s .= $value[ 0 ] ? '.' : 'F';
 			if( $value[ 0 ] === false )
-				$r .= ( ++ $i ) . ') ' . $this -> colorize( "FAILURE", "[0;31m" ) . PHP_EOL . $value[ 2 ] . '(' . $value[ 1 ] . ')' . ( !empty( $value[ 3 ] ) ? ': ' . $value[ 3 ] : '' ) . PHP_EOL;
+				$r .= ( ++ $i ) . ') ' . $value[ 2 ] . '(' . $value[ 1 ] . ')' . ( !empty( $value[ 3 ] ) ? ': ' . $value[ 3 ] : '' ) . PHP_EOL;
 		}
+		//$this -> colorize( "FAILURE", "[37;41m" )
 		
-		echo $s . PHP_EOL . PHP_EOL . $r;
+		echo $s . PHP_EOL . PHP_EOL;
+		if( $this -> counts[ 0 ] > 0 )
+			echo $this -> colorize( "There were {$this -> counts[ 0 ]} failures:", "[37;41m" ) . PHP_EOL;
+		else
+			echo $this -> colorize( "Everything OK!", "[0;42m" ) . PHP_EOL;
+			
+		echo $r;
 	}
 
-	function colorize( $test, $color ) {
-		return chr( 27 ) . $color . $test . chr( 27 ) . "[0m";;
+	function colorize( $text, $color ) {
+		return chr( 27 ) . $color . $text . chr( 27 ) . "[0m";
 	}
 	
 	function parseMessage( $message ) {
