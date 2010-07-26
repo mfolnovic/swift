@@ -1,18 +1,19 @@
 <?php
 
 class Cache {
-	var $instances = array();
+	static $instances = array();
 	
-	function loadDriver() {
-		foreach( func_get_args() as $driver ) {
-			if( isset( $instances[ $driver ] ) ) continue;
+	static function loadDrivers( $config ) {
+		foreach( $config as $driver => $options ) {
 			include LIB_DIR . "/cache/$driver.php";
-			$name = "Cache_$driver";
-			$instances[ $driver ] = new $name;
+			$name = "Cache_" . ucfirst( $driver );
+			self::$instances[ $driver ] = new $name( $options );
 		}
 	}
+	
+	static function getInstance( $name ) {
+		return self::$instances[ $name ];
+	}
 }
-
-$cache = new Cache;
 
 ?>

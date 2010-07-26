@@ -1,12 +1,12 @@
 <?php
 
-class Cache_memcache extends Base {
+class Cache_Memcache extends Base {
 	var $conn;
 
-	function __construct() {
+	function __construct( $options ) {
 		global $config;
 	
-		$this -> conn = memcache_pconnect( $config -> options[ 'cache' ][ 'host' ], $config -> options[ 'cache' ][ 'port' ] );
+		$this -> conn = memcache_pconnect( $options[ 'host' ], $options[ 'port' ] );
 	}
 	
 	function __destruct() {

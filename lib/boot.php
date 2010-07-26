@@ -23,16 +23,18 @@ include LIB_DIR . "model/base.php";
 include LIB_DIR . "model/model.php";
 include LIB_DIR . "view/view.php";
 
+// Load config
+$config -> load();
+
+Cache::loadDrivers( $config -> options[ 'cache' ] );
+
 if( ENV & ENV_HTTP ) {
-	// Load config
-	$config -> load();
+	// With more features at unit tests, will move most of this to run at tests too
 	
 	// Initiate log
 	$log -> init( "file", "application" );
 
 	// Initiate cache
-	$cache -> loadDriver( $config -> options[ 'cache' ][ 'driver' ] );
-	
 	// Initiate database
 	$db -> init();
 

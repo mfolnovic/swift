@@ -1,10 +1,10 @@
 <?php
 
-class Cache_file extends Base {
+class Cache_File extends Base {
 	var $cache = array();
 	var $changed = false;
 	
-	function __construct() {
+	function __construct( $options ) {
 		$this -> readFromFile();
 	}
 

@@ -1,22 +1,31 @@
 <?php
 
-class Cache_apc extends Base {
-	static function set( $index, $value ) {
+class Cache_Apc extends Base {
+	function __construct( $options ) {
+
+	}
+
+	function set( $index, $value ) {
 		apc_store( $index, $value );
 		
 		return $value;
 	}
 	
-	static function get( $index )  {
+	function get( $index )  {
 		return apc_fetch( $index );
 	}
 	
-	static function delete( $index ) {
+	function delete( $index ) {
 		apc_delete( $index );
 	}
 	
-	static function exists( $index ) {
+	function exists( $index ) {
+		return $this -> get( $index ) !== FALSE;
 		return apc_exists( $index );
+	}
+	
+	function clear( $type = 'user' ) {
+		apc_clear_cache( $type );
 	}
 }
 
