@@ -3,6 +3,12 @@
 class Ldap extends Base {
 	var $conn = NULL;
 	var $options;
+	var $cache;
+	
+	function __construct( $options ) {
+		$this -> options = $options;
+		$this -> cache = Cache::getInstance( $this -> options[ 'cache_store' ] );
+	}
 
 	function connect() {
 		$this -> conn = ldap_connect( $this -> options[ 'host' ], $this -> options[ 'port' ] );
@@ -23,14 +29,14 @@ class Ldap extends Base {
 	}
 	
 	function select( &$base ) {
-		global $cache, $config, $model, $benchmark, $log;
+		global $config, $model, $benchmark, $log;
 
 		$table = &$model -> tables[ $base -> tableName ];
 		$base -> resultSet = array();
 		$q = $this -> generateConditions( $base );
 
-		$from_cache = $cache -> get( $q );
-//		if( $from_cache !== false ) { $log -> write( "[CACHE]: $q" ); return $from_cache; }
+		$from_cache = $this -> cache -> get( $q );
+		if( $from_cache !== false ) { $log -> write( "[CACHE]: $q" ); return $from_cache; }
 		
 		$benchmark -> start( "[LDAP $q]" );
 		if( !$this -> conn ) $this -> connect();
@@ -54,7 +60,7 @@ class Ldap extends Base {
 			$base -> resultSet[ $i ] = &$table[ $i ];
 		}
 		$benchmark -> end( "[LDAP $q]" );
-		$cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
+		$this -> cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
 	}
 	
 	function generateConditions( &$model ) {
@@ -80,7 +86,7 @@ class Ldap extends Base {
 			print_r( $base -> currentDataSet );
 		} else {
 			$this -> select( $base );
-			$cache -> delete( $this -> generateConditions( $base ) );
+			$this -> cache -> delete( $this -> generateConditions( $base ) );
 			ldap_modify( $this -> conn, $base -> dn, $base -> update );
 		}
 	}
@@ -91,7 +97,5 @@ class Ldap extends Base {
  		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0], $data[ 1 ] ) == true;
 	}
 }
-
-$ldap = new LDAP;
 
 ?>

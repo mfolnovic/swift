@@ -9,8 +9,7 @@ class DB extends Base {
 		foreach( $config -> options[ 'database' ] as $name => $options ) {
 			$driver = ucfirst( $options[ 'driver' ] );
 			include_once "{$options['driver']}.php";
-			$this -> connections[ $name ] = new $driver;
-			$this -> connections[ $name ] -> options = $options;
+			$this -> connections[ $name ] = new $driver( $options );
 		}
 	}
 }

@@ -6,6 +6,10 @@ class Mysql extends Base {
 	var $last_query;
 	var $numrows;
 	var $options;
+	
+	function __construct( $options ) {
+		$this -> options = $options;
+	}
 
 	function safe( $str ) {
 		if( $str[ 0 ] == '`' ) return $str;
