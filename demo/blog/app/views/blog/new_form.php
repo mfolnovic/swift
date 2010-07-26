@@ -1,4 +1,4 @@
 %h1 New post
 
-%form { :action => '/PRF/demo/blog/blog/create/', :method => 'post' }
+- form( 'blog/create', array( 'method' => 'post' ) )
 	- partial( 'form' )

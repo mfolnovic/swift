@@ -16,7 +16,7 @@ class BlogController extends ApplicationController {
 	function create() {
 		$post = $this -> model( 'post', $this -> data[ 'post' ] ) -> save();
 	
-		$this -> redirect( '/blog/index' );
+		$this -> redirect( 'blog/index' );
 	}
 	
 	function edit() {
@@ -35,7 +35,7 @@ class BlogController extends ApplicationController {
 	function delete() {
 		$this -> model( 'post' ) -> find_by_id( $this -> data[ "id" ] ) -> delete();
 		
-		$this -> redirect( '/blog/index' );
+		$this -> redirect( 'blog/index' );
 	}
 }
 
