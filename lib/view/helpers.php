@@ -1,11 +1,10 @@
 <?php
 
-class ViewHelpers {
+class ViewHelpers extends ApplicationHelpers {
 	function javascript() {
-		global $config;
 		$args = func_get_args();
 		
-		$opt = & $config -> options[ 'other' ];
+		$opt =& $this -> config[ 'other' ];
 		$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
 		
 		if( $version != '' && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
@@ -19,9 +18,7 @@ class ViewHelpers {
 	}	
 	
 	function stylesheet() {
-		global $config;
-
-		$opt = & $config -> options[ 'other' ];
+		$opt =& $this -> config[ 'other' ];
 		$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
 		
 		if( $version != '' && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
@@ -37,28 +34,21 @@ class ViewHelpers {
 	}
 	
 	function favicon( $icon ) {
-		global $config;
-		return '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . 'favicon.ico">';
+		return '<link rel="icon" href="/' . ( $this -> config[ 'other' ][ 'url_prefix' ] ) . 'favicon.ico">';
 	}
 	
 	function image( $image, $options = array() ) {
-		global $config;
 		if( strpos( $image, '/' ) === false ) $image = "images/$image";
-//		$options = func_get_args();
-		$opt = & $config -> options[ 'other' ];
 		$options = $this -> attributes( $options );
-		return "<img src=\"/{$opt['url_prefix']}/$image\" $options>";
+		return "<img src=\"/{$this -> config[ 'other' ][ 'url_prefix' ]}/$image\" $options>";
 	}
 
 	function format_time( $timestamp ) {
-		global $config;
-		
-		return date( $config -> options[ 'other' ][ 'format_date' ], $timestamp );
+		return date( $this -> config[ 'other' ][ 'format_date' ], $timestamp );
 	}
 
 	function form( $url, $options = array() ) {
-		global $config;
-		return "<form action=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url\" " . $this -> attributes( $options ) . ">";
+		return "<form action=\"/" . ( $this -> config[ 'other' ][ 'url_prefix' ] ) . "$url\" " . $this -> attributes( $options ) . ">";
 	}
 	
 	function formEnd() {
@@ -66,18 +56,13 @@ class ViewHelpers {
 	}	
 
 	function link( $title, $href, $options = array() ) {
-		global $config;
 		$options = $this -> attributes( $options );
-		return '<a href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
+		return '<a href="/' . ( $this -> config[ 'other' ][ 'url_prefix' ] ) . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
 	}
 
 	function partial( $name ) {
 		global $view;
 		return $view -> render( null, '_' . $name );
-	}
-	
-	function textilize( $str ) {
-		echo nl2br( $str );
 	}
 	
 	protected function attributes( $array ) {

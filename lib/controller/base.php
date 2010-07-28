@@ -7,10 +7,16 @@ class ControllerBase extends Base {
 	var $data;
 	var $before_filter = array();
 	var $config;
+	var $globals = array();
 	
 	function __construct() {
-		global $config;
+		global $config, $controller;
 		$this -> config = & $config -> options;
+
+		if( !$controller -> checkCSRF() ) $controller -> render404();
+		$this -> csrf_token = md5( $this -> csrf_secret . time() );
+		Cache::getInstance( 'default' ) -> set( 'csrf_token_' . $this -> csrf_token, 1, 3600 );
+		$this -> current_time = time();
 
 		// running before filers
 		foreach( $this -> before_filter as $func )
@@ -64,21 +70,15 @@ class ControllerBase extends Base {
 	}
 
 	function &__get( $index ) {
-		global $controller;
-
-		return $controller -> globals[ $index ];
+		return $this -> globals[ $index ];
 	}
 
  	function __set( $index, $value ) {
-	 	global $controller;
- 		
-		$controller -> globals[ $index ] = $value;
+		$this -> globals[ $index ] = $value;
 	}
 	
 	function __isset( $index ) {
-		global $controller;
-	
-		return isset( $controller -> globals[ $index ] );
+		return isset( $this -> globals[ $index ] );
 	}
 };
 

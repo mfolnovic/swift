@@ -13,11 +13,8 @@ class Controller extends Base {
 	 * Action name
 	*/
 	var $action = NULL;
-	var $globals = array();
+	var $instance = NULL;
 	
-	function __construct() {
-		$this -> globals[ 'current_time' ] = time();
-	}
 	/**
 	 * Runs a controller
 	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )
@@ -40,11 +37,11 @@ class Controller extends Base {
 		$controllerName = $controller . 'Controller';
 		
 		if( is_callable( array( $controllerName, $action ) ) ) {
-			$obj = new $controllerName;
+			$this -> instance = new $controllerName;
 			$this -> controller = $controller;
 			$this -> action = $action;
-			$obj -> data = & $this -> data; // workaround
-			$obj -> $action();
+			$this -> instance -> data = & $this -> data; // workaround
+			$this -> instance -> $action();
 		}
 	}
 	
@@ -55,6 +52,10 @@ class Controller extends Base {
 		ob_clean();
 		include PUBLIC_DIR . "/404.html";
 		exit;
+	}
+	
+	function checkCSRF() {
+		return empty( $_POST ) || Cache::getInstance( 'default' ) -> exists( 'csrf_token_' . $_POST[ 'csrf_token' ] );
 	}
 }
 
