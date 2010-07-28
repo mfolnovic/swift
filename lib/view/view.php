@@ -1,18 +1,20 @@
 <?php
 
 include "haml.php";
+include APP_DIR . "helpers.php";
 include "helpers.php";
 
 class View extends ViewHelpers {
 	var $layout = 'application';
 	var $render = true;
+	var $config;
 	
 	function __construct() {
+		$this -> config =& $GLOBALS[ 'config' ] -> options;
 		ob_start( 'gz_handler' );	
 	}
 	
 	function __destruct() {
-//		echo substr( ob_get_clean(), 2 );
 		echo ob_get_clean();
 	}
 	
@@ -28,7 +30,7 @@ class View extends ViewHelpers {
 		if( !file_exists( TMP_DIR . "/views/$path" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
 			$haml -> parse( VIEWS_DIR . $path, TMP_DIR . "/views/$path" );
 
-		extract( $controller -> globals );
+		extract( $controller -> instance -> globals );
 
 		include TMP_DIR . '/views/' . $path;
 	}
