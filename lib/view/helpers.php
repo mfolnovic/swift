@@ -65,6 +65,10 @@ class ViewHelpers extends ApplicationHelpers {
 		return $view -> render( null, '_' . $name );
 	}
 	
+	function xss_clean( $string ) {
+		return htmlentities( $string, ENT_QUOTES, 'utf-8' );
+	}
+	
 	protected function attributes( $array ) {
 		$ret = '';
 		foreach( $array as $id => $val ) {

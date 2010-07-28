@@ -21,8 +21,8 @@ class Controller extends Base {
 	*/
 	function run( $controller, $action ) {
 		global $router;
-	
-		$this -> data = array_merge( $_POST, $this -> data );
+
+		$this -> data = array_merge( $this -> filterXSS( $_POST ), $this -> data );
 
 		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
 
@@ -56,6 +56,16 @@ class Controller extends Base {
 	
 	function checkCSRF() {
 		return empty( $_POST ) || Cache::getInstance( 'default' ) -> exists( 'csrf_token_' . $_POST[ 'csrf_token' ] );
+	}
+	
+	function filterXSS( $array ) {
+		foreach( $array as $id => &$val )
+			if( is_array( $val ) ) 
+				$val = $this -> filterXSS( $val );
+			else if( is_string( $val ) )
+				$val = htmlentities( $val );
+				
+		return $array;
 	}
 }
 
