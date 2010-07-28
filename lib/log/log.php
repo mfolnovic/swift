@@ -1,12 +1,17 @@
 <?php
 
 class Log extends Base {
-	var $type = null; // file, output
-	var $args = null;
+	var $type = NULL; // file, output
+	var $args = NULL;
+	var $handle = NULL; // file handle
+	static $instance = NULL;
+	
+	static function getInstance() {
+		if( self::$instance == NULL ) self::$instance = new Log( "file", "application" ); // temporary
+		return self::$instance;
+	}
 
-	var $handle = null; // file handle
-
-	function init( $type, $args ) {
+	function __construct( $type, $args ) {
 		global $config;
 		
 		if( !$config -> options[ 'other' ][ 'log' ] ) return;
@@ -45,7 +50,5 @@ class Log extends Base {
 		$this -> write( "[NOTICE] $message" );
 	}
 }
-
-$log = new Log;
 
 ?>

@@ -1,18 +1,15 @@
 <?php
 
 class Benchmark extends Base {
-	var $times = array();
+	static $times = array();
 	
-	function start( $name ) {
-		$this -> times[ $name ] = microtime();
+	static function start( $name ) {
+		self::$times[ $name ] = microtime( true );
 	}
 	
-	function end( $name ) {
-		global $log;
-		$log -> write( "[Benchmark] $name: " . round( ( microtime() - $this -> times[ $name ] ), 4 ) . " seconds!" );
+	static function end( $name ) {
+		Log::getInstance() -> write( "[Benchmark] $name: " . round( ( microtime( true ) - self::$times[ $name ] ), 4 ) . " seconds!" );
 	}
 }
-
-$benchmark = new Benchmark;
 
 ?>

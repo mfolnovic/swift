@@ -10,12 +10,11 @@ class ControllerBase extends Base {
 	
 	function __construct() {
 		global $config;
-	
+		$this -> config = & $config -> options;
+
 		// running before filers
 		foreach( $this -> before_filter as $func )
 			call_user_func( array( $this, $func ) );
-
-		$this -> config = & $config -> options;
 	}
 
 	/**
@@ -40,7 +39,6 @@ class ControllerBase extends Base {
 		else {
 			$this -> data = array();
 			$router -> route( $url, false );
-			$controller -> run();
 		}
 	}
 	
@@ -60,16 +58,6 @@ class ControllerBase extends Base {
 		return $GLOBALS[ 'model' ] -> create( $name, $data );
 	}
 	
-	function controller() { 
-		global $controller; 
-		return $controller -> controller; 
-	}
-	
-	function action() {
-		global $controller;
-		return $controller -> action;
-	}
-	
 	function notFound() {
 		global $router;
 		$router -> continueRouting = true;
@@ -77,7 +65,7 @@ class ControllerBase extends Base {
 
 	function &__get( $index ) {
 		global $controller;
-		
+
 		return $controller -> globals[ $index ];
 	}
 

@@ -29,16 +29,16 @@ class Ldap extends Base {
 	}
 	
 	function select( &$base ) {
-		global $config, $model, $benchmark, $log;
+		global $config, $model;
 
 		$table = &$model -> tables[ $base -> tableName ];
 		$base -> resultSet = array();
 		$q = $this -> generateConditions( $base );
 
 		$from_cache = $this -> cache -> get( $q );
-		if( $from_cache !== false ) { $log -> write( "[CACHE]: $q" ); return $from_cache; }
+		if( $from_cache !== false ) { Log::getInstance() -> write( "[CACHE]: $q" ); return $from_cache; }
 		
-		$benchmark -> start( "[LDAP $q]" );
+		Benchmark::start( "[LDAP $q]" );
 		if( !$this -> conn ) $this -> connect();
 		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
 
@@ -59,7 +59,8 @@ class Ldap extends Base {
 			$table[ $i ] = new ModelRow( $entry );
 			$base -> resultSet[ $i ] = &$table[ $i ];
 		}
-		$benchmark -> end( "[LDAP $q]" );
+		
+		Benchmark::end( "[LDAP $q]" );
 		$this -> cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
 	}
 	

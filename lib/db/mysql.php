@@ -32,9 +32,9 @@ class Mysql extends Base {
 	function query( $q ) {
 		if( !$this -> conn ) $this -> connect();
 
-		global $benchmark; $benchmark -> start( "[SQL $q]" );
+		Benchmark::start( "[SQL $q]" );
 		$r = $this -> conn -> query( $q );
-		$benchmark -> end( "[SQL $q]" );
+		Benchmark::end( "[SQL $q]" );
 		return $r;
 	}
 

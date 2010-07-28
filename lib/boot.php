@@ -16,6 +16,7 @@ include LIB_DIR . "log/log.php";
 include LIB_DIR . "benchmark/benchmark.php";
 include LIB_DIR . "image/image.php";
 include LIB_DIR . "controller/base.php";
+include LIB_DIR . "controller/flash.php";
 include LIB_DIR . "controller/controller.php";
 include LIB_DIR . "cache/cache.php";
 include LIB_DIR . "db/db.php";
@@ -26,15 +27,12 @@ include LIB_DIR . "view/view.php";
 // Load config
 $config -> load();
 
+// Initiate cache
 Cache::loadDrivers( $config -> options[ 'cache' ] );
 
 if( ENV & ENV_HTTP ) {
 	// With more features at unit tests, will move most of this to run at tests too
-	
-	// Initiate log
-	$log -> init( "file", "application" );
 
-	// Initiate cache
 	// Initiate database
 	$db -> init();
 
