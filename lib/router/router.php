@@ -22,9 +22,7 @@ class Router extends Base {
 		$path = substr( $path, $start, $end - $start + 1 );		
 
 		if( empty( $path ) ) {
-			$controller -> controller = $this -> root[ 'controller' ];
-			$controller -> action = $this -> root[ 'action' ];
-			$controller -> run();
+			$controller -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
 			return;
 		}
 		
@@ -58,13 +56,9 @@ class Router extends Base {
 			if( !isset( $ret[ $id ] ) )
 				$ret[ $id ] = $val;
 
-		$controller -> controller = $ret[ 'controller' ];
-		$controller -> action = $ret[ 'action' ];
-		
-		unset( $ret[ 'controller' ], $ret[ 'action' ] );
 		$controller -> data = array_merge( $controller -> data, $ret );
 		
-		if( $runController ) $controller -> run();
+		if( $runController ) $controller -> run( $ret[ 'controller' ], $ret[ 'action' ] );
 		return !$this -> continueRouting;
 	}
 	

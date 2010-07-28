@@ -22,14 +22,14 @@ class Controller extends Base {
 	 * Runs a controller
 	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )
 	*/
-	function run() {
+	function run( $controller, $action ) {
 		global $router;
 	
 		$this -> data = array_merge( $_POST, $this -> data );
 
 		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
 
-		$path = CONTROLLERS_DIR . $this -> controller . ".php";
+		$path = CONTROLLERS_DIR . $controller . ".php";
 		if( file_exists( $path ) )
 			include_once $path;
 		else {
@@ -37,13 +37,14 @@ class Controller extends Base {
 			return;
 		}
 
-		$controllerName = $this -> controller . 'Controller';
-		$actionName = $this -> action;
+		$controllerName = $controller . 'Controller';
 		
-		if( is_callable( array( $controllerName, $this -> action ) ) ) {
+		if( is_callable( array( $controllerName, $action ) ) ) {
 			$obj = new $controllerName;
+			$this -> controller = $controller;
+			$this -> action = $action;
 			$obj -> data = & $this -> data; // workaround
-			$obj -> $actionName();
+			$obj -> $action();
 		}
 	}
 	
