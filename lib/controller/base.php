@@ -14,7 +14,7 @@ class ControllerBase extends Base {
 		$this -> config = & $config -> options;
 
 		if( !$controller -> checkCSRF() ) $controller -> render404();
-		$this -> csrf_token = md5( $this -> csrf_secret . time() );
+		$this -> csrf_token = md5( $this -> csrf_secret . mt_rand() );
 		Cache::getInstance( 'default' ) -> set( 'csrf_token_' . $this -> csrf_token, 1, 3600 );
 		$this -> current_time = time();
 
