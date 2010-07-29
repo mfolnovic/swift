@@ -48,7 +48,8 @@ class ViewHelpers extends ApplicationHelpers {
 	}
 
 	function form( $url, $options = array() ) {
-		return "<form action=\"/" . ( $this -> config[ 'other' ][ 'url_prefix' ] ) . "$url\" " . $this -> attributes( $options ) . ">";
+		global $controller;
+		return "<form action=\"/" . ( $this -> config[ 'other' ][ 'url_prefix' ] ) . "$url\" " . $this -> attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . $controller -> instance -> csrf_token . '">';
 	}
 	
 	function formEnd() {
