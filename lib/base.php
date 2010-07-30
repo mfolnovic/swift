@@ -11,7 +11,7 @@ class Base {
 	
 	function __destruct() {
 		foreach( $this -> after_filters as $function )
-			call_user_func( array( $this, $func ) );
+			call_user_func( array( $this, $function ) );
 	}
 	
 	function before_filter( $function ) {
