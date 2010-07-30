@@ -70,8 +70,8 @@ class ModelBase extends Base {
 	
 	function __construct( $tableName, $newRow = NULL ) {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
-		$this -> link = & $GLOBALS[ 'db' ] -> connections[ $this -> connection ];
-//		unset( $this -> connection );
+		$this -> link = DB::getInstance( $this -> connection );;
+
 		if( $this -> connection == 'default' ) {
 			$res = $this -> link -> query( "SHOW TABLES LIKE '%{$this -> tableName}%'" );
 			if( $res -> num_rows == 0 ) $this -> link -> dropAndCreateTable( $this );
