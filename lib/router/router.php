@@ -1,7 +1,7 @@
 <?php
 
 class Router extends Base {
-	var $routes, $path, $root, $continueRouting;
+	var $routes, $path, $url, $root, $continueRouting;
 
 	function route( $path, $prefixed = true, $runController = true ) {
 		global $controller, $config;
@@ -26,6 +26,7 @@ class Router extends Base {
 			return;
 		}
 		
+		$this -> url = $path;
 		$this -> path = explode( "/", $path );
 
 		foreach( $this -> routes as $route )

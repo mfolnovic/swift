@@ -21,7 +21,6 @@ class Controller extends Base {
 	*/
 	function run( $controller, $action ) {
 		global $router;
-
 		$this -> data = array_merge( $this -> filterXSS( $_POST ), $this -> data );
 
 		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
@@ -41,7 +40,8 @@ class Controller extends Base {
 			$this -> controller = $controller;
 			$this -> action = $action;
 			$this -> instance -> data = & $this -> data; // workaround
-			$this -> instance -> $action();
+			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) )
+				$this -> instance -> $action();
 		}
 	}
 	
@@ -59,6 +59,8 @@ class Controller extends Base {
 	}
 	
 	function filterXSS( $array ) {
+		if( is_string( $array ) ) return htmlentities( $array );
+		
 		foreach( $array as $id => &$val )
 			if( is_array( $val ) ) 
 				$val = $this -> filterXSS( $val );

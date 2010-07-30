@@ -5,22 +5,34 @@ class ControllerBase extends Base {
 	 * Array containing data from $container -> data
 	*/
 	var $data;
-	var $before_filter = array();
 	var $config;
 	var $globals = array();
+	var $static_cache = array();
+	var $controllerName = "";
 	
 	function __construct() {
 		global $config, $controller;
 		$this -> config = & $config -> options;
+		
+		$this -> controllerName = strtolower( substr( get_class( $this ), 0, -10 ) );
 
 		if( !$controller -> checkCSRF() ) $controller -> render404();
 		$this -> csrf_token = md5( $this -> csrf_secret . mt_rand() );
 		Cache::getInstance( 'default' ) -> set( 'csrf_token_' . $this -> csrf_token, 1, 3600 );
 		$this -> current_time = time();
+		
+		parent::__construct();
+	}
+	
+	function __destruct() {
+		foreach( $this -> static_cache as $func ) {
+			$type = $func[ 0 ];
+			$action = $func[ 1 ];
+			
+			exit;
+		}
 
-		// running before filers
-		foreach( $this -> before_filter as $func )
-			call_user_func( array( $this, $func ) );
+		parent::__destruct();
 	}
 
 	/**
@@ -67,6 +79,12 @@ class ControllerBase extends Base {
 	function notFound() {
 		global $router;
 		$router -> continueRouting = true;
+	}
+	
+	function caches_action() {
+		global $view;
+		foreach( func_get_args() as $action )
+			$view -> action_caches[] = array( &$this -> controllerName, $action );
 	}
 
 	function &__get( $index ) {
