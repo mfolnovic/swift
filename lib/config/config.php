@@ -12,7 +12,7 @@ class Config extends Base {
 		Loads application config and routes
 	*/
 	function load() {
-		global $router;
+		global $router, $config;
 		
 		$files = array( 'application', 'routes' );
 		foreach( $files as $file )
