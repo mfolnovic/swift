@@ -35,40 +35,46 @@ class Ldap extends Base {
 		$base -> resultSet = array();
 		$q = $this -> generateConditions( $base );
 
-		$from_cache = $this -> cache -> get( $q );
-		if( $from_cache !== false ) { Log::getInstance() -> write( "[CACHE]: $q" ); return $from_cache; }
-		
 		Benchmark::start( "[LDAP $q]" );
-		if( !$this -> conn ) $this -> connect();
-		$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
+		$entries = $this -> cache -> get( $q );
+		if( $entries === false ) {
+			if( !$this -> conn ) $this -> connect();
 
-		if( $res === false ) return $base -> resultSet;
-		$entries = ldap_get_entries( $this -> conn, $res );
+			$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
 
-		for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
-			$entry = array();
-			foreach( $entries[ $i ] as $id => $val ) {
-				if( !is_numeric( $id ) && $id != 'count' ) {
-					if( $val[ 'count' ] == 1 ) $val = $val[ 0 ];
-					else if( is_array( $val ) ) array_shift( $val );
+			if( $res === false ) return $base -> resultSet;
+			$entries = ldap_get_entries( $this -> conn, $res );
+
+			for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
+				$entry = array();
+				foreach( $entries[ $i ] as $id => $val ) {
+					if( !is_numeric( $id ) && $id != 'count' ) {
+						if( $val[ 'count' ] == 1 ) $val = $val[ 0 ];
+						else if( is_array( $val ) ) array_shift( $val );
 					
-					$entry[ $id ] = $val;
+						$entry[ $id ] = $val;
+					}
 				}
-			}
 
-			$table[ $i ] = new ModelRow( $entry );
-			$base -> resultSet[ $i ] = &$table[ $i ];
+				$table[ $i ] = new ModelRow( $entry );
+				$base -> resultSet[ $i ] = &$table[ $i ];
+			}
+		} else {
+			foreach( $entries as $id => $val ) {
+				$table[ $id ] = $val;
+				$base -> resultSet[ $id ] = &$table[ $id ];
+			}
 		}
 		
 		Benchmark::end( "[LDAP $q]" );
 		$this -> cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
 	}
 	
-	function generateConditions( &$model ) {
-		if( empty( $model -> relation[ 'where' ] ) ) return '(webid=*)';
+	function generateConditions( &$base ) {
+		if( empty( $base -> relation[ 'where' ] ) ) return '(webid=*)';
 		
 		$where = '';
-		foreach( $model -> relation[ 'where' ] as $field => $value ) {
+		foreach( $base -> relation[ 'where' ] as $field => $value ) {
 			if( !is_array( $value ) ) $value = array( $value );
 			foreach( $value as $val ) {
 				if( is_numeric( $field ) ) $where .= "($val)";
