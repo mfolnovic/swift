@@ -27,9 +27,6 @@ include LIB_DIR . "view/view.php";
 // Load config
 $config -> load();
 
-// Initiate cache
-Cache::loadDrivers( $config -> options[ 'cache' ] );
-
 if( ENV & ENV_HTTP ) {
 	// With more features at unit tests, will move most of this to run at tests too
 

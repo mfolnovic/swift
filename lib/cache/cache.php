@@ -3,15 +3,16 @@
 class Cache {
 	static $instances = array();
 	
-	static function loadDrivers( $config ) {
-		foreach( $config as $driver => $options ) {
-			include LIB_DIR . "/cache/{$options[ 'driver' ]}.php";
-			$name = "Cache_" . ucfirst( $options[ 'driver' ] );
-			self::$instances[ $driver ] = new $name( $options );
-		}
-	}
-	
 	static function getInstance( $name ) {
+		global $config;
+		
+		if( !isset( self::$instances[ $name ] ) ) {
+			$conf = $config -> options[ 'cache' ][ $name ];
+			include LIB_DIR . "cache/{$conf[ 'driver' ]}.php";
+			$driver = "Cache_" . ucfirst( $conf[ 'driver' ] );
+			self::$instances[ $name ] = new $driver( $conf );
+		}
+		
 		return self::$instances[ $name ];
 	}
 }
