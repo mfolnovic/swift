@@ -12,7 +12,7 @@ $config -> options[ 'database' ] = array(
 );
 
 $config -> options[ 'cache' ] = array(
-	'apc' => array( 
+	'default' => array( 
 		'driver' => 'apc'
 	)
 );
