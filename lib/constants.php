@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Provides internal constants
+ */
+
 define( 'LOG_ERROR', 'error' ); // ?
 define( 'ENV_HTTP', 1 );
 define( 'ENV_CLI', 2 );

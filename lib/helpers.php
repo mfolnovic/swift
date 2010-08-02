@@ -1,20 +1,20 @@
 <?php
 
-function array_print( $array, $t = '' ) {
-	foreach( $array as $id => $val ) {
-		if( is_array( $val ) ) {
-			echo $t . $id . ": [ <br>";
-			array_print( $val, $t . '&nbsp;&nbsp;' );
-			echo $t . "] <br>";
-		} else
-			echo $t . $id . ": " . $val . "<br>";
-	}
-}
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
 
-	
-/** 
- * Tests if ajax is active
-*/
+/**
+ * Tests if this request was requested by ajax
+ * Currently only works with javascripts frameworks (jquery tested only)
+ * @return	bool
+ * @todo		Doesn't work while file upload using malsup form plugin
+ */
 function isAjax() {
 	return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
 }

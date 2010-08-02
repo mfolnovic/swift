@@ -1,9 +1,19 @@
 <?php
 
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
 session_start();
 
 include LIB_DIR . "base.php";
-//include LIB_DIR . "errors/errors.php";
+include LIB_DIR . "errors/errors.php";
+include LIB_DIR . "autoload.php";
 
 include LIB_DIR . "constants.php";
 include LIB_DIR . "helpers.php";
@@ -12,16 +22,8 @@ include LIB_DIR . "router/router.php";
 
 include LIB_DIR . "config/config.php";
 
-include LIB_DIR . "log/log.php";
-include LIB_DIR . "benchmark/benchmark.php";
-include LIB_DIR . "image/image.php";
-include LIB_DIR . "controller/base.php";
-include LIB_DIR . "controller/flash.php";
 include LIB_DIR . "controller/controller.php";
-include LIB_DIR . "cache/cache.php";
 include LIB_DIR . "db/db.php";
-include LIB_DIR . "model/base.php";
-include LIB_DIR . "model/model.php";
 include LIB_DIR . "view/view.php";
 
 // Load config
@@ -34,7 +36,7 @@ if( ENV & ENV_HTTP ) {
 	$router -> route( $_SERVER[ "REQUEST_URI" ] );
 
 	// Render
-	$view -> render( 'layouts', $view -> layout );
+	View::getInstance() -> render( 'layouts', View::getInstance() -> layout );
 }
 
 if( ENV & ENV_TEST ) {
