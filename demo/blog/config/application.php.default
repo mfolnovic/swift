@@ -7,13 +7,13 @@ $config -> options[ 'database' ] = array(
 		'username' => 'root',
 		'password' => '',
 		'database' => 'blog',
-		'driver' => 'mysql' 
+		'adapter' => 'mysql'
 	)
 );
 
 $config -> options[ 'cache' ] = array(
 	'default' => array( 
-		'driver' => 'apc'
+		'adapter' => 'apc'
 	)
 );
 
