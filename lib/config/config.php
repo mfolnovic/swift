@@ -15,7 +15,7 @@
  * This class is used for loading configuration and routes
  *
  * @package			Swift
- * @subpackage	Controller
+ * @subpackage	Config
  * @author			Swift dev team
  * @todo				Implement YAML support
  * @todo				Cache!
