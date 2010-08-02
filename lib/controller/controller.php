@@ -30,6 +30,7 @@ class Controller extends Base {
 	 * Constructor
 	 * @access	public
 	 * @return	void
+	 * @todo move csrf protection!
 	 */
 	function __construct() {
 		if( !$this -> checkCSRF() ) $this -> render404();
