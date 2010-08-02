@@ -128,7 +128,7 @@ class Db_Mysql extends Base {
 		for( $i = 0; $i < $res -> num_rows; ++ $i ) {
 			$row = $res -> fetch_assoc();
 
-			$table[ $row[ 'id' ] ] = new ModelRow( $row );
+			$table[ $row[ 'id' ] ] = new Model_Row( $row );
 			$base -> resultSet[ $row[ 'id' ] ] = &$table[ $row[ 'id' ] ];
 		}
 		
@@ -159,7 +159,7 @@ class Db_Mysql extends Base {
 			$this -> query( "INSERT INTO {$base -> tableName} ($columns) VALUES ($values)" );
 			$base -> newRecord -> id = $this -> conn -> insert_id;
 			
-			$table = Model::getInstance() -> &tables[ $base -> tableName ];
+			$table =& Model::getInstance() -> tables[ $base -> tableName ];
 			$table[ $base -> newRecord -> id ] = $base -> newRecord;
 			$base -> resultSet[ $base -> newRecord -> id ] = & $table[ $base -> newRecord -> id ];
 			$base -> newRecord = FALSE;
