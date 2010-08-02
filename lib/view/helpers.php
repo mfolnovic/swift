@@ -1,12 +1,31 @@
 <?php
 
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift View Class - Helpers
+ *
+ * Usual view helpers
+ *
+ * @package			Swift
+ * @subpackage	View
+ * @author			Swift dev team
+ */
+
 class View_Helpers extends ApplicationHelpers {
 	function javascript() {
 		$args = func_get_args();
-		
+
 		$opt =& $this -> config[ 'other' ];
 		$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
-		
+
 		if( $version != '' && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
 			return "<script type=\"text/javascript\" src=\"/{$opt[ 'url_prefix' ]}all$version.js\"></script>";
 		else {
@@ -16,27 +35,27 @@ class View_Helpers extends ApplicationHelpers {
 			return $ret;
 		}
 	}	
-	
+
 	function stylesheet() {
 		$opt =& $this -> config[ 'other' ];
 		$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
-		
+
 		if( $version != '' && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
 			return "<link href=\"/{$opt[ 'url_prefix' ]}all$version.css\" rel=\"stylesheet\" type=\"text/css\">";
 		else {
 			$ret = '';
-		
+
 			foreach( func_get_args() as $val )
 				$ret .= "<link href=\"/{$opt[ 'url_prefix' ]}$val\" rel=\"stylesheet\" type=\"text/css\">";
-			
+
 			return $ret;
 		}
 	}
-	
+
 	function favicon( $icon ) {
 		return '<link rel="icon" href="/' . ( $this -> config[ 'other' ][ 'url_prefix' ] ) . 'favicon.ico">';
 	}
-	
+
 	function image( $image, $options = array() ) {
 		if( strpos( $image, '/' ) === false ) $image = "images/$image";
 		$options = $this -> attributes( $options );
@@ -65,7 +84,7 @@ class View_Helpers extends ApplicationHelpers {
 		global $view;
 		return $view -> render( null, '_' . $name );
 	}
-	
+
 	function xss_clean( $string ) {
 		return htmlentities( $string, ENT_QUOTES, 'utf-8' );
 	}
@@ -76,7 +95,7 @@ class View_Helpers extends ApplicationHelpers {
 			if( $ret != '' ) $ret .= ' ';
 			$ret .= "$id=\"$val\"";
 		}
-		
+
 		return $ret;
 	}
 }

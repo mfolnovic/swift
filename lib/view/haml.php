@@ -1,5 +1,24 @@
 <?php
 
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift View Class - HAML parser
+ *
+ * This class is responsible for parsing haml files
+ *
+ * @package			Swift
+ * @subpackage	View
+ * @author			Swift dev team
+ */
+
 class View_Haml {
 	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr', "li" );
 	var $structures = array( "foreach", "if", "else" );
@@ -7,12 +26,19 @@ class View_Haml {
 	var $parsed;
 	var $tree;
 	static $instance = NULL;
-		
+
+	/**
+	 * Parses file $from, and writes to $to
+	 * @access	public
+	 * @param		string	from	Haml file to parse
+	 * @param		string	to		Output
+	 * @return	void
+	 */
 	function parse( $from, $to ) {
 		if( !file_exists( dirname( $to ) ) )
 			if( @mkdir( dirname( $to ) ) === false )
 				trigger_error( "chmod 777 -R tmp/ in directory where your site is!" );
-			
+
 		if( !file_exists( $from ) )
 			die( "Template doesn't exist!" );
 
@@ -20,28 +46,33 @@ class View_Haml {
 		$fileTo = fopen( $to, "w" );
 		$this -> parsed = '';
 		$this -> tree = array();
-		
+
 		while( $this -> line = fgets( $fileFrom ) )
 			$this -> parseLine();
-		
+
 		while( !empty( $this -> tree ) ) {
 			$curr = array_shift( $this -> tree );
 			$this -> parsed .= $curr[ 1 ];
 		}
-		
+
 		fwrite( $fileTo, $this -> parsed );
-			
+
 		fclose( $fileFrom );
 		fclose( $fileTo );
 	}
-	
+
+	/**
+	 * Parses current line
+	 * @access	public
+	 * @return	void
+	 */
 	function parseLine() {
 		$ret = '';
 		$line = & $this -> line; // for easier typing
 		$line = ' ' . substr( $line, 0, -1 ); // remove newline
 		$size = strlen( $line );
-		
 		$data = array( 'tag' => '', 'attributes' => array(), 'html' => '' );
+
 		if( $size == 1 ) return;
 		if( $line[ 1 ] == '#' ) return;
 
@@ -51,14 +82,14 @@ class View_Haml {
 			$curr = array_shift( $this -> tree );
 			$this -> parsed .= $curr[ 1 ];
 		}
-		
+
 		if( substr( $line, $tabs, 3 ) == '!!!' ) {
 			$this -> parsed .= "<!DOCTYPE html>";
 			return;
 		}
-		
+
 		if( $tabs == $size ) return;
-		
+
 		if( $line[ $tabs ] == '-' ) {
 			$rest = trim( substr( $line, $tabs + 1 ) );
 			$command = substr( $rest, 0, strpos( $rest, '(' ) );
@@ -68,7 +99,7 @@ class View_Haml {
 			if( method_exists( 'View', $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo $this -> ' . $command . 'End(); ?>' ) );
 			return;
 		}
-		
+
 		$pos = $tabs;
 		// parse tag
 		if( $line[ $pos ] == '%' || $line[ $pos ] == '#' || $line[ $pos ] == '.' ) {
@@ -84,23 +115,23 @@ class View_Haml {
 						else if( $type == '#' ) $this -> pushValue( $data[ 'attributes' ], 'id', $str );
 						else if( $type == '.' ) $this -> pushValue( $data[ 'attributes' ], 'class', $str );
 					} else $data[ 'html' ] .= $str;
-				
+
 					$type = $line[ $pos ];
 					$str = '';
-				
+
 					if( $line[ $pos ] == ' ' ) { $pos ++; break; }
 				}
 			}
 		}
-		
+
 		// parse attributes
 		$attributesStart = strpos( $line, "{", $pos );
 		$attributesEnd = strpos( $line, "}", $pos );
-		
+
 		if( $attributesStart !== FALSE && $attributesEnd !== FALSE ) {
 			$attributes = trim( substr( $line, $attributesStart + 1, $attributesEnd - $attributesStart - 1 ) );
 			$pos += $attributesEnd - $attributesStart + 1;
-			
+
 			$status = 1;
 			for( $i = 0, $attributesLen = strlen( $attributes ); $i < $attributesLen; ++ $i ) {
 				for( ; $attributes[ $i ] == ' '; ++ $i );
@@ -124,17 +155,17 @@ class View_Haml {
 							else if( !$status && $attributes[ $end ] == ',' && $cnt == 0 ) break;
 						}
 					}
-					
+
 					$tmp = trim( substr( $attributes, $start, $end - $start ) );
 					if( !$is_string ) $tmp = "<?php echo $tmp; ?>";
 					$i = $end + 1;
-					
+
 					if( $status ) { $index = $tmp; $i += 2; }
 					else $value = $tmp;
-					
+
 					if( !$status ) $this -> pushValue( $data[ 'attributes' ], $index, $this -> parseFunctions( $value ) );
 				}
-				
+
 				$status = !$status;
 			}
 		}
@@ -145,13 +176,29 @@ class View_Haml {
 		}
 		$this -> parsed .= $this -> parseHtml( $data[ "html" ] );
 	}
-	
+
+	/**
+	 * Pushes value $value to $data with key $attr
+	 * Used internally to push html attributes
+	 * @access	public
+	 * @param		array		data	Data array, mostly attributes
+	 * @param		string	attr	Key
+	 * @param		mixed		value	New value
+	 * @return	void
+	 */
 	function pushValue( &$data, $attr, $value ) {
 		if( !isset( $data[ $attr ] ) ) $data[ $attr ] = '';
 		if( $data[ $attr ] != '' ) $data[ $attr ] .= ' ';
 		$data[ $attr ] .= $value;
 	}
-	
+
+	/**
+	 * Parses function calls
+	 * @access	public
+	 * @param		string	string	String to parse
+	 * @return	string
+	 * @todo Try to avoid calling this, make all helpers functions, not methods
+	 */
 	function parseFunctions( $string ) {
 		$last = 0;
 		while( ( $end = strpos( $string, '(', $last ) ) !== false ) {
@@ -164,7 +211,7 @@ class View_Haml {
 			}
 			$start = $tmp;
 			$str = trim( substr( $string, $start, $end - $start ) );
-			
+
 			if( method_exists( 'View', $str ) ) {
 				$newstr = '$this -> ' . $str;
 				if( !$this -> between( $string, $end, '(', ')' ) ) $newstr = 'echo ' . $newstr;
@@ -176,18 +223,25 @@ class View_Haml {
 		}
 		return $string;
 	}
-	
+
 	function between( $string, $pos, $start, $end ) {
 		$startLen = strlen( $start );
 		$endLen = strlen( $end );
 		$cnt = 0;
+
 		for( $i = 0; $i < $pos; ++ $i )
 			if( substr( $string, $i, $startLen ) == $start ) ++ $cnt;
 			else if( substr( $string, $i, $endLen ) == $end ) -- $cnt;
 
 		return $cnt > 0;
 	}
-	
+
+	/**
+	 * Parses HTML, used only to parse variables and put <?php ?> around those
+	 * @access	public
+	 * @param		string	string	String to parse
+	 * @return	string
+	 */
 	function parseHtml( $string ) {
 		$ret = ''; $phpOpen = false;
 		for( $i = 0, $len = strlen( $string ); $i < $len; ++ $i ) {
@@ -206,16 +260,28 @@ class View_Haml {
 		
 		return $string;
 	}
-	
-	function attributesToHTML( &$attrs ) {
+
+	/**
+	 * Parses array of attributes to HTML
+	 * @access	public
+	 * @param		string	attributes	Attributes to parse
+	 * @return	return
+	 */
+	function attributesToHTML( &$attributes ) {
 		$ret = '';
-		foreach( $attrs as $id => $val )
+
+		foreach( $attributes as $id => $val )
 			$ret .= " $id=\"$val\"";
-                
+
 		return $ret;
 	}
-	
-	function getInstance() {
+
+	/**
+	 * Singleton
+	 * @access	public
+	 * @return	object
+	 */
+	static function getInstance() {
 		if( empty( self::$instance ) ) self::$instance = new View_Haml;
 		return self::$instance;
 	}

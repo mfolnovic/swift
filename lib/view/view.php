@@ -1,8 +1,28 @@
 <?php
 
-include "haml.php";
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/* 
+	@todo	Move this somewhere else 
+*/
 include APP_DIR . "helpers.php";
-include "helpers.php";
+
+/**
+ * Swift View Class
+ *
+ * This class is resposible for all rendering
+ *
+ * @package			Swift
+ * @subpackage	View
+ * @author			Swift dev team
+ */
 
 class View extends View_Helpers {
 	var $layout = 'application';
@@ -10,20 +30,37 @@ class View extends View_Helpers {
 	var $config;
 	var $action_caches = array();
 	static $instance;
-	
+
+	/**
+	 * Constructor
+	 * @access	public
+	 * @return	vpid
+	 */
 	function __construct() {
 		$this -> config =& $GLOBALS[ 'config' ] -> options;
 		ob_start( 'gz_handler' );	
 	}
-	
+
+	/**
+	 * Destructor
+	 * @access	public
+	 * @return	void
+	 */
 	function __destruct() {
 		echo ob_get_clean();
 	}
-	
+
+	/**
+	 * This function is responsible for rendering and caching
+	 * @access	public
+	 * @param		string	c	Controller
+	 * @param		string	a	Action
+	 * @return	void
+	 */
 	function render( $c = null, $a = null ) {
 		if( !$this -> render ) return;
 		global $haml, $config, $controller, $view;
-	
+
 		if( $c == null ) $c = $controller -> controller;
 		if( $a == null ) $a = $controller -> action;
 
@@ -50,16 +87,12 @@ class View extends View_Helpers {
 			ob_end_flush();
 		}
 	}
-	
-	function _cacheView( $file, $content ) {
-		list( $dir, $file ) = explode( '/', $file );
-		if( !file_exists( TMP_DIR . "/views/$dir" ) )
-			mkdir( TMP_DIR . "/views/$dir" );
-		file_put_contents( TMP_DIR . "/views/$dir/$file", $content );
-		
-		if( extension_loaded( 'apc' ) )	apc_compile_file( TMP_DIR . "/views/$dir/$file" );
-	}
-	
+
+	/**
+	 * Singleton
+	 * @access	public
+	 * @return	object
+	 */
 	static function getInstance() {
 		if( empty( self::$instance ) ) self::$instance = new View;
 		return self::$instance;
