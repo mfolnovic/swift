@@ -185,7 +185,6 @@ class Model_Base extends Base {
 	/**
 	 * Changes current row values
 	 * But, it doesn't save that row, you need to call save() to save it.
-	 * @example
 	 * <code>
 	 * $this -> model( 'articles' ) -> find_by_id( 5 ) -> values( array( 'title' => 'New title', 'content' => 'New content' ) );
 	 * </code>
