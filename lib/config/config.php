@@ -14,10 +14,11 @@
  *
  * This class is used for loading configuration and routes
  *
- * @package	Swift
- * @author	Swift dev team
- * @todo Implement YAML support
- * @todo Cache!
+ * @package			Swift
+ * @subpackage	Controller
+ * @author			Swift dev team
+ * @todo				Implement YAML support
+ * @todo				Cache!
  */
 
 class Config extends Base {

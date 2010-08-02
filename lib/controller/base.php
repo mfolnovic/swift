@@ -14,8 +14,9 @@
  *
  * This class gives methods in all application's controllers
  *
- * @package	Swift
- * @author	Swift dev team
+ * @package			Swift
+ * @subpackage	Controller
+ * @author			Swift dev team
  */
 
 class Controller_Base extends Base {

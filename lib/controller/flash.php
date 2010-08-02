@@ -14,8 +14,9 @@
  *
  * Gives Rails-like flash messages
  *
- * @package	Swift
- * @author	Swift dev team
+ * @package			Swift
+ * @subpackage	Controller
+ * @author			Swift dev team
  */
 
 class Controller_Flash extends Base {

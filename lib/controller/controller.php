@@ -14,8 +14,9 @@
  *
  * This class controls running actions, and maintains security
  *
- * @package	Swift
- * @author	Swift dev team
+ * @package			Swift
+ * @subpackage	Controller
+ * @author			Swift dev team
  */
 
 class Controller extends Base {
