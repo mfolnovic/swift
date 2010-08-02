@@ -15,7 +15,7 @@
  * Maintains all errors
  *
  * @package			Swift
- * @subpackage	Subpackage
+ * @subpackage	Errors
  * @author			Swift dev team
  */
 
