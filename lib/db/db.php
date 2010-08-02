@@ -1,19 +1,43 @@
 <?php
 
-class DB extends Base {
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift Database Class
+ *
+ * This class works as singleton class for all cache adapters
+ *
+ * @package			Swift
+ * @subpackage	Database
+ * @author			Swift dev team
+ */
+
+class Db extends Base {
 	static $instances = array();
 
-	static function getInstance( $name ) {
+	/**
+	 * Returns singleton instance of adapter $adapter
+	 * @access	public
+	 * @return	object
+	 */
+	static function getInstance( $adapter ) {
 		global $config;
-		
-		if( !isset( self::$instances[ $name ] ) ) {
-			$conf = $config -> options[ 'database' ][ $name ];
-			$driver = ucfirst( $conf[ 'driver' ] );
-			include_once "{$conf['driver']}.php";
-			self::$instances[ $name ] = new $driver( $conf );
+
+		if( !isset( self::$instances[ $adapter ] ) ) {
+			$conf			= $config -> options[ 'database' ][ $adapter ];
+			$adapter	= 'Db_' . ucfirst( $conf[ 'adapter' ] );
+
+			self::$instances[ $adapter ] = new $adapter( $conf );
 		}
-	
-		return self::$instances[ $name ];
+
+		return self::$instances[ $adapter ];
 	}
 }
 
