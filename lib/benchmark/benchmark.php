@@ -27,7 +27,7 @@ class Benchmark extends Base {
 	 * This function marks start point for name $name
 	 * @access	public
 	 * @static
-	 * @param		string	Mark name
+	 * @param		string	$name	Mark name
 	 * @return	void
 	 */
 	static function start( $name ) {
@@ -39,7 +39,7 @@ class Benchmark extends Base {
 	 * to current time and writes it to log.
 	 * @access	public
 	 * @static
-	 * @param		string	Mark name
+	 * @param		string	$name	Mark name
 	 * @return	void
 	 */
 	static function end( $name ) {
