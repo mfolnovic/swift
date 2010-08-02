@@ -1,6 +1,6 @@
 <?php
 
-class ApplicationController extends ControllerBase {
+class ApplicationController extends Controller_Base {
 	var $before_filter = array( 'check_user' );
 
 	function check_user() {

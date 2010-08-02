@@ -1,6 +1,6 @@
 <?php
 
-class Post extends ModelBase {
+class Post extends Model_Base {
 	var $tableName = 'posts';
 	var $schema = array (
 		'id' => array( 'type' => 'int', 'size' => 11, 'auto_increment' => true ),
