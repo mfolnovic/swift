@@ -1,6 +1,31 @@
 <?php
 
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift Directory Class
+ *
+ * Gives internal directory manipulation to Swift
+ *
+ * @package			Swift
+ * @subpackage	Directory
+ * @author			Swift dev team
+ */
+
 class Dir {
+	/**
+	 * Returns all files in $dir
+	 * @access	public
+	 * @param		string	dir	Directory to search in
+	 * @return	array
+	 */
 	function files( $dir ) {
 		$ret = array();
 		$dir = scandir( $dir );
@@ -10,9 +35,16 @@ class Dir {
 				$ret[] = $a;
 
 		return $ret;
-		//return array_slice( scandir( $dir ), 2 );
 	}
-	
+
+	/**
+	 * Reads from file
+	 * @access	public
+	 * @deprecated
+	 * @param		string	string	directory
+	 * @param		string	file		file
+	 * @return	string
+	 */
 	function read( $dir, $file ) {
 		return file_get_contents( $dir . '/' . $file );
 	}
