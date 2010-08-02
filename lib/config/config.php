@@ -1,34 +1,42 @@
 <?php
 
-// Load config files
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift Configuration Class
+ *
+ * This class is used for loading configuration and routes
+ *
+ * @package	Swift
+ * @author	Swift dev team
+ * @todo Implement YAML support
+ * @todo Cache!
+ */
 
 class Config extends Base {
-	/**
-		Array containing all application options
-	*/
 	var $options = array();
 
 	/**
-		Loads application config and routes
-	*/
+	 * Loads configurations and routes
+	 * @access	public
+	 * @return	void
+	 */
 	function load() {
 		global $router, $config;
-		
+
 		$files = array( 'application', 'routes' );
 		foreach( $files as $file )
 			include CONFIG_DIR . $file . ".php";
-		
-/*		$this -> options = apc_fetch( 'config_' . DIR );
-		if( $this -> options === false ) {
-			include CONFIG_DIR . "applicaton.php";
-		
-			if( $this -> options[ 'other' ][ 'cache_config' ] )
-				apc_store( 'config_' . DIR, $this -> options );
-		}
-		
-		include CONFIG_DIR . "routes.php";*/
 	}
 }
 
 $config = new Config;
+
 ?>
