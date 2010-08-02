@@ -21,6 +21,12 @@ In near future:
 - i18n
 - database migrations
 
+Documentation
+--------------------------------
+Because documentation is often changed, we currently don't provide it.
+If you want to generate it, run:
+phpdoc -d lib -t doc/ -ti "Swift Documentation" -q -dn Swift -s
+
 Notice
 --------------------------------
 This is an alpha ( preview ) release of PRF. It isn't stable for production yet!
