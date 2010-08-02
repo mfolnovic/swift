@@ -3,7 +3,7 @@
 class Cache_File extends Base {
 	var $cache = array();
 	var $changed = false;
-	
+
 	function __construct( $options ) {
 		$this -> readFromFile();
 	}
@@ -12,17 +12,29 @@ class Cache_File extends Base {
 		$this -> writeToFile();
 	}
 
-	function set( $index, $value ) {
-		$this -> cache[ $index ] = $value;
-		$this -> changed = true;
-	}
-	
 	function get( $index ) {
 		if( !$this -> read ) $this -> readFromFile();
 		
 		return $this -> cache[ $index ];
 	}
+
+	function set( $index, $value ) {
+		$this -> cache[ $index ] = $value;
+		$this -> changed = true;
+	}
+
+	function exists( $index ) {
+
+	}
+
+	function delete( $index ) {
 	
+	}
+
+	function clear() {
+
+	}
+
 	private function readFromFile() {
 		$f = fopen( CACHE_PATH, "w+" );
 		while( $line = fgets( $f, 4096 ) ) {

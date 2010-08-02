@@ -1,29 +1,75 @@
 <?php
 
-class Cache_Apc extends Base {
-	function __construct( $options ) {
+/**
+ * Swift framework
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
 
+/**
+ * Swift Cache Class - APC
+ *
+ * This class gives APC features to Swift Cache Class
+ *
+ * @package			Swift
+ * @subpackage	Cache
+ * @author			Swift dev team
+ */
+
+class Cache_Apc extends Base {
+	/**
+	 * Returns value of $key from cache
+	 * @access	public
+	 * @param		string	$key	Key
+	 * @return	object
+	 */
+	function get( $key )  {
+		return apc_fetch( $key );
 	}
 
-	function set( $index, $value, $ttl = 0 ) {
-		apc_store( $index, $value, $ttl );
-		
+	/**
+	 * Sets $key to $value, and also puts $expire
+	 * @access	public
+	 * @param		string	$key	Key
+	 * @param 	string	$value	New Value
+	 * @param		integer	$expire	Expires in $expire seconds
+	 * @return	object
+	 */
+	function set( $key, $value, $expire = 0 ) {
+		apc_store( $key, $value, $expire );
+
 		return $value;
 	}
-	
-	function get( $index )  {
-		return apc_fetch( $index );
+
+	/**
+	 * Returns TRUE if $key exists in cache
+	 * @access	public
+	 * @param		string	$key	Key
+	 * @return	bool
+	 */
+	function exists( $key ) {
+		return $this -> get( $key ) !== FALSE;
 	}
-	
-	function delete( $index ) {
-		apc_delete( $index );
+
+	/**
+	 * Deletes value for $key
+	 * @access	public
+	 * @param		string	$key	Key
+	 * @return	void
+	 */
+	function delete( $key ) {
+		apc_delete( $key );
 	}
-	
-	function exists( $index ) {
-		return $this -> get( $index ) !== FALSE;
-		return apc_exists( $index );
-	}
-	
+
+	/**
+	 * Clears whole cache
+	 * @access	public
+	 * @param		string	$type	Type of cache it clears, default user
+	 * @return	void
+	 */
 	function clear( $type = 'user' ) {
 		apc_clear_cache( $type );
 	}
