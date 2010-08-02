@@ -17,7 +17,6 @@
  * @package			Swift
  * @subpackage	Model
  * @author			Swift dev team
- * @example
  * <code>
  * // in controller
  *
