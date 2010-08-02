@@ -51,8 +51,8 @@ class Base {
 	 * @access	public
 	 * @param		string	function	Function which should be run as before_filter
 	 * @return	void
-	 * @todo	Allow multiple functions
-	 * @todo	Options?
+	 * @todo	Allow to pass multiple function
+	 * @todo	Options as last argument?
 	 */
 	function before_filter( $function ) {
 		$this -> before_filters[] = $function;
@@ -63,8 +63,8 @@ class Base {
 	 * @access	public
 	 * @param		string	function	Function which should be run as after_filter
 	 * @return	void
-	 * @todo	Allow multiple functions
-	 * @todo	Options?
+	 * @todo	Allow to pass multiple function
+	 * @todo	Options as last argument?
 	 */
 	function after_filter( $function ) {
 		$this -> after_filters[] = $function;
