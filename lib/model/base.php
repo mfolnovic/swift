@@ -1,8 +1,23 @@
 <?php
 
 /**
- * Base model, allows creating ActiveRecord like models
- * Example:
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift Model Class - Base
+ *
+ * Every application model inherits this class, which allows querying database in simpler way
+ *
+ * @package			Swift
+ * @subpackage	Model
+ * @author			Swift dev team
+ * @example
  * <code>
  * // in controller
  *
@@ -29,27 +44,13 @@
  * $user = $this -> model( 'user' ) -> first();
  * echo $user -> username;
  * </code>
- *
-*/
- 
-class ModelBase extends Base {
-	/**
-		Table name
-	*/
+ */
+
+class Model_Base extends Base {
 	var $tableName;
-	/**
-		Set of results, but only contains ID, all data is stored in model 
-	*/
 	var $resultSet = array();
-	/**
-		Contains IDS of rows that were updated
-	*/
 	var $update = array();
-	/**
-		Contains all validation rules
-	*/
 	var $validations = array();
-	
 	var $relation = array( 
 		'where' => array(), 
 		'order' => array(), 
@@ -59,7 +60,6 @@ class ModelBase extends Base {
 		'having' => array(), 
 		'includes' => array() 
 	);
-	
 	var $schema;
 	var $hasOne = array();
 	var $hasMany = array();
@@ -67,39 +67,66 @@ class ModelBase extends Base {
 	var $link;
 	var $newRecord = false;
 	var $relationChanged = true;
-	
+
+	/**
+	 * Constructor
+	 * @access	public
+	 * @param		string	tableName	Name of the table
+	 * @param		mixed		Array if it's new row, and NULL if it's not
+	 * @return	void
+	 */
 	function __construct( $tableName, $newRow = NULL ) {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
-		$this -> link = DB::getInstance( $this -> connection );;
+		$this -> link = DB::getInstance( $this -> connection );
 
 		if( $this -> connection == 'default' ) {
 			$res = $this -> link -> query( "SHOW TABLES LIKE '%{$this -> tableName}%'" );
 			if( $res -> num_rows == 0 ) $this -> link -> dropAndCreateTable( $this );
 		}
-		
-		if( !empty( $newRow ) )	$this -> newRecord = new ModelRow( $newRow );
+
+		if( !empty( $newRow ) )	$this -> newRecord = new Model_Row( $newRow );
 	}
-	
-	function __get( $index ) {
+
+	/**
+	 * Provides model getter
+	 * @access	public
+	 * @param		string	key	Key to get
+	 * @return	mixed
+	 */
+	function __get( $key ) {
 		if( empty( $this -> resultSet ) ) $this -> first();
-		if( isset( $this -> hasOne[ $index ] ) ) {
-			$this -> handleAssociation( $index ); // workaround
+		if( isset( $this -> hasOne[ $key ] ) ) {
+			$this -> handleAssociation( $key ); // workaround
 		}
 		
 		reset( $this -> resultSet );
 		$tmp = current( $this -> resultSet );
-		if( !isset( $tmp -> $index ) ) return NULL;
-		return $tmp -> $index;
+		if( !isset( $tmp -> $key ) ) return NULL;
+		return $tmp -> $key;
 	}
-	
-	function __set( $index, $value ) {
+
+	/**
+	 * Provides model setter
+	 * @access	public
+	 * @param		string	key		Key to set
+	 * @param		mixed		value	New value
+	 * @return	void
+	 */
+	function __set( $key, $value ) {
 		reset( $this -> resultSet );
 		$key = key( $this -> resultSet );
-		if( $key === NULL ) $this -> resultSet[ $key ] = new ModelRow();
-		$this -> resultSet[ $key ] -> $index = $value;
-		$this -> update[ $index ] = & $this -> resultSet[ $key ] -> $index;
+		if( $key === NULL ) $this -> resultSet[ $key ] = new Model_Row;
+		$this -> resultSet[ $key ] -> $key = $value;
+		$this -> update[ $key ] = & $this -> resultSet[ $key ] -> $key;
 	}
-	
+
+	/**
+	 * Allows calls like find_by_id, find_by_title and changing relation like $model -> where( ... ) etc.
+	 * @access	public
+	 * @param		string	function	Function name
+	 * @param		array		arguments	Passed arguments to this function
+	 * @return	return
+	 */
 	function __call( $function, $arguments ) {
 		if( in_array( $function, array_keys( $this -> relation ) ) ) {
 			if( is_array( $arguments[ 0 ] ) ) $args = $arguments[ 0 ];
@@ -120,51 +147,89 @@ class ModelBase extends Base {
 		
 		return $this;
 	}
-	
+
+	/**
+	 * Returns first row based on current relation
+	 * @access	public
+	 * @return	array
+	 */
 	function first() {
 		$this -> relation[ 'limit' ] = array( 1 );
 		$this -> link -> select( $this );
-		
+
 		return current( $this -> resultSet );
 	}
-	
+
+	/**
+	 * Returns last row based on current relation
+	 * @access	public
+	 * @return	array
+	 */
 	function last() {
 		$this -> relation[ 'order' ][] = array( 'id', 'desc' );
 		$this -> link -> select( $this );
-		
+
 		return current( $this -> resultSet );
 	}
-	
+
+	/**
+	 * Returns all rows based on current relation
+	 * @access	public
+	 * @return	array
+	 */
 	function all() {
 		$this -> link -> select( $this );
-		
+
 		return $this -> resultSet;
 	}
-	
+
+	/**
+	 * Changes current row values
+	 * But, it doesn't save that row, you need to call save() to save it.
+	 * @example
+	 * <code>
+	 * $this -> model( 'articles' ) -> find_by_id( 5 ) -> values( array( 'title' => 'New title', 'content' => 'New content' ) );
+	 * </code>
+	 * @access	public
+	 * @param		array	values	Values to change
+	 * @return	object
+	 */
 	function values( $values ) {
 		foreach( $values as $id => $val )
 			$this -> $id = $val;
-			
+
 		return $this;
 	}
-	
+
+	/**
+	 * Handles associations has_many, has_one
+	 * @access	public
+	 * @return	object
+	 */
 	function handleAssociations() {
 		foreach( $this -> relation[ 'includes' ] as $name => $assoc ) {
 			if( is_numeric( $name ) ) { $name = $assoc; $assoc = NULL; }
 			$this -> handleAssociation( $name, $assoc );
 		}
+
 		return $this;
 	}
-	
+
+	/**
+	 * Handles specific association
+	 * @access	public
+	 * @param		string	name	Name of association
+	 * @param		bool		assoc	TRUE if called from association
+	 * @return	void
+	 * @todo		Avoid $assoc
+	 */
 	function handleAssociation( $name, $assoc = NULL ) {
-		global $model;
-		
 		if( isset( $this -> hasMany[ $name ] ) ) { $association = &$this -> hasMany[ $name ]; $type = 'hasMany'; }
 		else if( isset( $this -> hasOne[ $name ] ) ) { $association = &$this -> hasOne[ $name ]; $type = 'hasOne'; }
 		else return false;
-		
+
 		$association = array_merge( array( 'primaryKey' => 'id', 'foreignKey' => 'id' ), $association );
-		
+
 		$className = $association[ 'model' ];
 		$primaryKey = $association[ 'primaryKey' ];
 		$foreignKey = $association[ 'foreignKey' ];
@@ -172,13 +237,13 @@ class ModelBase extends Base {
 		$ids = array();
 		foreach( $this -> resultSet as $id => $row ) {
 			if( !isset( $ids[ $row -> $primaryKey ] ) ) $ids[ $row -> $primaryKey ] = array();
-			
+
 			$ids[ $row -> $primaryKey ][] = $id;
 		}
 
-		$assocModel = $model -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
+		$assocModel = Model::getInstance() -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
 		if( !empty( $assoc ) ) $assocModel -> includes( $assoc );
-	
+
 		foreach( $this -> resultSet as $id => $val ) {
 			$val -> $name = new $className( $className );
 			$val -> $name -> newRecord = false;
