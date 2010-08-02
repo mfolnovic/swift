@@ -14,10 +14,9 @@
  *
  * Every application model inherits this class, which allows querying database in simpler way
  *
- * @package			Swift
- * @subpackage	Model
- * @author			Swift dev team
+ * Example:
  * <code>
+ * <?php
  * // in controller
  *
  * // creating new instance of model User
@@ -42,7 +41,13 @@
  * // you can also access attributes
  * $user = $this -> model( 'user' ) -> first();
  * echo $user -> username;
+ * ?>
  * </code>
+ *
+ * @package			Swift
+ * @subpackage	Model
+ * @author			Swift dev team
+ * 
  */
 
 class Model_Base extends Base {
@@ -186,7 +191,9 @@ class Model_Base extends Base {
 	 * Changes current row values
 	 * But, it doesn't save that row, you need to call save() to save it.
 	 * <code>
+	 * <?php
 	 * $this -> model( 'articles' ) -> find_by_id( 5 ) -> values( array( 'title' => 'New title', 'content' => 'New content' ) );
+	 * ?>
 	 * </code>
 	 * @access	public
 	 * @param		array	values	Values to change
