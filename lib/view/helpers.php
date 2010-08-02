@@ -1,6 +1,6 @@
 <?php
 
-class ViewHelpers extends ApplicationHelpers {
+class View_Helpers extends ApplicationHelpers {
 	function javascript() {
 		$args = func_get_args();
 		

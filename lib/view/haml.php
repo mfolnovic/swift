@@ -1,11 +1,12 @@
 <?php
 
-class Haml {
+class View_Haml {
 	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr', "li" );
 	var $structures = array( "foreach", "if", "else" );
 	var $line;
 	var $parsed;
 	var $tree;
+	static $instance = NULL;
 		
 	function parse( $from, $to ) {
 		if( !file_exists( dirname( $to ) ) )
@@ -213,8 +214,11 @@ class Haml {
                 
 		return $ret;
 	}
+	
+	function getInstance() {
+		if( empty( self::$instance ) ) self::$instance = new View_Haml;
+		return self::$instance;
+	}
 }
-
-$haml = new Haml;
 
 ?>
