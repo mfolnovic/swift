@@ -1,24 +1,49 @@
 <?php
 
+/**
+ * Swift
+ *
+ * @package		Swift
+ * @author		Swift dev team
+ * @copyright	Copyright (c) 2010, Swift dev team
+ * @license		LICENSE
+ */
+
+/**
+ * Swift Controller Class
+ *
+ * This class controls running actions, and maintains security
+ *
+ * @package	Swift
+ * @author	Swift dev team
+ */
+
 class Controller extends Base {
-	/**
-	 * Array containing $_POST + URL data
-	*/
 	var $data = array();
-	/**
-	 * Controller name
-	*/
 	var $controller = NULL;
-	/**
-	 * Action name
-	*/
 	var $action = NULL;
 	var $instance = NULL;
-	
+	var $csrf_token;
+
+	/**
+	 * Constructor
+	 * @access	public
+	 * @return	void
+	 */
+	function __construct() {
+		if( !$this -> checkCSRF() ) $this -> render404();
+
+		$this -> csrf_token = md5( mt_rand() );
+//		Cache::getInstance( 'default' ) -> set( 'csrf_token_' . $this -> csrf_token, 1, 3600 );
+	}
+
 	/**
 	 * Runs a controller
-	 * @param array $r Array passed from router, parsed url in array, e.g. /users/show/1 => array( 'controller => 'users', 'action' => 'show', 'id' => 1 ) ( default route )
-	*/
+	 * @access	public
+	 * @param		string	$controller	Name of controller
+	 * @param		string	$action			Name of action
+	 * @return	void
+	 */
 	function run( $controller, $action ) {
 		global $router;
 		$this -> data = array_merge( $this -> filterXSS( $_POST ), $this -> data );
@@ -44,20 +69,35 @@ class Controller extends Base {
 				$this -> instance -> $action();
 		}
 	}
-	
+
 	/**
-	 * Render 404 
-	*/
+	 * Renders 404
+	 * @access	public
+	 * @return	void
+	 */
 	function render404() {
 		ob_clean();
 		include PUBLIC_DIR . "/404.html";
 		exit;
 	}
-	
+
+	/**
+	 * Checks if CSRF token is correct
+	 * @access	public
+	 * @return	void
+	 * @todo		Move it to new file which handles security!
+	 */
 	function checkCSRF() {
 		return empty( $_POST ) || Cache::getInstance( 'default' ) -> exists( 'csrf_token_' . $_POST[ 'csrf_token' ] );
 	}
-	
+
+	/**
+	 * Fitlers array $array from XSS
+	 * @access	public
+	 * @param		array	$array	Array to filter
+	 * @return	array
+	 * @todo		Move it to new file which handles security!
+	 */
 	function filterXSS( $array ) {
 		if( is_string( $array ) ) return htmlentities( $array );
 		
