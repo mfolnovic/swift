@@ -114,10 +114,10 @@ class Model_Base extends Base {
 	 */
 	function __set( $key, $value ) {
 		reset( $this -> resultSet );
-		$key = key( $this -> resultSet );
-		if( $key === NULL ) $this -> resultSet[ $key ] = new Model_Row;
-		$this -> resultSet[ $key ] -> $key = $value;
-		$this -> update[ $key ] = & $this -> resultSet[ $key ] -> $key;
+		$row_id = key( $this -> resultSet );
+		if( $row_id === NULL ) $this -> resultSet[ $row_id ] = new Model_Row;
+		$this -> resultSet[ $row_id ] -> $key = $value;
+		$this -> update[ $key ] = & $this -> resultSet[ $row_id ] -> $key;
 	}
 
 	/**
