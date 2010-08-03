@@ -20,38 +20,22 @@
  */
 
 class Log extends Base {
-	var $type = NULL; // file, output
-	var $args = NULL;
-	var $handle = NULL; // file handle
 	static $instance = NULL;
 
 	/**
 	 * Constructor
 	 * @access	public
-	 * @param		string	type	Which type of log
-	 * @param		array		args	Configurations
 	 * @return	void
 	 * @todo		Create adapters, like cache and db
 	 */
-	function __construct( $type, $args ) {
+	function __construct() {
 		global $config;
 
-		if( !$config -> options[ 'other' ][ 'log' ] ) return;
-		$this -> type = $type;
-		$this -> args = $args;
+		$options = $config -> options[ 'other' ][ 'log' ];
+		if( $options === FALSE ) return;
 
-		if( $this -> type == 'file' )
-			$this -> fileConstruct();
-	}
-
-	/**
-	 * Destructor
-	 * @access	public
-	 * @return	void
-	 */
-	function __destruct() {
-		if( $this -> type == 'file' )
-			$this -> fileDestruct();
+		$adapter = 'Log_' . $options[ 'adapter' ];
+		$this -> adapter = new $adapter( $options );
 	}
 
 	/**
@@ -61,28 +45,8 @@ class Log extends Base {
 	 * @return	object
 	 */
 	static function getInstance() {
-		if( self::$instance == NULL ) self::$instance = new Log( "file", "application" ); // temporary
+		if( self::$instance == NULL ) self::$instance = new Log();
 		return self::$instance;
-	}
-
-	/**
-	 * File constructor
-	 * @access	public
-	 * @return	void
-	 * @todo		Move to file adapter
-	 */
-	private function fileConstruct() {
-		$this -> handle = fopen( LOG_DIR . $this -> args . ".log", "w" );
-	}
-
-	/**
-	 * File destructor
-	 * @access	public
-	 * @return	void
-	 * @todo		Move to file adapter
-	 */
-	private function fileDestruct() {
-		fclose( $this -> handle );
 	}
 
 	/**
@@ -93,10 +57,8 @@ class Log extends Base {
 	 * @todo Support multiple adapters
 	 */
 	function write( $message ) {
-		global $config;
-
-		if( !$config -> options[ 'other' ][ 'log' ] ) return;
-		fwrite( $this -> handle, $message . PHP_EOL );
+		if( $this -> adapter === NULL ) return;
+		$this -> adapter -> write( $message );
 	}
 
 	/**
@@ -106,7 +68,8 @@ class Log extends Base {
 	 * @return	void
 	 */
 	function error( $message ) {
-		$this -> write( "[ERROR] $message" );
+		if( $this -> adapter === NULL ) return;
+		$this -> adapter -> write( "[ERROR] $message" );
 	}
 
 	/**
@@ -116,7 +79,8 @@ class Log extends Base {
 	 * @return	void
 	 */
 	function notice( $message ) {
-		$this -> write( "[NOTICE] $message" );
+		if( $this -> adapter === NULL ) return;
+		$this -> adapter -> write( "[NOTICE] $message" );
 	}
 }
 
