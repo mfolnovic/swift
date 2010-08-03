@@ -202,7 +202,7 @@ class View_Haml {
 	 */
 	function parseFunctions( $string ) {
 		$last = 0;
-		while( ( $end = strpos( $string, '(', $last ) ) !== false ) {
+		while( ( $end = @strpos( $string, '(', $last ) ) !== false ) {
 			$broke = false; $start = $lastpos = $end;
 			for( $tmp = $end; $tmp > $last; -- $tmp ) {
 				if( $string[ $tmp ] == ' ' ) { $lastpos = $tmp + 1; $broke --; }
@@ -213,8 +213,8 @@ class View_Haml {
 			$start = $tmp;
 			$str = trim( substr( $string, $start, $end - $start ) );
 
-			if( method_exists( 'View', $str ) ) {
-				$newstr = '$this -> ' . $str;
+			if( function_exists( $str ) ) {
+				$newstr = $str;
 				if( !$this -> between( $string, $end, '(', ')' ) ) $newstr = 'echo ' . $newstr;
 				$string = substr_replace( $string, $newstr , $start, $end - $start );
 				$end += 14;

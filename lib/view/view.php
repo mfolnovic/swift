@@ -12,7 +12,9 @@
 /* 
 	@todo	Move this somewhere else 
 */
+
 include APP_DIR . "helpers.php";
+include LIB_DIR . "view/helpers.php";
 
 /**
  * Swift View Class
@@ -24,7 +26,7 @@ include APP_DIR . "helpers.php";
  * @author			Swift dev team
  */
 
-class View extends View_Helpers {
+class View {
 	var $layout = 'application';
 	var $render = true;
 	var $config;
@@ -34,7 +36,7 @@ class View extends View_Helpers {
 	/**
 	 * Constructor
 	 * @access	public
-	 * @return	vpid
+	 * @return	void
 	 */
 	function __construct() {
 		$this -> config =& $GLOBALS[ 'config' ] -> options;
