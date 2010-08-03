@@ -17,7 +17,6 @@
  * @package			Swift
  * @subpackage	View
  * @author			Swift dev team
- * @todo				Try to avoid classes for all helpers
  */
 
 function javascript() {
@@ -86,8 +85,7 @@ function link_tag( $title, $href, $options = array() ) {
 }
 
 function partial( $name ) {
-	global $view;
-	return $view -> render( null, '_' . $name );
+	View::getInstance() -> render( null, '_' . $name );
 }
 
 function render( $c = NULL, $a = NULL ) {
@@ -100,11 +98,13 @@ function xss_clean( $string ) {
 
 function _attributes( $array ) {
 	$ret = '';
+
 	foreach( $array as $id => $val ) {
 		if( $ret != '' ) $ret .= ' ';
 		$ret .= "$id=\"$val\"";
 	}
-		return $ret;
+
+	return $ret;
 }
 
 ?>
