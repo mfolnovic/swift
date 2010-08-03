@@ -17,6 +17,7 @@
  * @package			Swift
  * @subpackage	View
  * @author			Swift dev team
+ * @todo				Support blocks, e.g. partial cache
  */
 
 class View_Haml {

@@ -45,6 +45,7 @@ class Controller extends Base {
 	 * @param		string	$controller	Name of controller
 	 * @param		string	$action			Name of action
 	 * @return	void
+	 * @todo		Move filterXSS to somewhere else, since now, it'll be run more times
 	 */
 	function run( $controller, $action ) {
 		global $router;

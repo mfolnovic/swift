@@ -17,6 +17,7 @@
  * @package			Swift
  * @subpackage	View
  * @author			Swift dev team
+ * @todo				Try to avoid classes for all helpers
  */
 
 class View_Helpers extends ApplicationHelpers {

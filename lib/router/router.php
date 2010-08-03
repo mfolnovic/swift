@@ -107,6 +107,7 @@ class Router extends Base {
 	 * @param		string	route		Route to parse and add
 	 * @param		array		options	Options for this route
 	 * @return	void
+	 * @todo		Do I really need to parse all routes?
 	 */
 	function addRoute( $route, $options = array() ) {
 		$ret = array();
