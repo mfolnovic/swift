@@ -26,7 +26,6 @@ class Log extends Base {
 	 * Constructor
 	 * @access	public
 	 * @return	void
-	 * @todo		Create adapters, like cache and db
 	 */
 	function __construct() {
 		global $config;
@@ -54,7 +53,6 @@ class Log extends Base {
 	 * @access	public
 	 * @param		string	message	Message to write
 	 * @return	void
-	 * @todo Support multiple adapters
 	 */
 	function write( $message ) {
 		if( $this -> adapter === NULL ) return;
