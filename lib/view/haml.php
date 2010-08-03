@@ -21,7 +21,7 @@
  */
 
 class View_Haml {
-	var $ommitCloseTag = array( "br", "input", "link", "meta", 'colgroup', 'td', 'tr', 'th', 'hr', "li" );
+	var $ommitCloseTag = array( "br" => 1, "input" => 2, "link" => 3, "meta" => 4, 'colgroup' => 5, 'td' => 6, 'tr' => 7, 'th' => 8, 'hr' => 9, "li" => 10 );
 	var $structures = array( "foreach", "if", "else" );
 	var $line;
 	var $parsed;
@@ -95,7 +95,7 @@ class View_Haml {
 			$rest = trim( substr( $line, $tabs + 1 ) );
 			$command = substr( $rest, 0, strpos( $rest, '(' ) );
 			$structure = in_array( $command, $this -> structures );
-			$this -> parsed .= "<?php " . $this -> parseFunctions( $rest ) . ( $structure ? " { " : ";" ) . " ?>";
+			$this -> parsed .= "<?php " . $rest . ( $structure ? " { " : ";" ) . " ?>";
 			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
 			if( method_exists( 'View', $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo $this -> ' . $command . 'End(); ?>' ) );
 			return;
@@ -164,7 +164,7 @@ class View_Haml {
 					if( $status ) { $index = $tmp; $i += 2; }
 					else $value = $tmp;
 
-					if( !$status ) $this -> pushValue( $data[ 'attributes' ], $index, $this -> parseFunctions( $value ) );
+					if( !$status ) $this -> pushValue( $data[ 'attributes' ], $index, $value );
 				}
 
 				$status = !$status;
@@ -173,7 +173,7 @@ class View_Haml {
 		$data[ 'html' ] .= trim( substr( $line, $pos ) );
 		if( !empty( $data[ 'tag' ] ) ) {
 			$this -> parsed .= "<{$data[ 'tag' ] }" . $this -> attributesToHTML( $data[ 'attributes' ] ) . ">";
-			array_unshift( $this -> tree, array( $tabs, in_array( $data[ 'tag' ], $this -> ommitCloseTag ) ? "" : "</{$data[ 'tag' ]}>" ) );
+			array_unshift( $this -> tree, array( $tabs, isset( $this -> ommitCloseTag[ $data[ 'tag' ] ] ) ? "" : "</{$data[ 'tag' ]}>" ) );
 		}
 		$this -> parsed .= $this -> parseHtml( $data[ "html" ] );
 	}
@@ -191,50 +191,6 @@ class View_Haml {
 		if( !isset( $data[ $attr ] ) ) $data[ $attr ] = '';
 		if( $data[ $attr ] != '' ) $data[ $attr ] .= ' ';
 		$data[ $attr ] .= $value;
-	}
-
-	/**
-	 * Parses function calls
-	 * @access	public
-	 * @param		string	string	String to parse
-	 * @return	string
-	 * @todo Try to avoid calling this, make all helpers functions, not methods
-	 */
-	function parseFunctions( $string ) {
-		$last = 0;
-		while( ( $end = @strpos( $string, '(', $last ) ) !== false ) {
-			$broke = false; $start = $lastpos = $end;
-			for( $tmp = $end; $tmp > $last; -- $tmp ) {
-				if( $string[ $tmp ] == ' ' ) { $lastpos = $tmp + 1; $broke --; }
-				else if( $string[ $tmp ] == ',' ) -- $broke;
-				else if( $string[ $tmp ] == '>' && $string[ $tmp - 1 ] == '-' ) { $lastpos = $tmp; $broke = 2; }
-				else if( $broke < 0 ) { $tmp = $lastpos; break; }
-			}
-			$start = $tmp;
-			$str = trim( substr( $string, $start, $end - $start ) );
-
-			if( function_exists( $str ) ) {
-				$newstr = $str;
-				if( !$this -> between( $string, $end, '(', ')' ) ) $newstr = 'echo ' . $newstr;
-				$string = substr_replace( $string, $newstr , $start, $end - $start );
-				$end += 14;
-			}
-			
-			$last = $end + 1;
-		}
-		return $string;
-	}
-
-	function between( $string, $pos, $start, $end ) {
-		$startLen = strlen( $start );
-		$endLen = strlen( $end );
-		$cnt = 0;
-
-		for( $i = 0; $i < $pos; ++ $i )
-			if( substr( $string, $i, $startLen ) == $start ) ++ $cnt;
-			else if( substr( $string, $i, $endLen ) == $end ) -- $cnt;
-
-		return $cnt > 0;
 	}
 
 	/**
