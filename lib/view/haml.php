@@ -198,6 +198,7 @@ class View_Haml {
 	 * @access	public
 	 * @param		string	string	String to parse
 	 * @return	string
+	 * @todo		Optimize!
 	 */
 	function parseHtml( $string ) {
 		$ret = ''; $phpOpen = false;
