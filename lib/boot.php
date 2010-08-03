@@ -13,18 +13,13 @@ session_start();
 
 include LIB_DIR . "base.php";
 include LIB_DIR . "errors/errors.php";
-include LIB_DIR . "autoload.php";
-
 include LIB_DIR . "constants.php";
+include LIB_DIR . "autoload.php";
 include LIB_DIR . "helpers.php";
-include LIB_DIR . "dir/dir.php";
+
 include LIB_DIR . "router/router.php";
-
 include LIB_DIR . "config/config.php";
-
 include LIB_DIR . "controller/controller.php";
-include LIB_DIR . "db/db.php";
-include LIB_DIR . "view/view.php";
 
 // Load config
 $config -> load();
