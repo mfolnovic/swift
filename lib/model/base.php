@@ -99,7 +99,7 @@ class Model_Base extends Base {
 	 */
 	function __get( $key ) {
 		if( empty( $this -> resultSet ) && $this -> relationChanged ) $this -> first();
-		if( isset( $this -> hasOne[ $key ] ) ) $this -> handleAssociation( $key ); // workaround
+		if( isset( $this -> hasOne[ $key ] ) || isset( $this -> hasMany[ $key ] ) ) $this -> handleAssociation( $key ); // workaround
 
 		reset( $this -> resultSet );
 		$tmp = current( $this -> resultSet );
