@@ -9,6 +9,7 @@
  * @license		LICENSE
  */
 
+
 session_start();
 
 include LIB_DIR . "base.php";
@@ -16,6 +17,10 @@ include LIB_DIR . "errors/errors.php";
 include LIB_DIR . "constants.php";
 include LIB_DIR . "autoload.php";
 include LIB_DIR . "helpers.php";
+
+include LIB_DIR . "security/security.php";
+
+Security::instance();// -> checkCSRF();
 
 include LIB_DIR . "router/router.php";
 include LIB_DIR . "config/config.php";
@@ -25,8 +30,6 @@ include LIB_DIR . "controller/controller.php";
 $config -> load();
 
 if( ENV & ENV_HTTP ) {
-	// With more features at unit tests, will move most of this to run at tests too
-
 	// Route
 	$router -> route( $_SERVER[ "REQUEST_URI" ] );
 
