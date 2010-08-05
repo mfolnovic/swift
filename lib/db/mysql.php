@@ -53,6 +53,7 @@ class Db_Mysql extends Base {
 	 * @return	string
 	 */
 	function safe( $string ) {
+		if( empty( $string ) ) return "''";
 		if( $string[ 0 ] == '`' ) return $string;
 		if( !$this -> conn ) $this -> connect();
 		if( !is_numeric( $string ) ) $string = "'" . mysqli_real_escape_string( $this -> conn, $string ) . "'";
@@ -81,6 +82,8 @@ class Db_Mysql extends Base {
 
 		Benchmark::start( "[SQL $query]" );
 		$resource = $this -> conn -> query( $query );
+
+		if( $resource === FALSE ) trigger_error( $this -> conn -> error );
 		Benchmark::end( "[SQL $query]" );
 		return $resource;
 	}
@@ -167,7 +170,6 @@ class Db_Mysql extends Base {
 			$set = '';
 			foreach( $base -> update as $id => $val ) 
 				$set .= ( $set == '' ? '' : ',' ) . "`$id`=" . $this -> safe( $val );
-
 			$this -> query( "UPDATE {$base -> tableName} SET $set " . $this -> generateWhere( $base ) );
 		}
 	}
