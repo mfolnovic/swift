@@ -48,6 +48,26 @@ class Dir {
 	static function read( $dir, $file ) {
 		return file_get_contents( $dir . '/' . $file );
 	}
+
+	/**
+	 * Create directory $dir if it doesn't exist
+	 * @access	public
+	 * @param		dir	string	Directory
+	 * @return	return
+	 */
+	static function make_dir( $dir ) {
+		if( file_exists( $dir ) ) return;
+		$dir = dirname( $dir );
+		$dirs = explode( '/', $dir );
+		$current = '';
+
+		foreach( $dirs as $value ) {
+			$current .= $value . '/';
+			if( !file_exists( $current ) )
+				if( @mkdir( $current ) === FALSE )
+					trigger_error( "Couldn't make directory $current" );
+		}
+	}
 }
 
 ?>

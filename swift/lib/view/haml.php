@@ -36,9 +36,7 @@ class View_Haml {
 	 * @return	void
 	 */
 	function parse( $from, $to ) {
-		if( !file_exists( dirname( $to ) ) )
-			if( @mkdir( dirname( $to ) ) === false )
-				trigger_error( "chmod 777 -R tmp/ in directory where your site is!" );
+		Dir::make_dir( $to );
 
 		if( !file_exists( $from ) )
 			die( "Template doesn't exist!" );

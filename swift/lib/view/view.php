@@ -73,23 +73,25 @@ class View {
 			$path = $this -> render . '.php';
 
 		$cache = str_replace( '/', '_', $path );
-		if( file_exists( TMP_DIR . "caches/$cache.php" ) ) {
-			include TMP_DIR . "caches/$cache.php";
+		if( file_exists( TMP_DIR . "caches/$cache" ) ) {
+			include TMP_DIR . "caches/$cache";
 			return;
 		} 
 
-		if( !file_exists( TMP_DIR . "/views/$cache" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
-			View_Haml::getInstance() -> parse( VIEWS_DIR . $path, TMP_DIR . "/views/$path" );
+		if( !file_exists( TMP_DIR . "views/$cache" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
+			View_Haml::getInstance() -> parse( VIEWS_DIR . $path, TMP_DIR . "views/$path" );
 
 		if( isset( $controller -> instance ) )
 			extract( $controller -> instance -> globals );
 
 		ob_start();
 		$view = View::getInstance();
-		include TMP_DIR . '/views/' . $path;
+		include TMP_DIR . 'views/' . $path;
 		if( in_array( array( $c, $a ), $this -> action_caches ) ) {
+			$path = TMP_DIR . "caches/$cache";
 			$content = ob_get_clean();
-			file_put_contents( TMP_DIR . "caches/$cache.php", $content );
+			Dir::make_dir( $path );
+			file_put_contents( $path, $content );
 			echo $content;
 		} else {
 			ob_end_flush();
