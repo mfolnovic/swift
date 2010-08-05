@@ -72,7 +72,7 @@ class Security {
 	 * @return	array
 	 */
 	function filter( &$array ) {
-		if( is_string( $array ) ) return $array = htmlentities( $array );
+		if( is_string( $array ) ) return $array = htmlentities( $array, ENT_COMPAT, 'utf-8' );
 
 		foreach( $array as $id => &$val )
 			$this -> filter( $val );
