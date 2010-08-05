@@ -97,7 +97,7 @@ class View_Haml {
 			$structure = in_array( $command, $this -> structures );
 			$this -> parsed .= "<?php " . $rest . ( $structure ? " { " : ";" ) . " ?>";
 			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
-			if( method_exists( 'View', $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo $this -> ' . $command . 'End(); ?>' ) );
+			if( !empty( $command ) && function_exists( $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php ' . $command . 'End(); ?>' ) );
 			return;
 		}
 
