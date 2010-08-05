@@ -81,7 +81,8 @@ class View {
 		if( !file_exists( TMP_DIR . "/views/$cache" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
 			View_Haml::getInstance() -> parse( VIEWS_DIR . $path, TMP_DIR . "/views/$path" );
 
-		extract( $controller -> instance -> globals );
+		if( isset( $controller -> instance ) )
+			extract( $controller -> instance -> globals );
 
 		ob_start();
 		$view = View::getInstance();
