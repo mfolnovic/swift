@@ -21,12 +21,11 @@ define( 'ENV_PRODUCTION', 8 );
 define( 'ENV_TEST', 16 );
 define( 'ENV_INTERNAL', 32 );
 
-define( 'LOG_DIR', DIR . 'log/' );
-define( 'CONFIG_DIR', DIR . 'config/' );
 define( 'APP_DIR', DIR . 'app/' );
-define( 'PUBLIC_DIR', DIR . 'public/' );
-define( 'TMP_DIR', DIR . 'tmp/' );
-
+define( 'LOG_DIR', APP_DIR . 'log/' );
+define( 'CONFIG_DIR', APP_DIR . 'config/' );
+define( 'PUBLIC_DIR', APP_DIR . 'public/' );
+define( 'TMP_DIR', APP_DIR . 'tmp/' );
 define( 'CONTROLLERS_DIR', APP_DIR . 'controllers/' );
 define( 'MODEL_DIR', APP_DIR . 'models/' );
 define( 'VIEWS_DIR', APP_DIR . 'views/' );
