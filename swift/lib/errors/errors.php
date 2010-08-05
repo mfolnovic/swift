@@ -29,7 +29,7 @@ class Errors extends Base {
 	 * @param		int			line		In line $line
 	 * @return	void
 	 */
-	function error( $number, $message, $file, $line ) {
+	static function error( $number, $message, $file, $line ) {
 		if( error_reporting() ) {
 			@ob_clean();
 			$backtrace = debug_backtrace();
