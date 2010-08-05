@@ -83,10 +83,10 @@ class Model_Base extends Base {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
 		$this -> link = DB::getInstance( $this -> connection );
 
-		if( $this -> connection == 'default' ) {
+/*		if( $this -> connection == 'default' ) {
 			$res = $this -> link -> query( "SHOW TABLES LIKE '%{$this -> tableName}%'" );
 			if( $res -> num_rows == 0 ) $this -> link -> dropAndCreateTable( $this );
-		}
+		}*/
 
 		if( !empty( $newRow ) )	$this -> newRecord = new Model_Row( $newRow );
 	}
@@ -159,7 +159,7 @@ class Model_Base extends Base {
 		$this -> limit( 1 );
 		$this -> link -> select( $this );
 
-		return current( $this -> resultSet );
+		return reset( $this -> resultSet );
 	}
 
 	/**
@@ -171,7 +171,7 @@ class Model_Base extends Base {
 		$this -> order( 'id', 'desc' ) -> limit( 1 );
 		$this -> link -> select( $this );
 
-		return current( $this -> resultSet );
+		return reset( $this -> resultSet );
 	}
 
 	/**
