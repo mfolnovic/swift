@@ -19,16 +19,21 @@ class apcTest extends TestCase {
 	function test_set() {
 		$apc = Cache::getInstance( 'apc' );
 
+		$this -> assert( !$apc -> exists( 'foo' ), "Foo shouldn't exist." );
+
 		$apc -> set( 'foo', 'bar' );
 		$this -> assertEqual( $apc -> get( 'foo' ), 'bar' );
+		$this -> assert( $apc -> exists( 'foo' ), "Foo should exist." );
 		
 		$array = array( 1 => 'hello', '2' => 'world' );
 		$apc -> set( 'foo2', $array );
 		$this -> assertEqual( $apc -> get( 'foo2' ), $array );
+		$this -> assert( $apc -> exists( 'foo2' ), "Foo2 should exist." );
 		
 		$array2 = array( new TempObject( $array ), new TempObject( array_reverse( $array ) ) );
 		$apc -> set( 'foo3', $array2 );
 		$this -> assertEqual( $apc -> get( 'foo3' ), $array2 );
+		$this -> assert( $apc -> exists( 'foo3' ), "Foo3 should exist" );
 		
 	}
 	

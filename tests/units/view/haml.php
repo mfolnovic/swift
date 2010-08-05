@@ -5,9 +5,7 @@ class hamlTest extends TestCase {
 	}
 	
 	function parse_template( $name ) {
-		global $haml;
-		
-		$haml -> parse( VIEWS_DIR . $name . ".php", TMP_DIR . $name . ".php" );
+		View_Haml::getInstance() -> parse( VIEWS_DIR . $name . ".php", TMP_DIR . $name . ".php" );
 		return file_get_contents( TMP_DIR . $name . ".php" );
 	}
 	
