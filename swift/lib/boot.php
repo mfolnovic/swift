@@ -9,7 +9,6 @@
  * @license		LICENSE
  */
 
-
 session_start();
 
 include LIB_DIR . "base.php";
