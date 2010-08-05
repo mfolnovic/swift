@@ -26,7 +26,7 @@ class Dir {
 	 * @param		string	dir	Directory to search in
 	 * @return	array
 	 */
-	function files( $dir ) {
+	static function files( $dir ) {
 		$ret = array();
 		$dir = scandir( $dir );
 
@@ -45,11 +45,9 @@ class Dir {
 	 * @param		string	file		file
 	 * @return	string
 	 */
-	function read( $dir, $file ) {
+	static function read( $dir, $file ) {
 		return file_get_contents( $dir . '/' . $file );
 	}
 }
-
-$dir = new Dir;
 
 ?>
