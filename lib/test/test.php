@@ -7,7 +7,7 @@ class TestSuite extends Base {
 	var $vars = array();
 	var $counts = array( 0 => 0, 1 => 0 );
 	static $instance = NULL;
-	
+
 	function __destruct() {
 		$this -> printResults();
 	}
@@ -16,18 +16,17 @@ class TestSuite extends Base {
 		if( self::$instance == NULL ) self::$instance = new TestSuite;
 		return self::$instance;
 	}
-	
+
 	function __set( $index, $value ) {
 		$this -> vars[ $index ] = $value;
 	}
-	
+
 	function __get( $index ) {
 		return $this -> vars[ $index ];
 	}
-	
+
 	function load( $d ) {
-		global $dir;
-		$files = $dir -> files( $d );
+		$files = Dir::files( $d );
 
 		foreach( $files as $file ) {
 			if( is_dir( $d . $file ) )
@@ -38,17 +37,17 @@ class TestSuite extends Base {
 			}
 		}
 	}
-	
+
 	function run( $file ) {
 		$obj = substr( $file, 0, -4 ) . 'Test';
 		$this -> currentClass = $obj;
 		$case = new $obj;
 		$methods = get_class_methods( $case );
-		
+
 		foreach( $methods as $method ) {
 			if( substr( $method, 0, 4 ) != "test" ) continue;
 			$this -> currentTest = $method;
-			@$case -> $method();
+			$case -> $method();
 		}
 	}
 
@@ -59,7 +58,7 @@ class TestSuite extends Base {
 
 	function printResults() {
 		if( empty( $this -> results ) ) return;
-	
+
 		$last = ''; $i = 0;
 		$s = ""; $r = '';
 
@@ -68,14 +67,13 @@ class TestSuite extends Base {
 			if( $value[ 0 ] === false )
 				$r .= ( ++ $i ) . ') ' . $value[ 2 ] . '(' . $value[ 1 ] . ')' . ( !empty( $value[ 3 ] ) ? ': ' . $value[ 3 ] : '' ) . PHP_EOL;
 		}
-		//$this -> colorize( "FAILURE", "[37;41m" )
-		
+
 		echo $s . PHP_EOL . PHP_EOL;
 		if( $this -> counts[ 0 ] > 0 )
 			echo $this -> colorize( "There were {$this -> counts[ 0 ]} failures:", "[37;41m" ) . PHP_EOL;
 		else
 			echo $this -> colorize( "Everything OK (" . count( $this -> results ) ." asserts)!", "[0;42m" ) . PHP_EOL;
-			
+
 		echo $r;
 	}
 
