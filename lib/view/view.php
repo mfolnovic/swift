@@ -58,22 +58,27 @@ class View {
 	 * @param		string	c	Controller
 	 * @param		string	a	Action
 	 * @return	void
+	 * @todo		fix caching, filename should be current url
 	 */
-	function render( $c = null, $a = null ) {
-		if( !$this -> render ) return;
-		global $haml, $config, $controller, $view;
+	function render( $c = NULL, $a = NULL ) {
+		global $config, $controller;
 
-		if( $c == null ) $c = $controller -> controller;
-		if( $a == null ) $a = $controller -> action;
+		if( $this -> render === FALSE ) return;
+		else if( $this -> render === TRUE ) {
+			if( empty( $c ) ) $c = $controller -> controller;
+			if( empty( $a ) ) $a = $controller -> action;
 
-		if( file_exists( TMP_DIR . "caches/{$c}_{$a}.php" ) ) {
-			include TMP_DIR . "caches/{$c}_{$a}.php";
+			$path = $c . '/' . $a . '.php';
+		} else
+			$path = $this -> render . '.php';
+
+		$cache = str_replace( '/', '_', $path );
+		if( file_exists( TMP_DIR . "caches/$cache.php" ) ) {
+			include TMP_DIR . "caches/$cache.php";
 			return;
 		} 
 
-		$path = "$c/$a.php";
-
-		if( !file_exists( TMP_DIR . "/views/$path" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
+		if( !file_exists( TMP_DIR . "/views/$cache" ) || !$config -> options[ 'other' ][ 'cache_views' ] )
 			View_Haml::getInstance() -> parse( VIEWS_DIR . $path, TMP_DIR . "/views/$path" );
 
 		extract( $controller -> instance -> globals );
@@ -83,7 +88,7 @@ class View {
 		include TMP_DIR . '/views/' . $path;
 		if( in_array( array( $c, $a ), $this -> action_caches ) ) {
 			$content = ob_get_clean();
-			file_put_contents( TMP_DIR . 'caches/' .$c . "_" . $a . ".php", $content );
+			file_put_contents( TMP_DIR . "caches/$cache.php", $content );
 			echo $content;
 		} else {
 			ob_end_flush();

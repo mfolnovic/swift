@@ -95,9 +95,7 @@ class Router extends Base {
 			if( !isset( $ret[ $id ] ) )
 				$ret[ $id ] = $val;
 
-		$controller -> data = array_merge( $controller -> data, $ret );
-
-		if( $runController ) $controller -> run( $ret[ 'controller' ], $ret[ 'action' ] );
+		if( $runController ) $controller -> run( $ret[ 'controller' ], $ret[ 'action' ], $ret );
 		return !$this -> continueRouting;
 	}
 

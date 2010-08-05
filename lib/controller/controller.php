@@ -20,7 +20,6 @@
  */
 
 class Controller extends Base {
-	var $data = array();
 	var $controller = NULL;
 	var $action = NULL;
 	var $instance = NULL;
@@ -29,15 +28,16 @@ class Controller extends Base {
 	/**
 	 * Runs a controller
 	 * @access	public
-	 * @param		string	$controller	Name of controller
-	 * @param		string	$action			Name of action
+	 * @param		string	controller	Name of controller
+	 * @param		string	action			Name of action
+	 * @param		array		data				Contains data
 	 * @return	void
 	 * @todo		Move filterXSS to somewhere else, since now, it'll be run more times
 	 */
-	function run( $controller, $action ) {
+	function run( $controller, $action, $data = array() ) {
 		global $router;
-		$this -> data = array_merge( $_POST, $this -> data );
 
+		$this -> clean();
 		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
 
 		$path = CONTROLLERS_DIR . $controller . ".php";
@@ -49,12 +49,13 @@ class Controller extends Base {
 		}
 
 		$controllerName = $controller . 'Controller';
-		
+
 		if( is_callable( array( $controllerName, $action ) ) ) {
 			$this -> instance = new $controllerName;
 			$this -> controller = $controller;
 			$this -> action = $action;
-			$this -> instance -> data = & $this -> data; // workaround
+			$this -> instance -> data = array_merge( $_POST, $data );
+
 			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) )
 				$this -> instance -> $action();
 		}
@@ -69,6 +70,17 @@ class Controller extends Base {
 		ob_clean();
 		include PUBLIC_DIR . "/404.html";
 		exit;
+	}
+
+	/**
+	 * Clean globals
+	 * @access	public
+	 * @return	void
+	 */
+	function clean() {
+		if( empty( $this -> instance ) ) return;
+		foreach( $this -> instance -> globals as $key => $val )
+			unset( $_GLOBALS[ $key ] );
 	}
 }
 

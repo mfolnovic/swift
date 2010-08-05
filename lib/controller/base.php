@@ -33,11 +33,12 @@ class Controller_Base extends Base {
 	function __construct() {
 		global $config, $controller;
 
+		$this -> globals = array();
 		$this -> config =& $config -> options;
 		$this -> controllerName = strtolower( substr( get_class( $this ), 0, -10 ) );
 		$this -> current_time = time();
 		$this -> csrf_token = Security::instance() -> csrf_token;
-		
+
 		parent::__construct();
 	}
 
@@ -60,11 +61,11 @@ class Controller_Base extends Base {
 	function redirect( $url ) {
 		global $router, $config;
 
-		if( !isAjax() ) header( "Location:/{$config -> options[ 'other' ][ 'url_prefix' ]}$url" );
-		else {
-			header( "X-Redirect: " . ( isAjax() ? '' : $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url" );
-			$this -> data = array();
+		if( isAjax() ) {
+			header( "X-Redirect: $url" );
 			$router -> route( $url, false );
+		}	else {
+			header( "Location:/{$config -> options[ 'other' ][ 'url_prefix' ]}$url" );
 		}
 	}
 
@@ -75,10 +76,7 @@ class Controller_Base extends Base {
 	 * @return	return
 	 */
 	function render( $path ) {
-		global $router;
-
-		if( $path === false ) View::getInstance() -> render = false;
-		else $router -> route( $path, false );
+		View::getInstance() -> render = $path;
 	}
 
 	/**
