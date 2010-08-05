@@ -80,7 +80,7 @@ class Controller extends Base {
 	function clean() {
 		if( empty( $this -> instance ) ) return;
 		foreach( $this -> instance -> globals as $key => $val )
-			unset( $_GLOBALS[ $key ] );
+			unset( $GLOBALS[ $key ] );
 	}
 }
 
