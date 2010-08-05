@@ -59,14 +59,15 @@ class Controller_Base extends Base {
 	 * @return 	void
 	*/
 	function redirect( $url ) {
-		global $router, $config;
+		global $config;
 
 		if( isAjax() ) {
 			header( "X-Redirect: $url" );
-			$router -> route( $url, false );
+			View::getInstance() -> render = false;
 		}	else {
 			header( "Location:/{$config -> options[ 'other' ][ 'url_prefix' ]}$url" );
 		}
+
 	}
 
 	/**
