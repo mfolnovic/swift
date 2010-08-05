@@ -70,7 +70,7 @@ class Model_Base extends Base {
 	var $connection = 'default';
 	var $link;
 	var $newRecord = false;
-	var $relationChanged = true;
+	var $relationChanged = false;
 
 	/**
 	 * Constructor
@@ -98,11 +98,9 @@ class Model_Base extends Base {
 	 * @return	mixed
 	 */
 	function __get( $key ) {
-		if( empty( $this -> resultSet ) ) $this -> first();
-		if( isset( $this -> hasOne[ $key ] ) ) {
-			$this -> handleAssociation( $key ); // workaround
-		}
-		
+		if( empty( $this -> resultSet ) && $this -> relationChanged ) $this -> first();
+		if( isset( $this -> hasOne[ $key ] ) ) $this -> handleAssociation( $key ); // workaround
+
 		reset( $this -> resultSet );
 		$tmp = current( $this -> resultSet );
 		if( !isset( $tmp -> $key ) ) return NULL;
@@ -158,7 +156,7 @@ class Model_Base extends Base {
 	 * @return	array
 	 */
 	function first() {
-		$this -> relation[ 'limit' ] = array( 1 );
+		$this -> limit( 1 );
 		$this -> link -> select( $this );
 
 		return current( $this -> resultSet );
@@ -170,7 +168,7 @@ class Model_Base extends Base {
 	 * @return	array
 	 */
 	function last() {
-		$this -> relation[ 'order' ][] = array( 'id', 'desc' );
+		$this -> order( 'id', 'desc' ) -> limit( 1 );
 		$this -> link -> select( $this );
 
 		return current( $this -> resultSet );
@@ -182,6 +180,7 @@ class Model_Base extends Base {
 	 * @return	array
 	 */
 	function all() {
+		$this -> relationChanged = true;
 		$this -> link -> select( $this );
 
 		return $this -> resultSet;
