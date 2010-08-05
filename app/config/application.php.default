@@ -6,7 +6,7 @@ $config -> options[ 'database' ] = array(
 		'host' => 'localhost',
 		'username' => 'root',
 		'password' => '',
-		'database' => 'blog',
+		'database' => 'database',
 		'adapter' => 'mysql'
 	)
 );
@@ -20,9 +20,9 @@ $config -> options[ 'cache' ] = array(
 $config -> options[ 'other' ] = array (
 	'log' => false,
 	'cache_views' => false,
-	'cache_config' => true,
+	'cache_config' => false,
 	'format_date' => 'm.d.y H:i:s',
-	'url_prefix' => 'projects/PRF/demo/blog/',
+	'url_prefix' => '',
 	'static_version' => false
 );
 
