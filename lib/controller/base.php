@@ -36,6 +36,7 @@ class Controller_Base extends Base {
 		$this -> config =& $config -> options;
 		$this -> controllerName = strtolower( substr( get_class( $this ), 0, -10 ) );
 		$this -> current_time = time();
+		$this -> csrf_token = Security::instance() -> csrf_token;
 		
 		parent::__construct();
 	}
