@@ -31,7 +31,7 @@ class Errors extends Base {
 	 */
 	function error( $number, $message, $file, $line ) {
 		if( error_reporting() ) {
-			ob_clean();
+			@ob_clean();
 			$backtrace = debug_backtrace();
 
 			include PUBLIC_DIR . "500.php";
