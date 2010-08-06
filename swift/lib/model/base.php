@@ -70,13 +70,13 @@ class Model_Base extends Base {
 	var $connection = 'default';
 	var $link;
 	var $newRecord = false;
-	var $relationChanged = false;
+	var $relationChanged = true;
 
 	/**
 	 * Constructor
 	 * @access	public
 	 * @param		string	tableName	Name of the table
-	 * @param		mixed		Array if it's new row, and NULL if it's not
+	 * @param		mixed		Array			if it's new row, and NULL if it's not
 	 * @return	void
 	 */
 	function __construct( $tableName, $newRow = NULL ) {
@@ -180,7 +180,6 @@ class Model_Base extends Base {
 	 * @return	array
 	 */
 	function all() {
-		$this -> relationChanged = true;
 		$this -> link -> select( $this );
 
 		return $this -> resultSet;
@@ -250,7 +249,7 @@ class Model_Base extends Base {
 
 		foreach( $this -> resultSet as $id => $val ) {
 			$val -> $name = new $className( $className );
-			$val -> $name -> newRecord = false;
+			$val -> $name -> relationChanged = false;
 		}
 
 		foreach( $assocModel -> all() as $id => $row )
