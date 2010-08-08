@@ -23,7 +23,6 @@ include LIB_DIR . "security/security.php";
 
 Security::instance();// -> checkCSRF();
 
-include LIB_DIR . "router/router.php";
 include LIB_DIR . "config/config.php";
 include LIB_DIR . "controller/controller.php";
 
@@ -32,7 +31,7 @@ $config -> load();
 
 if( ENV & ENV_HTTP ) {
 	// Route
-	$router -> route( $_GET[ 'url' ] );
+	Router::instance() -> route( $_GET[ 'url' ] );
 
 	// Render
 	View::getInstance() -> render( 'layouts', View::getInstance() -> layout );
