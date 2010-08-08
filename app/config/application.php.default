@@ -22,7 +22,6 @@ $config -> options[ 'other' ] = array (
 	'cache_views' => false,
 	'cache_config' => false,
 	'format_date' => 'm.d.y H:i:s',
-	'url_prefix' => '',
 	'static_version' => false
 );
 
