@@ -32,8 +32,8 @@ class Router extends Base {
 	 * @todo		Remove $runController
 	 * @return	void
 	 */
-	function route( $path, $prefixed = true, $runController = true ) {
-		global $controller, $config;
+	function route( $path, $runController = true ) {
+		global $controller;
 
 		$path = str_replace( "+", " ", $path );
 		$start = 0; 
@@ -46,9 +46,7 @@ class Router extends Base {
 			else break;
 		}
 
-		if( $prefixed ) $start += strlen( $config -> options[ 'other' ][ 'url_prefix' ] );
-
-		$path = substr( $path, $start, $end - $start + 1 );		
+		$path = substr( $path, $start, $end - $start + 1 );
 
 		if( empty( $path ) ) {
 			$controller -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );

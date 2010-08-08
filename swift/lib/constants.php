@@ -30,4 +30,6 @@ define( 'CONTROLLERS_DIR', APP_DIR . 'controllers/' );
 define( 'MODEL_DIR', APP_DIR . 'models/' );
 define( 'VIEWS_DIR', APP_DIR . 'views/' );
 
+define( "URL_PREFIX", removeSamePrefix( $_SERVER[ "REQUEST_URI" ], $_SERVER[ "PHP_SELF" ] ) );
+
 ?>

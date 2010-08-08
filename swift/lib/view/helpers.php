@@ -27,11 +27,11 @@ function javascript() {
 	$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
 
 	if( $version != '' && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
-		echo "<script type=\"text/javascript\" src=\"/{$opt[ 'url_prefix' ]}all$version.js\"></script>";
+		echo "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/all$version.js\"></script>";
 	else {
 		$ret = '';
 		foreach( $args as $val )
-			$ret .= "<script type=\"text/javascript\" src=\"/{$opt[ 'url_prefix' ]}$val\"></script>";
+			$ret .= "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/$val\"></script>";
 		echo $ret;
 	}
 }	
@@ -42,26 +42,25 @@ function stylesheet() {
 	$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
 
 	if( $version != '' && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
-		echo "<link href=\"/{$opt[ 'url_prefix' ]}all$version.css\" rel=\"stylesheet\" type=\"text/css\">";
+		echo "<link href=\"" . URL_PREFIX . "stylesheets/all$version.css\" rel=\"stylesheet\" type=\"text/css\">";
 	else {
 		$ret = '';
 
 		foreach( func_get_args() as $val )
-			$ret .= "<link href=\"/{$opt[ 'url_prefix' ]}$val\" rel=\"stylesheet\" type=\"text/css\">";
+			$ret .= "<link href=\"" . URL_PREFIX . "stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
 			echo $ret;
 	}
 }
 
 function favicon( $icon ) {
 	global $config;
-	echo '<link rel="icon" href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . 'favicon.ico">';
+	echo '<link rel="icon" href="' . URL_PREFIX . 'favicon.ico">';
 }
 
 function image( $image, $options = array() ) {
-	global $config;
 	if( strpos( $image, '/' ) === false ) $image = "images/$image";
 	$options = _attributes( $options );
-	echo "<img src=\"/{$config -> options[ 'other' ][ 'url_prefix' ]}/$image\" $options>";
+	echo "<img src=\"" . URL_PREFIX . "$image\" $options>";
 }
 
 function format_time( $timestamp ) {
@@ -70,8 +69,8 @@ function format_time( $timestamp ) {
 }
 
 function form( $url, $options = array() ) {
-	global $controller, $config;
-	echo "<form action=\"/" . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . "$url\" " . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . $controller -> instance -> csrf_token . '">';
+	global $controller;
+	echo "<form action=\"" . URL_PREFIX . "$url\" " . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . $controller -> instance -> csrf_token . '">';
 }
 
 function formEnd() {
@@ -79,9 +78,8 @@ function formEnd() {
 }
 
 function link_tag( $title, $href, $options = array() ) {
-	global $config;
 	$options = _attributes( $options );
-	echo '<a href="/' . ( $config -> options[ 'other' ][ 'url_prefix' ] ) . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
+	echo '<a href="' . URL_PREFIX . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
 }
 
 function partial( $name ) {

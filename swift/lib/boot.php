@@ -11,11 +11,13 @@
 
 session_start();
 
+if( empty( $_GET[ 'url' ] ) ) $_GET[ 'url' ] = '';
+
+include LIB_DIR . "helpers.php";
 include LIB_DIR . "base.php";
 include LIB_DIR . "errors/errors.php";
 include LIB_DIR . "constants.php";
 include LIB_DIR . "autoload.php";
-include LIB_DIR . "helpers.php";
 
 include LIB_DIR . "security/security.php";
 
@@ -30,7 +32,7 @@ $config -> load();
 
 if( ENV & ENV_HTTP ) {
 	// Route
-	$router -> route( $_SERVER[ "REQUEST_URI" ] );
+	$router -> route( $_GET[ 'url' ] );
 
 	// Render
 	View::getInstance() -> render( 'layouts', View::getInstance() -> layout );

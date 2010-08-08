@@ -19,4 +19,29 @@ function isAjax() {
 	return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
 }
 
+/**
+ * Returns same prefixed from $str1 and $str2
+ * @param		string	str1	First string
+ * @param		string	str2	Second string
+ * @return	string
+ */
+function samePrefix( $str1, $str2 ) {
+	$ret = '';
+
+	for( $i = 0, $len1 = strlen( $str1 ), $len2 = strlen( $str2 ); $i < $len1 && $i < $len2 && $str1[ $i ] == $str2[ $i ]; ++ $i )
+		$ret .= $str1[ $i ];
+
+	return $ret;
+}
+
+/**
+ * Removes same prefix of $str1 and $str2 from $str1 and returns it
+ * @param		string	str1	First string
+ * @param		string	str2	Second string
+ * @return	string
+ */
+function removeSamePrefix( $str1, $str2 ) {
+	return substr( $str1, 0, strlen( samePrefix( $str1, $str2 ) ) );
+}
+
 ?>
