@@ -1,6 +1,6 @@
 <?php
 
-define( "ROOT_DIR", getcwd() . '/../../' );
+define( "ROOT_DIR", realpath( getcwd() . '/../../' ) );
 define( "DIR", ROOT_DIR );
 define( "LIB_DIR", ROOT_DIR . "swift/lib/" );
 define( "ENV", 1 + 8 );
