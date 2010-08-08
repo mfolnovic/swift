@@ -32,7 +32,9 @@ class Config extends Base {
 	function load() {
 		global $router, $config;
 
+		$router = Router::instance();
 		$files = array( 'application', 'routes' );
+
 		foreach( $files as $file )
 			include CONFIG_DIR . $file . ".php";
 	}
