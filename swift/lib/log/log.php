@@ -35,6 +35,18 @@ class Log extends Base {
 
 		$adapter = 'Log_' . $options[ 'adapter' ];
 		self::$adapter = new $adapter( $options );
+
+		self::$adapter -> write( '' ); // empty line
+		self::$adapter -> write( date( 'm.d.y H:m:s' ) . ' | ' . FULL_URL );
+	}
+
+	/**
+	 * Destroy function
+	 * @access	public
+	 * @return	return
+	 */
+	static function destroy() {
+		self::$adapter -> write( 'Request done in ' . Benchmark::end( 'request' ) . ' seconds', NULL );
 	}
 
 	/**

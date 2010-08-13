@@ -19,6 +19,8 @@ include LIB_DIR . "errors/errors.php";
 include LIB_DIR . "constants.php";
 include LIB_DIR . "autoload.php";
 
+Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
+
 include LIB_DIR . "security/security.php";
 
 Security::instance();// -> checkCSRF();

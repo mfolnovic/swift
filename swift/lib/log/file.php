@@ -32,9 +32,6 @@ class Log_File extends Base {
 	 */
 	function __construct( $options ) {
 		$this -> options	= $options;
-
-		$this -> write( '' ); // empty line
-		$this -> write( date( 'm.d.y H:m:s' ) );
 	}
 
 	/**
@@ -43,6 +40,7 @@ class Log_File extends Base {
 	 * @return	void
 	 */
 	function __destruct() {
+		Log::destroy(); // any better way?
 		$handle = fopen( LOG_DIR . $this -> options[ 'file' ], "a" );
 		fwrite( $handle, $this -> output );
 		fclose( $handle );

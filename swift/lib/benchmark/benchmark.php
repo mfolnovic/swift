@@ -22,6 +22,7 @@
 
 class Benchmark extends Base {
 	static $times = array();
+	static $id = 0;
 
 	/**
 	 * This function marks start point for name $name
@@ -30,8 +31,10 @@ class Benchmark extends Base {
 	 * @param		string	$name	Mark name
 	 * @return	void
 	 */
-	static function start( $name ) {
-		self::$times[ $name ] = microtime( true );
+	static function start( $name = NULL, $time = NULL ) {
+		if( empty( $name ) ) $name = ++ self::$id;
+		self::$times[ $name ] = $time ? $time : microtime( true );
+		return $name;
 	}
 
 	/**
