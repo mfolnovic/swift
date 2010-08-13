@@ -22,6 +22,7 @@
 class Log_File extends Base {
 	var $handle = NULL;
 	var $options = NULL;
+	var $output = '';
 
 	/**
 	 * Constructor
@@ -31,7 +32,9 @@ class Log_File extends Base {
 	 */
 	function __construct( $options ) {
 		$this -> options	= $options;
-		$this -> handle		= fopen( LOG_DIR . $options[ 'file' ], "w" );
+
+		$this -> write( '' ); // empty line
+		$this -> write( date( 'm.d.y H:m:s' ) );
 	}
 
 	/**
@@ -40,17 +43,19 @@ class Log_File extends Base {
 	 * @return	void
 	 */
 	function __destruct() {
-		fclose( $this  -> handle );
+		$handle = fopen( LOG_DIR . $this -> options[ 'file' ], "a" );
+		fwrite( $handle, $this -> output );
+		fclose( $handle );
 	}
 
 	/**
-	 * Writes message to a file
+	 * Writes message
 	 * @access	public
 	 * @param		string	message	Message to write
 	 * @return	return
 	 */
 	function write( $message ) {
-		fwrite( $this -> handle, $message . PHP_EOL );
+		$this -> output .= $message . PHP_EOL;
 	}
 }
 
