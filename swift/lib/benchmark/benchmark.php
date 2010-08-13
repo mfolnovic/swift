@@ -36,14 +36,16 @@ class Benchmark extends Base {
 
 	/**
 	 * This function calculates difference between time from name $name
-	 * to current time and writes it to log.
+	 * to current time and returns it
 	 * @access	public
 	 * @static
 	 * @param		string	$name	Mark name
 	 * @return	void
 	 */
 	static function end( $name ) {
-		Log::getInstance() -> write( "[Benchmark] $name: " . round( ( microtime( true ) - self::$times[ $name ] ), 4 ) . " seconds!" );
+		if( !isset( self::$times[ $name ] ) ) return 0;
+
+		return round( ( microtime( true ) - self::$times[ $name ] ), 4 );
 	}
 }
 

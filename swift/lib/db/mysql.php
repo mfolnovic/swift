@@ -80,11 +80,12 @@ class Db_Mysql extends Base {
 	function query( $query ) {
 		if( !$this -> conn ) $this -> connect();
 
-		Benchmark::start( "[SQL $query]" );
+		Benchmark::start( 'query' );
 		$resource = $this -> conn -> query( $query );
 
 		if( $resource === FALSE ) trigger_error( $this -> conn -> error );
-		Benchmark::end( "[SQL $query]" );
+		Log::write( $query, 'MySQL', 'query' );
+
 		return $resource;
 	}
 

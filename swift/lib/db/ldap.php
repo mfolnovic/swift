@@ -84,7 +84,7 @@ class Db_Ldap extends Base {
 		$base -> resultSet = array();
 		$q = $this -> generateConditions( $base );
 
-		Benchmark::start( "[LDAP $q]" );
+		Benchmark::start( 'query' );
 		$entries = $this -> cache -> get( $q );
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
@@ -115,7 +115,7 @@ class Db_Ldap extends Base {
 			}
 		}
 		
-		Benchmark::end( "[LDAP $q]" );
+		Log::write( $q, 'LDAP', 'query' );
 		$this -> cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
 	}
 

@@ -20,32 +20,21 @@
  */
 
 class Log extends Base {
-	static $instance = NULL;
+	static $adapter;
 
 	/**
-	 * Constructor
+	 * Init function
 	 * @access	public
 	 * @return	void
 	 */
-	function __construct() {
+	static function init() {
 		global $config;
 
 		$options = $config -> options[ 'other' ][ 'log' ];
 		if( $options === FALSE ) return;
 
 		$adapter = 'Log_' . $options[ 'adapter' ];
-		$this -> adapter = new $adapter( $options );
-	}
-
-	/**
-	 * Singleton
-	 * @access	public
-	 * @static
-	 * @return	object
-	 */
-	static function getInstance() {
-		if( self::$instance == NULL ) self::$instance = new Log();
-		return self::$instance;
+		self::$adapter = new $adapter( $options );
 	}
 
 	/**
@@ -54,9 +43,15 @@ class Log extends Base {
 	 * @param		string	message	Message to write
 	 * @return	void
 	 */
-	function write( $message ) {
-		if( $this -> adapter === NULL ) return;
-		$this -> adapter -> write( $message );
+	static function write( $message, $type = NULL, $benchmark = NULL ) {
+		if( self::$adapter === NULL ) self::init();
+
+		if( !empty( $type ) ) $type = "[$type]";
+
+		if( !empty( $benchmark ) ) $time = '(' . Benchmark::end( $benchmark ) . ' seconds)';
+		else $time = '';
+
+		self::$adapter -> write( "$type $time: $message" );
 	}
 
 	/**
@@ -65,9 +60,8 @@ class Log extends Base {
 	 * @param		string	message	Message to write with flag error
 	 * @return	void
 	 */
-	function error( $message ) {
-		if( $this -> adapter === NULL ) return;
-		$this -> adapter -> write( "[ERROR] $message" );
+	static function error( $message ) {
+		self::$adapter -> write( $message, 'ERROR' );
 	}
 
 	/**
@@ -76,9 +70,8 @@ class Log extends Base {
 	 * @param		string	message	Message to write with flag notice
 	 * @return	void
 	 */
-	function notice( $message ) {
-		if( $this -> adapter === NULL ) return;
-		$this -> adapter -> write( "[NOTICE] $message" );
+	static function notice( $message ) {
+		self::$adapter -> write( $message, 'NOTICE' );
 	}
 }
 
