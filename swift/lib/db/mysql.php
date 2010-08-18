@@ -134,7 +134,7 @@ class Db_Mysql extends Base {
 	*/
 	function select( &$base ) {
 		if( $base -> relationChanged === FALSE ) return;
-		
+
 		$base -> resultSet = array();
 		$base -> relationChanged = FALSE;
 		$table =& Model::getInstance() -> tables[ $base -> tableName ];
