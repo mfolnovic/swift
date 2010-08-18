@@ -54,8 +54,11 @@ class Base {
 	 * @todo	Allow to pass multiple function
 	 * @todo	Options as last argument?
 	 */
-	function before_filter( $function ) {
-		$this -> before_filters[] = $function;
+	function before_filter() {
+		$functions = func_get_args();
+		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
+
+		$this -> before_filters += $function;
 	}
 
 	/**
@@ -67,7 +70,10 @@ class Base {
 	 * @todo	Options as last argument?
 	 */
 	function after_filter( $function ) {
-		$this -> after_filters[] = $function;
+		$functions = func_get_args();
+		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
+
+		$this -> after_filters += $function;
 	}
 }
 
