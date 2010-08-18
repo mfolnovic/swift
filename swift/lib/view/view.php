@@ -49,7 +49,7 @@ class View {
 	 * @return	void
 	 */
 	function __destruct() {
-		echo ob_get_clean();
+		ob_end_flush();
 	}
 
 	/**
