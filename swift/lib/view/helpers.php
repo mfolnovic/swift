@@ -74,11 +74,11 @@ function form( $url, $options = array() ) {
 	echo "<form action=\"" . URL_PREFIX . "$url\" " . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . $controller -> instance -> csrf_token . '">';
 }
 
-function formEnd() {
+function _formEnd() {
 	echo "</form>";
 }
 
-function link_tag( $title, $href, $options = array() ) {
+function ahref( $title, $href, $options = array() ) {
 	$options = _attributes( $options );
 	echo '<a href="' . URL_PREFIX . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
 }
