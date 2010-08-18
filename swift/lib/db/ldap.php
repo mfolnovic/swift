@@ -169,7 +169,7 @@ class Db_Ldap extends Base {
 	function authenticate( &$base, $data ) {
 		if( !$this -> conn ) $this -> connect();
 
-		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0], $data[ 1 ] ) == true;
+		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0] . $this -> options[ 'domain' ], $data[ 1 ] ) == true;
 	}
 }
 
