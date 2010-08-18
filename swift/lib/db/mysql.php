@@ -111,6 +111,22 @@ class Db_Mysql extends Base {
 	}
 
 	/**
+	 * Generates joins
+	 * @access	public
+	 * @param		string	base	Model
+	 * @return	return
+	 */
+	function generateJoins( &$base ) {
+		$ret  = '';
+		$join =& $base -> relation[ 'join' ];
+
+		for( $i = 0, $size = count( $join ); $i < $size; $i += 2 )
+			$ret .= " INNER JOIN {$join[ $i ]} ON {$join[ $i + 1 ]}";
+
+		return $ret;
+	}
+
+	/**
 	 * Does query based on current relation
 	 * @access	public
 	 * @param		base	Model
@@ -125,9 +141,9 @@ class Db_Mysql extends Base {
 		$relation =& $base -> relation;
 
 		if( empty( $relation[ 'select' ] ) ) $select = '*';
-		else $select = 'id,' . implode( ',', $relation[ 'select' ] );
+		else $select = ( !empty( $relation[ 'join' ] ) ? '' : 'id,' ) . implode( ',', $relation[ 'select' ] );
 
-		$res = $this -> query( "SELECT " . $select . " FROM " . $base -> tableName . $this -> generateWhere( $base ) . $this -> generateExtra( $base ) . ';' );
+		$res = $this -> query( "SELECT " . $select . " FROM " . $base -> tableName . $this -> generateJoins( $base ) . $this -> generateWhere( $base ) . $this -> generateExtra( $base ) . ';' );
 
 		for( $i = 0; $i < $res -> num_rows; ++ $i ) {
 			$row = $res -> fetch_assoc();

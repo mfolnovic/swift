@@ -62,7 +62,8 @@ class Model_Base extends Base {
 		'limit' => array(), 
 		'group' => array(),
 		'having' => array(), 
-		'includes' => array() 
+		'includes' => array(),
+		'join' => array()
 	);
 	var $schema;
 	var $hasOne = array();
@@ -133,7 +134,7 @@ class Model_Base extends Base {
 		if( in_array( $function, array_keys( $this -> relation ) ) ) {
 			if( is_array( $arguments[ 0 ] ) ) $args = $arguments[ 0 ];
 			else $args = $arguments;
-			
+
 			$this -> relation[ $function ] = $args;
 			$this -> relationChanged = true;
 		} else if( $function == 'find' || substr( $function, 0, 8 ) == 'find_by_' ) {
