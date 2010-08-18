@@ -90,8 +90,8 @@ class View_Haml {
 		if( $tabs == $size ) return;
 
 		if( $line[ $tabs ] == '-' ) {
-			$rest = trim( substr( $line, $tabs + 1 ) );
-			$command = substr( $rest, 0, strpos( $rest, '(' ) );
+			$rest = substr( $line, $tabs + 1 );
+			$command = trim( substr( $rest, 0, strpos( $rest, '(' ) ) );
 			$structure = in_array( $command, $this -> structures );
 			$this -> parsed .= "<?php " . $rest . ( $structure ? " { " : ";" ) . " ?>";
 			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
@@ -168,7 +168,7 @@ class View_Haml {
 				$status = !$status;
 			}
 		}
-		$data[ 'html' ] .= trim( substr( $line, $pos ) );
+		$data[ 'html' ] .= substr( $line, $pos );
 		if( !empty( $data[ 'tag' ] ) ) {
 			$this -> parsed .= "<{$data[ 'tag' ] }" . $this -> attributesToHTML( $data[ 'attributes' ] ) . ">";
 			array_unshift( $this -> tree, array( $tabs, isset( $this -> ommitCloseTag[ $data[ 'tag' ] ] ) ? "" : "</{$data[ 'tag' ]}>" ) );
