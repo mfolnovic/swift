@@ -39,7 +39,7 @@ class View_Haml {
 		Dir::make_dir( $to );
 
 		if( !file_exists( $from ) )
-			die( "Template doesn't exist!" );
+			trigger_error( "Template doesn't exist!" );
 
 		$fileFrom = fopen( $from, "r" );
 		$fileTo = fopen( $to, "w" );
