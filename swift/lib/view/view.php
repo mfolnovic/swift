@@ -61,13 +61,13 @@ class View {
 	 * @todo		fix caching, filename should be current url
 	 */
 	function render( $c = NULL, $a = NULL ) {
-		global $config, $controller;
+		global $config;
 
 		$view_id = Benchmark::start();
 		if( $this -> render === FALSE ) return;
 		else if( $this -> render === TRUE ) {
-			if( empty( $c ) ) $c = $controller -> controller;
-			if( empty( $a ) ) $a = $controller -> action;
+			if( empty( $c ) ) $c = Controller::instance() -> controller;
+			if( empty( $a ) ) $a = Controller::instance() -> action;
 
 			$path = $c . '/' . $a . '.php';
 		} else
@@ -85,8 +85,8 @@ class View {
 			Log::write( $path, 'HAML', $haml_id );
 		}
 
-		if( isset( $controller -> instance ) )
-			extract( $controller -> instance -> globals );
+		if( isset( Controller::instance() -> object ) )
+			extract( Controller::instance() -> object -> globals );
 
 		ob_start();
 		$view = View::getInstance();

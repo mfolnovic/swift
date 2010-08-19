@@ -22,9 +22,9 @@
 class Controller extends Base {
 	var $controller = NULL;
 	var $action = NULL;
-	var $instance = NULL;
+	var $object = NULL;
 	var $csrf_token;
-	static $instance;
+	static $instance = NULL;
 
 	/**
 	 * Runs a controller
@@ -52,13 +52,13 @@ class Controller extends Base {
 		$controllerName = $controller . 'Controller';
 
 		if( is_callable( array( $controllerName, $action ) ) ) {
-			$this -> instance         = new $controllerName;
+			$this -> object         = new $controllerName;
 			$this -> controller       = $controller;
 			$this -> action           = $action;
-			$this -> instance -> data = array_merge( $_POST, $data );
+			$this -> object -> data = array_merge( $_POST, $data );
 
 			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) )
-				$this -> instance -> $action();
+				$this -> object -> $action();
 		}
 	}
 
@@ -79,8 +79,8 @@ class Controller extends Base {
 	 * @return	void
 	 */
 	function clean() {
-		if( empty( $this -> instance ) ) return;
-		foreach( $this -> instance -> globals as $key => $val )
+		if( empty( $this -> object ) ) return;
+		foreach( $this -> object -> globals as $key => $val )
 			unset( $GLOBALS[ $key ] );
 	}
 
@@ -89,7 +89,7 @@ class Controller extends Base {
 	 * @access	public
 	 * @return	object
 	 */
-	function instance() {
+	static function instance() {
 		if( empty( self::$instance ) ) self::$instance = new Controller;
 		return self::$instance;
 	}

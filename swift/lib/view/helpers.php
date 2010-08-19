@@ -69,9 +69,8 @@ function format_time( $timestamp ) {
 }
 
 function form( $url, $options = array() ) {
-	global $controller;
 	$options = array_merge( $options, array( 'method' => 'post' ) );
-	echo "<form action=\"" . URL_PREFIX . "$url\" " . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . $controller -> instance -> csrf_token . '">';
+	echo "<form action=\"" . URL_PREFIX . "$url\" " . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . Controller::instance() -> object -> csrf_token . '">';
 }
 
 function _formEnd() {
