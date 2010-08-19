@@ -23,6 +23,7 @@
 
 class Config extends Base {
 	var $options = array();
+	static $instance;
 
 	/**
 	 * Loads configurations and routes
@@ -37,6 +38,16 @@ class Config extends Base {
 
 		foreach( $files as $file )
 			include CONFIG_DIR . $file . ".php";
+	}
+
+	/**
+	 * Singleton
+	 * @access	public
+	 * @return	object
+	 */
+	static function instance() {
+		if( empty( self::$instance ) ) self::$instance = new Config;
+		return self::$instance;
 	}
 }
 
