@@ -30,6 +30,7 @@ class Model {
 	 * @param		string	tableName	Name of table
 	 * @param		bool		newRow		Is it new row?
 	 * @return	object
+	 * @todo		__invoke?
 	 */
 	function create( $tableName, $newRow = NULL ) {
 		if( !isset( $this -> tables[ $tableName ] ) ) {

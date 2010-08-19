@@ -47,7 +47,7 @@
  * @package			Swift
  * @subpackage	Model
  * @author			Swift dev team
- * 
+ * @todo				__set_state?
  */
 
 class Model_Base extends Base {
