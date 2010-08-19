@@ -32,7 +32,7 @@ class Security {
 	 */
 	function __construct() {
 		$this -> filter( $_POST );
-		$this -> CsrfToken();
+		$this -> csrfToken();
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Security {
 	 * @access	public
 	 * @return	void
 	 */
-	function CsrfToken() {
+	function csrfToken() {
 		$this -> csrf_token = md5( mt_rand() );
 
 		if( !isset( $_SESSION[ 'csrf_tokens' ] ) ) $_SESSION[ 'csrf_tokens' ] = array();
