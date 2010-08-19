@@ -36,6 +36,11 @@ class Router extends Base {
 	function route( $path, $runController = true ) {
 		global $controller;
 
+		if( empty( $path ) ) {
+			$controller -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
+			return;
+		}
+
 		$path = str_replace( "+", " ", $path );
 		$start = 0; 
 		$end = strpos( $path, "?" ) - 1;
@@ -48,11 +53,6 @@ class Router extends Base {
 		}
 
 		$path = substr( $path, $start, $end - $start + 1 );
-
-		if( empty( $path ) ) {
-			$controller -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
-			return;
-		}
 
 		$this -> url = $path;
 		$this -> path = explode( "/", $path );
