@@ -23,6 +23,10 @@ class Router extends Base {
 	var $routes, $path, $url, $root, $continueRouting;
 	static $instance;
 
+	function __construct() {
+		$this -> loadRoutes();
+	}
+
 	/**
 	 * Main function responsible to route $path to current controller & action
 	 * @access	public
@@ -34,10 +38,8 @@ class Router extends Base {
 	 * @return	void
 	 */
 	function route( $path, $runController = true ) {
-		global $controller;
-
 		if( empty( $path ) ) {
-			$controller -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
+			Controller::instance() -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
 			return;
 		}
 
@@ -61,7 +63,7 @@ class Router extends Base {
 			if( $this -> checkRoute( $route, $this -> path, $runController ) )
 				return;
 
-		$controller -> render404();
+		Controller::instance() -> render404();
 	}
 
 	/**
@@ -74,7 +76,6 @@ class Router extends Base {
 	 * @todo		Remove runController
 	 */
 	function checkRoute( &$route, $path, $runController ) {
-		global $controller;
 		$ret = array();
 
 		$this -> continueRouting = false;
@@ -94,8 +95,12 @@ class Router extends Base {
 			if( !isset( $ret[ $id ] ) )
 				$ret[ $id ] = $val;
 
-		if( $runController ) $controller -> run( $ret[ 'controller' ], $ret[ 'action' ], $ret );
+		if( $runController ) Controller::instance() -> run( $ret[ 'controller' ], $ret[ 'action' ], $ret );
 		return !$this -> continueRouting;
+	}
+
+	function loadRoutes() {
+		include CONFIG_DIR . "routes.php";
 	}
 
 	/**
