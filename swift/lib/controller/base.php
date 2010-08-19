@@ -49,7 +49,7 @@ class Controller_Base extends Base {
 	 * @return	void
 	 */
 	function layout( $layout ) {
-		View::getInstance() -> layout = $layout;
+		View::instance() -> layout = $layout;
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Controller_Base extends Base {
 	 * @return	return
 	 */
 	function render( $path ) {
-		View::getInstance() -> render = $path;
+		View::instance() -> render = $path;
 	}
 
 	/**
@@ -86,7 +86,7 @@ class Controller_Base extends Base {
 	 * @return object
 	*/
 	function model( $name, $data = array() ) {
-		return Model::getInstance() -> create( $name, $data );
+		return Model::instance() -> create( $name, $data );
 	}
 
 	/**
@@ -105,7 +105,7 @@ class Controller_Base extends Base {
 	 * @return	return
 	 */
 	function caches_action() {
-		$view = View::getInstance();
+		$view = View::instance();
 		foreach( func_get_args() as $action )
 			$view -> action_caches[] = array( &$this -> controllerName, $action );
 	}
