@@ -31,13 +31,9 @@ class Router extends Base {
 	 * Main function responsible to route $path to current controller & action
 	 * @access	public
 	 * @param		string	path					Path to route from
-	 * @param		bool		prefixed			Is url prefixed?
-	 * @param		bool		runController	Does router need to run it too?
-	 * @todo		Remove $prefixed
-	 * @todo		Remove $runController
 	 * @return	void
 	 */
-	function route( $path, $runController = true ) {
+	function route( $path ) {
 		if( empty( $path ) ) {
 			Controller::instance() -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
 			return;
@@ -60,7 +56,7 @@ class Router extends Base {
 		$this -> path = explode( "/", $path );
 
 		foreach( $this -> routes as $route )
-			if( $this -> checkRoute( $route, $this -> path, $runController ) )
+			if( $this -> checkRoute( $route, $this -> path ) )
 				return;
 
 		Controller::instance() -> render404();
@@ -75,7 +71,7 @@ class Router extends Base {
 	 * @return	return
 	 * @todo		Remove runController
 	 */
-	function checkRoute( &$route, $path, $runController ) {
+	function checkRoute( &$route, $path ) {
 		$ret = array();
 
 		$this -> continueRouting = false;
@@ -95,7 +91,7 @@ class Router extends Base {
 			if( !isset( $ret[ $id ] ) )
 				$ret[ $id ] = $val;
 
-		if( $runController ) Controller::instance() -> run( $ret[ 'controller' ], $ret[ 'action' ], $ret );
+		Controller::instance() -> run( $ret[ 'controller' ], $ret[ 'action' ], $ret );
 		return !$this -> continueRouting;
 	}
 
