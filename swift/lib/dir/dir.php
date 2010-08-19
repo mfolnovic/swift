@@ -21,17 +21,34 @@
 
 class Dir {
 	/**
-	 * Returns all files in $dir
+	 * Returns all files in directory $path
 	 * @access	public
-	 * @param		string	dir	Directory to search in
+	 * @param		string	path	Directory to search in
 	 * @return	array
 	 */
-	static function files( $dir ) {
+	static function files( $path ) {
 		$ret = array();
-		$dir = scandir( $dir );
+		$dir = scandir( $path );
 
 		foreach( $dir as $a )
-			if( $a[ 0 ] != '.' && $a[ strlen( $a ) - 1 ] != '/' )
+			if( $a[ 0 ] != '.' && is_file( $path . $a ) )
+				$ret[] = $a;
+
+		return $ret;
+	}
+
+	/**
+	 * Returns all directories in directory $path
+	 * @access	public
+	 * @param		string	path	Directory to search in
+	 * @return	array
+	 */
+	static function dirs( $path ) {
+		$ret = array();
+		$dir = scandir( $path );
+
+		foreach( $dir as $a )
+			if( $a[ 0 ] != '.' && is_dir( $path . $a ) )
 				$ret[] = $a;
 
 		return $ret;
@@ -44,6 +61,7 @@ class Dir {
 	 * @param		string	string	directory
 	 * @param		string	file		file
 	 * @return	string
+	 * @todo		Move to class file
 	 */
 	static function read( $dir, $file ) {
 		return file_get_contents( $dir . '/' . $file );

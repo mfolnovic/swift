@@ -42,7 +42,7 @@ class Cache extends Base {
 	 * @param		string	$adapter	Adapter name
 	 * @return	object
 	 */
-	static function getInstance( $adapter ) {
+	static function instance( $adapter ) {
 		if( !isset( self::$instances[ $adapter ] ) ) {
 			global $config;
 

@@ -45,7 +45,7 @@ class Model {
 	 * @access	public
 	 * @return	object
 	 */
-	static function getInstance() {
+	static function instance() {
 		if( empty( self::$instance ) ) self::$instance = new Model;
 		return self::$instance;
 	}

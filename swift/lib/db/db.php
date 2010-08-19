@@ -27,7 +27,7 @@ class Db extends Base {
 	 * @access	public
 	 * @return	object
 	 */
-	static function getInstance( $adapter ) {
+	static function instance( $adapter ) {
 		global $config;
 
 		if( !isset( self::$instances[ $adapter ] ) ) {
