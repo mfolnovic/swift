@@ -83,11 +83,11 @@ function ahref( $title, $href, $options = array() ) {
 }
 
 function partial( $name ) {
-	View::getInstance() -> render( null, '_' . $name );
+	View::instance() -> render( null, '_' . $name );
 }
 
 function render( $c = NULL, $a = NULL ) {
-	View::getInstance() -> render( $c, $a );
+	View::instance() -> render( $c, $a );
 }
 
 function xss_clean( $string ) {

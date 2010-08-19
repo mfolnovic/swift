@@ -237,7 +237,7 @@ class View_Haml {
 	 * @access	public
 	 * @return	object
 	 */
-	static function getInstance() {
+	static function instance() {
 		if( empty( self::$instance ) ) self::$instance = new View_Haml;
 		return self::$instance;
 	}

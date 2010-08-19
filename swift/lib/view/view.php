@@ -81,7 +81,7 @@ class View {
 
 		if( !file_exists( TMP_DIR . "views/$path" ) || !$config -> options[ 'other' ][ 'cache_views' ] ) {
 			$haml_id = Benchmark::start();
-			View_Haml::getInstance() -> parse( VIEWS_DIR . $path, TMP_DIR . "views/$path" );
+			View_Haml::instance() -> parse( VIEWS_DIR . $path, TMP_DIR . "views/$path" );
 			Log::write( $path, 'HAML', $haml_id );
 		}
 
@@ -89,7 +89,7 @@ class View {
 			extract( Controller::instance() -> object -> globals );
 
 		ob_start();
-		$view = View::getInstance();
+		$view = View::instance();
 		include TMP_DIR . 'views/' . $path;
 		if( in_array( array( $c, $a ), $this -> action_caches ) ) {
 			$path = TMP_DIR . "caches/$cache";
