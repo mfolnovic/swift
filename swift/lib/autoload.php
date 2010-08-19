@@ -19,8 +19,13 @@ function __autoload( $name ) {
 	$name = strtolower( $name );
 	$path = str_replace( '_', '/', $name );
 	if( strpos( $path, '/' ) === false ) $path .= '/' . $name;
+	$path = LIB_DIR . $path . ".php";
+	
+	if( file_exists( $path ) )
+		include $path;
+	else
+		return Plugins::instance() -> loadPlugin( $name );
 
-	include LIB_DIR . $path . ".php";
 	return true;
 }
 

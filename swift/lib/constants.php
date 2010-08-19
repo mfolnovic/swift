@@ -24,20 +24,21 @@ define( 'ENV_INTERNAL', 32 );
 define( 'APP_DIR', DIR . 'app/' );
 define( 'LOG_DIR', APP_DIR . 'log/' );
 define( 'CONFIG_DIR', APP_DIR . 'config/' );
+define( 'PLUGIN_DIR', APP_DIR . 'plugins/' );
 define( 'PUBLIC_DIR', APP_DIR . 'public/' );
 define( 'TMP_DIR', APP_DIR . 'tmp/' );
 define( 'CONTROLLERS_DIR', APP_DIR . 'controllers/' );
 define( 'MODEL_DIR', APP_DIR . 'models/' );
 define( 'VIEWS_DIR', APP_DIR . 'views/' );
 
-if( empty( $_SERVER[ "REQUEST_URI" ] ) ) {
+if( empty( $_SERVER[ 'REQUEST_URI' ] ) ) {
 	define( 'URL', '' );
 	define( 'FULL_URL', '' );
 } else {
-	define( "URL", empty( $_SERVER[ "REQUEST_URI" ] ) ? '' : $_SERVER[ "REQUEST_URI" ] );
-	define( "FULL_URL", "http://". $_SERVER[ 'SERVER_NAME' ] . URL );
+	define( 'URL', empty( $_SERVER[ 'REQUEST_URI' ] ) ? '' : $_SERVER[ 'REQUEST_URI' ] );
+	define( 'FULL_URL', 'http://'. $_SERVER[ 'SERVER_NAME' ] . URL );
 }
 
-define( "URL_PREFIX", removeSamePrefix( URL, $_SERVER[ "PHP_SELF" ] ) );
+define( 'URL_PREFIX', removeSamePrefix( URL, $_SERVER[ 'PHP_SELF' ] ) );
 
 ?>

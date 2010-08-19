@@ -51,7 +51,6 @@ class Base {
 	 * @access	public
 	 * @param		string	function	Function which should be run as before_filter
 	 * @return	void
-	 * @todo	Allow to pass multiple function
 	 * @todo	Options as last argument?
 	 */
 	function before_filter() {
@@ -66,7 +65,6 @@ class Base {
 	 * @access	public
 	 * @param		string	function	Function which should be run as after_filter
 	 * @return	void
-	 * @todo	Allow to pass multiple function
 	 * @todo	Options as last argument?
 	 */
 	function after_filter( $function ) {
@@ -75,6 +73,37 @@ class Base {
 
 		$this -> after_filters += $function;
 	}
+
+	/**
+	 * Searches through all plugins and finds that function
+	 * @access	public
+	 * @param		string	name	Function name
+	 * @param 	array		args	Arguments
+	 * @return	void
+	 */
+	function __call( $name, $args ) {
+		$extends = Plugins::instance() -> extends[ get_class( $this ) ];
+		foreach( $extends as $class ) {
+			$class_name = (string)$class -> name;
+			$object = new $class_name;
+
+			if( method_exists( $object, $name ) )
+				call_user_func_array( array( $object, $name ), $args );
+		}
+	}
+
+	/**
+	 * Same as above, but for static calls
+	 * @access	public
+	 * @param		string	name	Function name
+	 * @param 	array		args	Arguments
+	 * @return	void
+	 * @todo		Optimize, call_user-func_array is slow!
+	 */
+	static function __callStatic( $name, $args ) {
+		call_user_func_array( array( __CLASS__, $name ), $args );
+	}
+
 }
 
 ?>

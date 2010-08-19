@@ -21,6 +21,8 @@ include LIB_DIR . "constants.php";
 
 Plugins::instance() -> loadManifests();
 Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
+$a = new Benchmark;
+$a -> foo();exit;
 //Benchmark::instance() -> foo();
 
 //Cache::pageCache( $_GET[ 'url' ] );
