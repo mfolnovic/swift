@@ -21,15 +21,8 @@ include LIB_DIR . "autoload.php";
 
 Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
 
-include LIB_DIR . "security/security.php";
-
-Security::instance();// -> checkCSRF();
-
-include LIB_DIR . "config/config.php";
-include LIB_DIR . "controller/controller.php";
-
-// Load config
-$config -> load();
+Security::instance();
+Config::instance() -> load();
 
 if( ENV & ENV_HTTP ) {
 	// Route
