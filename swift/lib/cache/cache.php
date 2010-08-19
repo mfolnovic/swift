@@ -23,6 +23,20 @@ class Cache extends Base {
 	static $instances = array();
 
 	/**
+	 * Checks if page cache exists, if yes, load it and stop
+	 * @access	public
+	 * @param		string	name	description
+	 * @return	return
+	 */
+	static function pageCache( $url ) {
+		$path = TMP_DIR . "caches/" . str_replace( '/', '_', $url );
+		if( file_exists( $path ) ) {
+			include $path;
+			exit;
+		}
+	}
+
+	/**
 	 * Returns singleton instance of adapter $adapter
 	 * @access	public
 	 * @param		string	$adapter	Adapter name
