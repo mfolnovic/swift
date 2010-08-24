@@ -30,7 +30,7 @@ class Log extends Base {
 	static function init() {
 		global $config;
 
-		$options = $config -> options[ 'other' ][ 'log' ];
+		$options = Config::instance() -> get( 'other', 'log' );
 		if( $options === FALSE ) return;
 
 		$adapter = 'Log_' . $options[ 'adapter' ];

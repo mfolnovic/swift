@@ -28,11 +28,9 @@ class Db extends Base {
 	 * @return	object
 	 */
 	static function instance( $adapter ) {
-		global $config;
-
 		if( !isset( self::$instances[ $adapter ] ) ) {
-			$conf			= $config -> options[ 'database' ][ $adapter ];
-			$adapter	= 'Db_' . ucfirst( $conf[ 'adapter' ] );
+			$conf    = Config::instance() -> get( 'database', $adapter );
+			$adapter = 'Db_' . ucfirst( $conf[ 'adapter' ] );
 
 			self::$instances[ $adapter ] = new $adapter( $conf );
 		}

@@ -137,7 +137,7 @@ class Db_Mysql extends Base {
 
 		$base -> resultSet = array();
 		$base -> relationChanged = FALSE;
-		$table =& Model::getInstance() -> tables[ $base -> tableName ];
+		$table =& Model::instance() -> tables[ $base -> tableName ];
 		$relation =& $base -> relation;
 
 		if( empty( $relation[ 'select' ] ) ) $select = '*';
@@ -179,7 +179,7 @@ class Db_Mysql extends Base {
 			$this -> query( "INSERT INTO {$base -> tableName} ($columns) VALUES ($values)" );
 			$base -> newRecord -> id = $this -> conn -> insert_id;
 			
-			$table =& Model::getInstance() -> tables[ $base -> tableName ];
+			$table =& Model::instance() -> tables[ $base -> tableName ];
 			$table[ $base -> newRecord -> id ] = $base -> newRecord;
 			$base -> resultSet[ $base -> newRecord -> id ] = & $table[ $base -> newRecord -> id ];
 			$base -> newRecord = FALSE;

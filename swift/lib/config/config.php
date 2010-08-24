@@ -31,12 +31,30 @@ class Config extends Base {
 	 * @return	void
 	 */
 	function load() {
-		global $config;
-
 		$files = array( 'application' );
 
-		foreach( $files as $file )
-			include CONFIG_DIR . $file . ".php";
+		foreach( $files as $file ) {
+			$path = $dir = CONFIG_DIR . $file;
+			if( file_exists( $path . '.yml' ) )
+				$this -> options = array_merge( $this -> options, Yaml::parse( $path = $path . '.yml' ) );
+			else if( file_exists( $path . '.php' ) )
+				include $path . ".php";
+		}
+	}
+
+	/**
+	 * Gets passed indexes from configuration
+	 * @access	public
+	 * @param		mixed	index1, ...	Indexes
+	 * @return	return
+	 */
+	function get() {
+		$curr =& $this -> options;
+
+		foreach( func_get_args() as $index )
+			$curr =& $curr[ $index ];
+
+		return $curr;
 	}
 
 	/**

@@ -19,15 +19,13 @@ include LIB_DIR . "autoload.php";
 include LIB_DIR . "errors/errors.php";
 include LIB_DIR . "constants.php";
 
+Config::instance() -> load();
 Plugins::instance() -> loadManifests();
 Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
-$a = new Benchmark;
-$a -> foo();exit;
 //Benchmark::instance() -> foo();
 
 //Cache::pageCache( $_GET[ 'url' ] );
 Security::instance();
-Config::instance() -> load();
 
 if( ENV & ENV_HTTP ) {
 	// Route

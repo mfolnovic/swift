@@ -32,7 +32,7 @@ class Db_Ldap extends Base {
 	 */
 	function __construct( $options ) {
 		$this -> options = $options;
-		$this -> cache = Cache::getInstance( $this -> options[ 'cache_store' ] );
+		$this -> cache = Cache::instance( $this -> options[ 'cache_store' ] );
 	}
 
 	/**
