@@ -36,8 +36,7 @@ class Log extends Base {
 		$adapter = 'Log_' . $options[ 'adapter' ];
 		self::$adapter = new $adapter( $options );
 
-		self::$adapter -> write( '' ); // empty line
-		self::$adapter -> write( date( 'm.d.y H:m:s' ) . ' | ' . FULL_URL );
+		self::$adapter -> write( '' ) -> write( date( 'm.d.y H:m:s' ) . ' | ' . FULL_URL );
 	}
 
 	/**
@@ -53,7 +52,7 @@ class Log extends Base {
 	 * Writes to log
 	 * @access	public
 	 * @param		string	message	Message to write
-	 * @return	void
+	 * @return	object
 	 */
 	static function write( $message, $type = NULL, $benchmark = NULL ) {
 		if( self::$adapter === NULL ) self::init();
@@ -64,26 +63,32 @@ class Log extends Base {
 		else $time = '';
 
 		self::$adapter -> write( "$type $time: $message" );
+
+		return $this;
 	}
 
 	/**
 	 * Write error to log
 	 * @access	public
 	 * @param		string	message	Message to write with flag error
-	 * @return	void
+	 * @return	object
 	 */
 	static function error( $message ) {
 		self::$adapter -> write( $message, 'ERROR' );
+
+		return $this;
 	}
 
 	/**
 	 * Write notice to log
 	 * @access	public
 	 * @param		string	message	Message to write with flag notice
-	 * @return	void
+	 * @return	object
 	 */
 	static function notice( $message ) {
 		self::$adapter -> write( $message, 'NOTICE' );
+
+		return $this;
 	}
 }
 
