@@ -82,7 +82,7 @@ class Model_Base extends Base {
 	 */
 	function __construct( $tableName, $newRow = NULL ) {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
-		$this -> link = DB::getInstance( $this -> connection );
+		$this -> link = DB::instance( $this -> connection );
 
 /*		if( $this -> connection == 'default' ) {
 			$res = $this -> link -> query( "SHOW TABLES LIKE '%{$this -> tableName}%'" );
@@ -131,6 +131,8 @@ class Model_Base extends Base {
 	 * @return	return
 	 */
 	function __call( $function, $arguments ) {
+		if( parent::__call( $function, $arguments ) ) return;
+
 		if( in_array( $function, array_keys( $this -> relation ) ) ) {
 			if( is_array( $arguments[ 0 ] ) ) $args = $arguments[ 0 ];
 			else $args = $arguments;
@@ -245,7 +247,7 @@ class Model_Base extends Base {
 			$ids[ $row -> $primaryKey ][] = $id;
 		}
 
-		$assocModel = Model::getInstance() -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
+		$assocModel = Model::instance() -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
 		if( !empty( $assoc ) ) $assocModel -> includes( $assoc );
 
 		foreach( $this -> resultSet as $id => $val ) {

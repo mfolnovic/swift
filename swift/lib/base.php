@@ -82,14 +82,22 @@ class Base {
 	 * @return	void
 	 */
 	function __call( $name, $args ) {
-		$extends = Plugins::instance() -> extends[ get_class( $this ) ];
+		$plugins = Plugins::instance();
+		$class = get_class( $this );
+		if( !isset( $plugins -> extends[ $class ] ) ) return false;
+
+		$extends = $plugins -> extends[ $class ];
 		foreach( $extends as $class ) {
 			$class_name = (string)$class -> name;
 			$object = new $class_name;
 
-			if( method_exists( $object, $name ) )
+			if( method_exists( $object, $name ) ) {
 				call_user_func_array( array( $object, $name ), $args );
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -101,7 +109,7 @@ class Base {
 	 * @todo		Optimize, call_user-func_array is slow!
 	 */
 	static function __callStatic( $name, $args ) {
-		call_user_func_array( array( __CLASS__, $name ), $args );
+//		call_user_func_array( array( __CLASS__, $name ), $args );
 	}
 
 }
