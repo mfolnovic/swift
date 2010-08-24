@@ -30,7 +30,7 @@ class Log extends Base {
 	static function init() {
 		global $config;
 
-		$options = Config::instance() -> get( 'other', 'log' );
+		$options = Config::instance() -> get( 'log' );
 		if( $options === FALSE ) return;
 
 		$adapter = 'Log_' . $options[ 'adapter' ];
@@ -52,7 +52,7 @@ class Log extends Base {
 	 * Writes to log
 	 * @access	public
 	 * @param		string	message	Message to write
-	 * @return	object
+	 * @return	objectg
 	 */
 	static function write( $message, $type = NULL, $benchmark = NULL ) {
 		if( self::$adapter === NULL ) self::init();
