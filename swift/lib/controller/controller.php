@@ -45,7 +45,7 @@ class Controller extends Base {
 		if( file_exists( $path ) )
 			include_once $path;
 		else {
-			$router -> continueRouting = true;
+			Router::instance() -> continueRouting = true;
 			return;
 		}
 
