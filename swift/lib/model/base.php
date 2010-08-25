@@ -50,7 +50,7 @@
  * @todo				__set_state?
  */
 
-class Model_Base extends Base {
+class Model_Base extends Base implements IteratorAggregate {
 	var $tableName;
 	var $resultSet = array();
 	var $update = array();
@@ -131,7 +131,7 @@ class Model_Base extends Base {
 	 * @return	return
 	 */
 	function __call( $function, $arguments ) {
-		if( parent::__call( $function, $arguments ) ) return;
+		if( parent::__call( $function, $arguments ) ) return $this;
 
 		if( in_array( $function, array_keys( $this -> relation ) ) ) {
 			if( is_array( $arguments[ 0 ] ) ) $args = $arguments[ 0 ];
@@ -153,6 +153,14 @@ class Model_Base extends Base {
 		return $this;
 	}
 
+	/**
+	 * Allows iterating through model
+	 * @access	public
+	 * @return	object
+	 */
+	function getIterator() {
+		return new ArrayIterator( $this -> all() );
+	}
 	/**
 	 * Returns first row based on current relation
 	 * @access	public
