@@ -113,7 +113,6 @@ class Base {
 	static function __callStatic( $name, $args ) {
 //		call_user_func_array( array( __CLASS__, $name ), $args );
 	}
-
 }
 
 ?>
