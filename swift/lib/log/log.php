@@ -36,7 +36,8 @@ class Log extends Base {
 		$adapter = 'Log_' . $options[ 'adapter' ];
 		self::$adapter = new $adapter( $options );
 
-		self::$adapter -> write( '' ) -> write( date( 'm.d.y H:m:s' ) . ' | ' . FULL_URL );
+		self::write( '' );
+		self::write( date( 'm.d.y H:m:s' ) . ' | ' . FULL_URL );
 	}
 
 	/**
@@ -63,8 +64,6 @@ class Log extends Base {
 		else $time = '';
 
 		self::$adapter -> write( "$type $time: $message" );
-
-		return $this;
 	}
 
 	/**
