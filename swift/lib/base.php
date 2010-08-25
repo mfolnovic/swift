@@ -83,17 +83,19 @@ class Base {
 	 */
 	function __call( $name, $args ) {
 		$plugins = Plugins::instance();
-		$class = get_class( $this );
-		if( !isset( $plugins -> extends[ $class ] ) ) return false;
+		$classes = get_parent_classes( get_class( $this ) );
 
-		$extends = $plugins -> extends[ $class ];
-		foreach( $extends as $class ) {
-			$class_name = (string)$class -> name;
-			$object = new $class_name;
+		foreach( $classes as $class ) {
+			$extends = $plugins -> extensions( $class );
 
-			if( method_exists( $object, $name ) ) {
-				call_user_func_array( array( $object, $name ), $args );
-				return true;
+			foreach( $extends as $object ) {
+				$class_name = (string)$object -> name;
+				$object = new $class_name( $this );
+
+				if( method_exists( $object, $name ) ) {
+					call_user_func_array( array( $object, $name ), $args );
+					return true;
+				}
 			}
 		}
 

@@ -12,7 +12,9 @@ class Plugins extends Base {
 	 * @return	void
 	 */
 	function loadPlugin( $name ) {
+		if( strpos( '/', $name ) === FALSE ) $name .= '/' . $name;
 		$path = PLUGIN_DIR . str_replace( '_', '/', $name ) . ".php";
+
 		if( !file_exists( $path ) ) return FALSE;
 
 		include $path;
@@ -48,6 +50,10 @@ class Plugins extends Base {
 	static function instance() {
 		if( self::$instance == NULL ) self::$instance = new Plugins;
 		return self::$instance;
+	}
+
+	function extensions( $class ) {
+		return isset( self::instance() -> extends[ $class ] ) ? self::instance() -> extends[ $class ] : array();
 	}
 }
 

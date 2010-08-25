@@ -54,4 +54,13 @@ function extension( $filename ) {
 	return substr( $filename, - strpos( '.', $filename ) );
 }
 
+function get_parent_classes( $class ) {
+	$ret = array( $class );
+
+	while( ( $class = get_parent_class( $class ) ) !== FALSE )
+		$ret[] = $class;
+
+	return $ret;
+}
+
 ?>
