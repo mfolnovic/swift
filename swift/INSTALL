@@ -1,1 +1,0 @@
-For now, copy lib/scripts/new_app to e.g. /var/www/, and change LIB_DIR constant to wherever the PRF is, also, give permissions for writing to tmp and log, and change applications.php to use your database ( supports only mysql now )
