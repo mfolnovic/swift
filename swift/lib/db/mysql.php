@@ -107,7 +107,8 @@ class Db_Mysql extends Base {
 	 * @todo		Implement it
 	 */
 	function generateExtra( &$base ) {
-		return '';
+		$relation =& $base -> relation;
+		return ( empty( $relation[ 'limit' ] ) ? '' : ' LIMIT ' . implode( $relation[ 'limit' ] ) );
 	}
 
 	/**
