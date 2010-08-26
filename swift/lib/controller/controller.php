@@ -24,7 +24,6 @@ class Controller extends Base {
 	var $action = NULL;
 	var $object = NULL;
 	var $csrf_token;
-	static $instance = NULL;
 
 	/**
 	 * Runs a controller
@@ -84,15 +83,6 @@ class Controller extends Base {
 			unset( $GLOBALS[ $key ] );
 	}
 
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new Controller;
-		return self::$instance;
-	}
 }
 
 $controller = new Controller;

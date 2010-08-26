@@ -23,11 +23,11 @@ class Db extends Base {
 	static $instances = array();
 
 	/**
-	 * Returns singleton instance of adapter $adapter
+	 * Returns factory instance of adapter $adapter
 	 * @access	public
 	 * @return	object
 	 */
-	static function instance( $adapter ) {
+	static function factory( $adapter ) {
 		if( !isset( self::$instances[ $adapter ] ) ) {
 			$conf    = Config::instance() -> get( 'database', $adapter );
 			$adapter = 'Db_' . ucfirst( $conf[ 'adapter' ] );

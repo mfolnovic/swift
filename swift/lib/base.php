@@ -23,6 +23,7 @@
 class Base {
 	var $before_filters = array();
 	var $after_filters  = array();
+	static $instance    = array();
 
 	/**
 	 * Constructor
@@ -108,10 +109,23 @@ class Base {
 	 * @param		string	name	Function name
 	 * @param 	array		args	Arguments
 	 * @return	void
+	 * @todo		Implement it
 	 * @todo		Optimize, call_user-func_array is slow!
 	 */
 	static function __callStatic( $name, $args ) {
 //		call_user_func_array( array( __CLASS__, $name ), $args );
+	}
+
+	/**
+	 * Global singleton
+	 * @access	public
+	 * @param		string	args	Optional arguments passed to constructor
+	 * @return	object
+	 */
+	static function instance( $args = NULL ) {
+		$name = get_called_class();
+		if( !isset( self::$instance[ $name ] ) ) self::$instance[ $name ] = new $name( $args );
+		return self::$instance[ $name ];
 	}
 }
 

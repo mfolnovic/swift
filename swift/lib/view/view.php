@@ -26,12 +26,11 @@ include LIB_DIR . "view/helpers.php";
  * @author			Swift dev team
  */
 
-class View {
+class View extends Base {
 	var $layout = 'application';
 	var $render = true;
 	var $config;
 	var $action_caches = array();
-	static $instance;
 
 	/**
 	 * Constructor
@@ -102,16 +101,6 @@ class View {
 		}
 
 		Log::write( $path, 'Render', $view_id );
-	}
-
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new View;
-		return self::$instance;
 	}
 }
 

@@ -20,8 +20,7 @@
  */
 
 
-class Security {
-	static $instance = NULL;
+class Security extends Base {
 	var $csrf_token;
 	var $token_expiration = 3600; // 1 hour
 
@@ -78,16 +77,6 @@ class Security {
 			$this -> filter( $val );
 	}
 
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 * @static
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new Security;
-		return self::$instance;
-	}
 }
 
 ?>

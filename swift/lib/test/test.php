@@ -6,15 +6,9 @@ class TestSuite extends Base {
 	var $currentClass = '';
 	var $vars = array();
 	var $counts = array( 0 => 0, 1 => 0 );
-	static $instance = NULL;
 
 	function __destruct() {
 		$this -> printResults();
-	}
-
-	static function getInstance() {
-		if( self::$instance == NULL ) self::$instance = new TestSuite;
-		return self::$instance;
 	}
 
 	function __set( $index, $value ) {

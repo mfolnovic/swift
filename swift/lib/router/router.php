@@ -21,7 +21,6 @@
 
 class Router extends Base {
 	var $routes, $path, $url, $root, $continueRouting;
-	static $instance;
 
 	function __construct() {
 		$this -> loadRoutes();
@@ -129,16 +128,6 @@ class Router extends Base {
 	 */
 	function root( $controller, $action ) {
 		$this -> root = array( 'controller' => $controller, 'action' => $action );
-	}
-
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new Router;
-		return self::$instance;
 	}
 }
 

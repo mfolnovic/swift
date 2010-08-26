@@ -23,7 +23,6 @@
 
 class Config extends Base {
 	var $options = array();
-	static $instance;
 
 	/**
 	 * Loads configurations and routes
@@ -55,16 +54,6 @@ class Config extends Base {
 			$curr =& $curr[ $index ];
 
 		return $curr;
-	}
-
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new Config;
-		return self::$instance;
 	}
 }
 

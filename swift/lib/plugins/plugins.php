@@ -43,15 +43,11 @@ class Plugins extends Base {
 	}
 
 	/**
-	 * Singelton
+	 * Returns list of extensions of class $class
 	 * @access	public
-	 * @return	object
+	 * @param		string	class	Class for which to return extensions
+	 * @return	return
 	 */
-	static function instance() {
-		if( self::$instance == NULL ) self::$instance = new Plugins;
-		return self::$instance;
-	}
-
 	function extensions( $class ) {
 		return isset( self::instance() -> extends[ $class ] ) ? self::instance() -> extends[ $class ] : array();
 	}

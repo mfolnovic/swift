@@ -82,7 +82,7 @@ class Model_Base extends Base implements IteratorAggregate {
 	 */
 	function __construct( $tableName, $newRow = NULL ) {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
-		$this -> link = DB::instance( $this -> connection );
+		$this -> link = DB::factory( $this -> connection );
 
 /*		if( $this -> connection == 'default' ) {
 			$res = $this -> link -> query( "SHOW TABLES LIKE '%{$this -> tableName}%'" );
