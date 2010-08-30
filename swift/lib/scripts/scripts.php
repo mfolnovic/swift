@@ -14,7 +14,7 @@ class Scripts extends Base {
 		global $dir;
 		
 		echo "Available commands:" . PHP_EOL;
-		$files = $dir -> files( LIB_DIR . "scripts/" );
+		$files = Dir::files( LIB_DIR . "scripts/" );
 		for( $i = 0, $cnt = count( $files ); $i < $cnt; ++ $i )
 			if( !is_dir( LIB_DIR . "scripts/" . $files[ $i ] ) && $files[ $i ] != 'scripts.php' )
 				echo "\t" . substr( $files[ $i ], 0, -4 ) . PHP_EOL;

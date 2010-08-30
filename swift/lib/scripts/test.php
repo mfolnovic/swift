@@ -5,7 +5,7 @@ class TestScript extends Base {
 		include LIB_DIR . "test/test.php";
 		include LIB_DIR . "test/testCase.php";
 		
-		TestSuite::getInstance() -> load( ROOT_DIR . "/tests/units/" );
+		TestSuite::instance() -> load( ROOT_DIR . "tests/units/" );
 	}
 }
 
