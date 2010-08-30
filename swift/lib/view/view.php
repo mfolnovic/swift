@@ -29,18 +29,8 @@ include LIB_DIR . "view/helpers.php";
 class View extends Base {
 	var $layout = 'application';
 	var $render = true;
-	var $config;
 	var $action_caches = array();
-
-	/**
-	 * Constructor
-	 * @access	public
-	 * @return	void
-	 */
-	function __construct() {
-		$this -> config =& $GLOBALS[ 'config' ] -> options;
-		ob_start( 'gz_handler' );	
-	}
+	var $output = '';
 
 	/**
 	 * Destructor
@@ -48,6 +38,9 @@ class View extends Base {
 	 * @return	void
 	 */
 	function __destruct() {
+		if( !empty( Errors::$errors ) ) return;
+		ob_start( 'gz_handler' );
+		echo $this -> output;
 		ob_end_flush();
 	}
 
@@ -60,9 +53,8 @@ class View extends Base {
 	 * @todo		fix caching, filename should be current url
 	 */
 	function render( $c = NULL, $a = NULL ) {
-		global $config;
-
 		$view_id = Benchmark::start();
+
 		if( $this -> render === FALSE ) return;
 		else if( $this -> render === TRUE ) {
 			if( empty( $c ) ) $c = Controller::instance() -> controller;
@@ -72,35 +64,43 @@ class View extends Base {
 		} else
 			$path = $this -> render . '.php';
 
-		$cache = str_replace( '/', '_', $path );
-		if( file_exists( TMP_DIR . "caches/$cache" ) ) {
-			include TMP_DIR . "caches/$cache";
-			return;
-		} 
+		$cache = TMP_DIR . "caches/" . str_replace( '/', '_', $path );
+		$template = VIEWS_DIR . $path;
+		$compiled = TMP_DIR . "views/$path";
+		
+		if( file_exists( $cache ) ) return include $cache;
 
-		if( !file_exists( TMP_DIR . "views/$path" ) || !Config::instance() -> get( 'cache_views' ) ) {
+		if( !file_exists( $compiled ) || !Config::instance() -> get( 'cache_views' ) ) {
 			$haml_id = Benchmark::start();
-			View_Haml::instance() -> parse( VIEWS_DIR . $path, TMP_DIR . "views/$path" );
+			View_Haml::instance() -> parse( $template, $compiled );
 			Log::write( $path, 'HAML', $haml_id );
 		}
 
 		if( isset( Controller::instance() -> object ) )
 			extract( Controller::instance() -> object -> globals );
 
+		$this -> end();
 		ob_start();
 		$view = View::instance();
-		include TMP_DIR . 'views/' . $path;
+		include $compiled;
+
 		if( in_array( array( $c, $a ), $this -> action_caches ) ) {
-			$path = TMP_DIR . "caches/$cache";
 			$content = ob_get_clean();
-			Dir::make_dir( $path );
-			file_put_contents( $path, $content );
-			echo $content;
+			$this -> output .= $content;
+
+			Dir::make_dir( $cache );
+			file_put_contents( $cache, $content );
 		} else {
-			ob_end_flush();
+			$this -> end();
 		}
 
+		ob_start();
 		Log::write( $path, 'Render', $view_id );
+	}
+	
+	function end() {
+		while( ob_get_level() > 0 )
+			$this -> output .= ob_get_clean();
 	}
 }
 
