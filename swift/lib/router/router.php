@@ -31,6 +31,7 @@ class Router extends Base {
 	 * @access	public
 	 * @param		string	path					Path to route from
 	 * @return	void
+	 * @todo		Allows URLs like %controller%/%action%/%h%:%m%:%s%
 	 */
 	function route( $path ) {
 		if( empty( $path ) ) {
