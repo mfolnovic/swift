@@ -21,6 +21,10 @@ define( 'ENV_PRODUCTION', 8 );
 define( 'ENV_TEST', 16 );
 define( 'ENV_INTERNAL', 32 );
 
+define( "ERROR", E_USER_ERROR );
+define( "WARNING", E_USER_WARNING );
+define( "NOTICE", E_USER_NOTICE );
+
 define( 'APP_DIR', DIR . 'app/' );
 define( 'LOG_DIR', APP_DIR . 'log/' );
 define( 'CONFIG_DIR', APP_DIR . 'config/' );
