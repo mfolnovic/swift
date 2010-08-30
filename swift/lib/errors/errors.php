@@ -46,7 +46,7 @@ class Errors extends Base {
 					$type = 'error';
 				break;
 				default:
-					$type = 'wtf';
+					$type = 'notice';
 			}
 
 			self::$errors[] = array( 'number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => debug_backtrace(), 'type' => $type );
