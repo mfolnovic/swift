@@ -78,7 +78,7 @@ class View extends Base {
 			return;
 		} 
 
-		if( !file_exists( TMP_DIR . "views/$path" ) || !$config -> options[ 'other' ][ 'cache_views' ] ) {
+		if( !file_exists( TMP_DIR . "views/$path" ) || !Config::instance() -> get( 'cache_views' ) ) {
 			$haml_id = Benchmark::start();
 			View_Haml::instance() -> parse( VIEWS_DIR . $path, TMP_DIR . "views/$path" );
 			Log::write( $path, 'HAML', $haml_id );
