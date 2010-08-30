@@ -71,7 +71,7 @@ class Db_Mysql extends Base {
 		$this -> conn = @new mysqli( $this -> options[ 'host' ], $this -> options[ 'username' ], $this -> options[ 'password' ], $this -> options[ 'database' ] );
 
 		if( $this -> conn -> connect_error )
-			trigger_error( "Couldn't connect to mysql database", E_USER_ERROR );
+			trigger_error( "Couldn't connect to mysql server <i>{$this -> options[ 'host' ]}</i> or database <i>{$this -> options[ 'database' ]}</i> doesn't exist!", ERROR );
 		else
 			$this -> connected = TRUE;
 
@@ -90,7 +90,7 @@ class Db_Mysql extends Base {
 		Benchmark::start( 'query' );
 		$resource = $this -> conn -> query( $query );
 
-		if( $resource === FALSE ) trigger_error( $this -> conn -> error );
+		if( $resource === FALSE ) trigger_error( $this -> conn -> error, WARNING );
 		Log::write( $query, 'MySQL', 'query' );
 
 		return $resource;
