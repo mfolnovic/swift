@@ -21,6 +21,7 @@
 
 class Db_Mysql extends Base {
 	var $conn = NULL;
+	var $connected = FALSE;
 	var $last_query;
 	var $numrows;
 	var $options;
@@ -42,7 +43,7 @@ class Db_Mysql extends Base {
 	 * @return	void
 	 */
 	function __destruct() {
-		if( $this -> conn ) 
+		if( $this -> connected )
 			$this -> conn -> close();
 	}
 
@@ -67,7 +68,13 @@ class Db_Mysql extends Base {
 	 * @return	void
 	 */
 	function connect() {
-		$this -> conn = new mysqli( $this -> options[ 'host' ], $this -> options[ 'username' ], $this -> options[ 'password' ], $this -> options[ 'database' ] );
+		$this -> conn = @new mysqli( $this -> options[ 'host' ], $this -> options[ 'username' ], $this -> options[ 'password' ], $this -> options[ 'database' ] );
+
+		if( $this -> conn -> connect_error )
+			trigger_error( "Couldn't connect to mysql database", E_USER_ERROR );
+		else
+			$this -> connected = TRUE;
+
 		$this -> conn -> set_charset( 'utf8' );
 	}
 
