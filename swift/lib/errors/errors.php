@@ -50,7 +50,7 @@ class Errors extends Base {
 			}
 
 			self::$errors[] = array( 'number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => debug_backtrace(), 'type' => $type );
-			if( $number === E_USER_ERROR ) self::show();
+			if( $number === E_USER_ERROR || $number == E_ERROR ) self::show();
 		}
 	}
 	
