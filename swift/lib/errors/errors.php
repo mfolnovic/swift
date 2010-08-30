@@ -20,6 +20,7 @@
  */
 
 class Errors extends Base {
+	static $errors = array();
 	/**
 	 * description
 	 * @access	public
@@ -31,13 +32,34 @@ class Errors extends Base {
 	 */
 	static function error( $number, $message, $file, $line ) {
 		if( error_reporting() ) {
-			@ob_clean();
-			$backtrace = debug_backtrace();
+			switch( $number ) {
+				case E_USER_NOTICE;
+				case E_NOTICE;
+					$type = 'notice';
+				break;
+				case E_USER_WARNING;
+				case E_WARNING;
+					$type = 'warning';
+				break;
+				case E_USER_ERROR:
+				case E_NOTICE;
+					$type = 'error';
+				break;
+				default:
+					$type = 'wtf';
+			}
 
-			include PUBLIC_DIR . "500.php";
-
-			exit;
+			self::$errors[] = array( 'number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => debug_backtrace(), 'type' => $type );
+			if( $number === E_USER_ERROR ) self::show();
 		}
+	}
+	
+	static function show() {
+		if( empty( self::$errors ) ) return;
+		@ob_clean();
+		global $errors; $errors = self::$errors;
+		include PUBLIC_DIR . "500.php";
+		exit;
 	}
 }
 

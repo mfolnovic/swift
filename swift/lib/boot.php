@@ -42,4 +42,6 @@ if( ENV & ENV_TEST ) {
 	$scripts -> call( $argv );
 }
 
+Errors::show();
+
 ?>
