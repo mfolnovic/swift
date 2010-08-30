@@ -2,7 +2,7 @@
 
 class modelTest extends TestCase {
 	function test_instance() {
-		$model = Model::getInstance();
+		$model = Model::instance();
 		$this -> assert( true );
 	}
 }

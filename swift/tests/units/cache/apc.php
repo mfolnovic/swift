@@ -10,14 +10,14 @@ class TempObject {
 
 class apcTest extends TestCase {
 	function test_clear() {
-		$apc = Cache::getInstance( 'apc' );
+		$apc = Cache::factory( 'apc' );
 		$apc -> clear(); // Just to make sure tests run cleanly
 
 		$this -> assert( !$apc -> exists( 'foo' ), "Foo shouldn't exist since I didn't make it anywhere" );
 	}
 
 	function test_set() {
-		$apc = Cache::getInstance( 'apc' );
+		$apc = Cache::factory( 'apc' );
 
 		$this -> assert( !$apc -> exists( 'foo' ), "Foo shouldn't exist." );
 
@@ -38,7 +38,7 @@ class apcTest extends TestCase {
 	}
 	
 	function test_delete() {
-		$apc = Cache::getInstance( 'apc' );
+		$apc = Cache::factory( 'apc' );
 	
 		$apc -> delete( 'foo' );
 		$this -> assert( !$apc -> exists( 'foo' ), "Foo exists, but it should exist" );

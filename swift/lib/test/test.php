@@ -20,7 +20,7 @@ class TestSuite extends Base {
 	}
 
 	function load( $d ) {
-		$files = Dir::files( $d );
+		$files = Dir::all( $d );
 
 		foreach( $files as $file ) {
 			if( is_dir( $d . $file ) )
