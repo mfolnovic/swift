@@ -23,8 +23,8 @@ function __autoload( $name ) {
 	
 	if( file_exists( $path ) )
 		include $path;
-	else
-		return Plugins::instance() -> loadPlugin( $name );
+	else if( !Plugins::instance() -> loadPlugin( $name ) )
+		trigger_error( "Couldn't load class <i>$name</i>", ERROR );
 
 	return true;
 }
