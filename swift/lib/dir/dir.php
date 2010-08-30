@@ -55,6 +55,16 @@ class Dir {
 	}
 
 	/**
+	 * Returns all files and directories in directory $path
+	 * @access	public
+	 * @param		string	path	Directory to search in
+	 * @return	array
+	 */
+	static function all( $path ) {
+		return array_slice( scandir( $path ), 2 );
+	}
+
+	/**
 	 * Reads from file
 	 * @access	public
 	 * @deprecated
