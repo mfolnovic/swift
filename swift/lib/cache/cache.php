@@ -44,9 +44,7 @@ class Cache extends Base {
 	 */
 	static function factory( $adapter ) {
 		if( !isset( self::$instances[ $adapter ] ) ) {
-			global $config;
-
-			$conf		= $config -> options[ 'cache' ][ $adapter ];
+			$conf		= Config::instance() -> get( 'cache', $adapter );
 			$driver	= "Cache_" . ucfirst( $conf[ 'adapter' ] );
 
 			self::$instances[ $adapter ] = new $driver( $conf );
