@@ -3,7 +3,7 @@
 /**
  * Swift framework
  *
- * @package	   Swift
+ * @package    Swift
  * @author     Swift dev team
  * @copyright  Copyright (c) 2010, Swift dev team
  * @license    LICENSE
