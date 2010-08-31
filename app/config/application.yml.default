@@ -1,0 +1,21 @@
+database:
+  default:
+    host: localhost
+    username: root
+    password: 
+    database: database
+    adapter: mysql
+
+cache:
+  default:
+    adapter: apc
+
+log:
+  adapter: file
+  file: application.log
+
+cache_views: false
+cache_config: false
+format_date: d.m.y H:i:s
+static_version: false
+
