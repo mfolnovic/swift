@@ -94,6 +94,8 @@ class View extends Base {
 			$this -> end();
 		}
 
+		ob_start(); // don't understand why I need this
+
 		Log::write( $path, 'Render', $view_id );
 	}
 	
