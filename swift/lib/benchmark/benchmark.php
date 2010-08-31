@@ -46,7 +46,10 @@ class Benchmark extends Base {
 	 * @return	void
 	 */
 	static function end( $name ) {
-		if( !isset( self::$times[ $name ] ) ) return 0;
+		if( !isset( self::$times[ $name ] ) ) {
+			trigger_error( "Benchmark mark $name doesn't exist.", WARNING ); 
+			return 0;
+		}
 
 		return round( ( microtime( true ) - self::$times[ $name ] ), 4 );
 	}
