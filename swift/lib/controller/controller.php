@@ -35,8 +35,6 @@ class Controller extends Base {
 	 * @todo		Move filterXSS to somewhere else, since now, it'll be run more times
 	 */
 	function run( $controller, $action, $data = array() ) {
-		global $router;
-
 		$this -> clean();
 		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
 
@@ -51,10 +49,10 @@ class Controller extends Base {
 		$controllerName = $controller . 'Controller';
 
 		if( is_callable( array( $controllerName, $action ) ) ) {
-			$this -> object         = new $controllerName;
 			$this -> controller       = $controller;
 			$this -> action           = $action;
-			$this -> object -> data = array_merge( $_POST, $data );
+			$this -> object           = new $controllerName;
+			$this -> object -> data   = array_merge( $_POST, $data );
 
 			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) )
 				$this -> object -> $action();
