@@ -52,15 +52,15 @@ class View extends Base {
 	 * @return	void
 	 * @todo		fix caching, filename should be current url
 	 */
-	function render( $c = NULL, $a = NULL ) {
+	function render( $controller = NULL, $action = NULL ) {
 		$view_id = Benchmark::start();
 
 		if( $this -> render === FALSE ) return;
 		else if( $this -> render === TRUE ) {
-			if( empty( $c ) ) $c = Controller::instance() -> controller;
-			if( empty( $a ) ) $a = Controller::instance() -> action;
+			if( empty( $controller ) ) $controller = Controller::instance() -> controller;
+			if( empty( $action ) ) $action = Controller::instance() -> action;
 
-			$path = $c . '/' . $a . '.php';
+			$path = $controller . '/' . $a . '.php';
 		} else
 			$path = $this -> render . '.php';
 
@@ -84,7 +84,7 @@ class View extends Base {
 		$view = View::instance();
 		include $compiled;
 
-		if( in_array( array( $c, $a ), $this -> action_caches ) ) {
+		if( in_array( array( $controller, $action ), $this -> action_caches ) ) {
 			$content = ob_get_clean();
 			$this -> output .= $content;
 
