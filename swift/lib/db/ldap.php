@@ -54,7 +54,7 @@ class Db_Ldap extends Base {
 	function connect() {
 		$this -> conn = @ldap_connect( $this -> options[ 'host' ], $this -> options[ 'port' ] );
 
-		if( $this -> conn === FALSE ) trigger_error( "Ldap connection failed!" );
+		if( $this -> conn === FALSE ) trigger_error( "Failed to connect to LDAP server {$this -> options[ 'host' ]}:{$this -> options[ 'port' ]}!", ERROR );
 
 		ldap_set_option( $this -> conn, LDAP_OPT_PROTOCOL_VERSION, 3 );
 		ldap_set_option( $this -> conn, LDAP_OPT_REFERRALS, 0 );
@@ -68,7 +68,7 @@ class Db_Ldap extends Base {
 	 */
 	function bindAdmin() {
 		if( @ldap_bind( $this -> conn, $this -> options[ 'username' ], $this -> options[ 'password' ] ) === FALSE ) 
-			trigger_error( "Ldap bind as admin was unsuccessful!" );
+			trigger_error( "Ldap bind as admin was unsuccessful!", ERROR );
 	}
 
 	/**
@@ -78,9 +78,7 @@ class Db_Ldap extends Base {
 	 * @return	void
 	 */
 	function select( &$base ) {
-		global $config, $model;
-
-		$table = &$model -> tables[ $base -> tableName ];
+		$table = &Model::instance() -> tables[ $base -> tableName ];
 		$base -> resultSet = array();
 		$q = $this -> generateConditions( $base );
 
@@ -116,7 +114,7 @@ class Db_Ldap extends Base {
 		}
 		
 		Log::write( $q, 'LDAP', 'query' );
-		$this -> cache -> set( $q, $base -> resultSet, $config -> options[ 'database' ][ 'ldap' ][ 'cache' ] );
+		$this -> cache -> set( $q, $base -> resultSet, Config::instance() -> get( 'database', 'ldap', 'cache' ) );
 	}
 
 	/**

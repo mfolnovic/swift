@@ -90,7 +90,7 @@ class Db_Mysql extends Base {
 		Benchmark::start( 'query' );
 		$resource = $this -> conn -> query( $query );
 
-		if( $resource === FALSE ) trigger_error( $this -> conn -> error, WARNING );
+		if( $resource === FALSE ) trigger_error( "SQL Error: $query", ERROR );
 		Log::write( $query, 'MySQL', 'query' );
 
 		return $resource;
