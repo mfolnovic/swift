@@ -34,8 +34,13 @@ class Model {
 	 */
 	function create( $tableName, $newRow = NULL ) {
 		if( !isset( $this -> tables[ $tableName ] ) ) {
-			include_once MODEL_DIR . $tableName . '.php'; // crashes if I don't put _once :S
-			$this -> tables[ $tableName ] = array();
+			$path = MODEL_DIR . $tableName . '.php';
+			if( file_exists( $path ) ) {
+				include_once $path; // crashes if I don't put _once :S
+				$this -> tables[ $tableName ] = array();
+			} else {
+				trigger_error( "Model $tableName doesn't exist!", ERROR );
+			}
 		}
 
 		return new $tableName( $tableName, $newRow );
