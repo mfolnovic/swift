@@ -57,6 +57,7 @@ class Errors extends Base {
 	static function show() {
 		if( empty( self::$errors ) ) return;
 		@ob_clean();
+		header( "HTTP/1.1 500 Internal Server Error" ); // (?)
 		global $errors; $errors = self::$errors;
 		include PUBLIC_DIR . "500.php";
 		exit;
