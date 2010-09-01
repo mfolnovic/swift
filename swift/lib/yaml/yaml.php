@@ -22,6 +22,7 @@
 class Yaml {
 	/**
 	 * Used for parsing yaml files
+	 *
 	 * @access public
 	 * @param  string $path Path to file
 	 * @return object
