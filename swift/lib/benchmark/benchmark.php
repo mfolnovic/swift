@@ -36,6 +36,7 @@ class Benchmark extends Base {
 	 *
 	 * @access public
 	 * @param  string $name Mark name
+	 * @param  int    $time Start time for this mark
 	 * @static
 	 * @return string
 	 */
