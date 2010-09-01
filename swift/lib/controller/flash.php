@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
  * @author		Swift dev team
  * @copyright	Copyright (c) 2010, Swift dev team
  * @license		LICENSE
+ * @package		Swift
  */
 
 /**
@@ -14,9 +14,9 @@
  *
  * Gives Rails-like flash messages
  *
+ * @author			Swift dev team
  * @package			Swift
  * @subpackage	Controller
- * @author			Swift dev team
  */
 
 class Controller_Flash extends Base {

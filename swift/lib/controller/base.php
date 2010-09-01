@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,21 +14,36 @@
  *
  * This class gives methods in all application's controllers
  *
- * @package			Swift
- * @subpackage	Controller
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Controller
  */
 
 class Controller_Base extends Base {
+	/**
+	 * Contains all $_POST data
+	 */
 	var $data;
+	/**
+	 * Contains reference to configuration
+	 * @todo Needed?
+	 */
 	var $config;
+	/**
+	 * All vars available in views are here
+	 */
 	var $globals = array();
+	/**
+	 * Name of controller
+	 * @todo Needed?
+	 */
 	var $controllerName = "";
 
 	/**
 	 * Constructor
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function __construct() {
 		global $config, $controller;
@@ -36,7 +51,7 @@ class Controller_Base extends Base {
 		$this -> globals = array();
 		$this -> config =& $config -> options;
 		$this -> controllerName = strtolower( substr( get_class( $this ), 0, -10 ) );
-		$this -> current_time = time();
+		$this -> current_time = time(); // needed?
 		$this -> csrf_token = Security::instance() -> csrf_token;
 
 		parent::__construct();
@@ -44,9 +59,10 @@ class Controller_Base extends Base {
 
 	/**
 	 * Used for changing layout
-	 * @access	public
-	 * @param		string	$layout	Name of new layout
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $layout Name of new layout
+	 * @return void
 	 */
 	function layout( $layout ) {
 		View::instance() -> layout = $layout;
@@ -54,9 +70,10 @@ class Controller_Base extends Base {
 
 	/**
 	 * Redirects to $url
-	 * @access	public
-	 * @param		string	$url	Url to redirect to
-	 * @return 	void
+	 *
+	 * @access public
+	 * @param  string $url Url to redirect to
+	 * @return void
 	*/
 	function redirect( $url ) {
 		if( isAjax() ) {
@@ -65,14 +82,14 @@ class Controller_Base extends Base {
 		}	else {
 			header( "Location:" . URL_PREFIX . $url );
 		}
-
 	}
 
 	/**
 	 * Changes what it should be rendered
-	 * @access	public
-	 * @param		string	$url	Path which should be rendered
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  string $url Path which should be rendered
+	 * @return return
 	 */
 	function render( $path ) {
 		View::instance() -> render = $path;
@@ -80,9 +97,10 @@ class Controller_Base extends Base {
 
 	/**
 	 * Returns instance of model $name, and can also create new row from data $data
-	 * @access	public
-	 * @param	string	$name	Name of model
-	 * @param	array		$data	New row
+	 *
+	 * @access public
+	 * @param  string $name Name of model
+	 * @param  array  $data New row
 	 * @return object
 	*/
 	function model( $name, $data = array() ) {
@@ -91,8 +109,9 @@ class Controller_Base extends Base {
 
 	/**
 	 * Tells router that it missed action and should continue finding right one
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function notFound() {
 		Router::instance() -> continueRouting = true;
@@ -100,9 +119,10 @@ class Controller_Base extends Base {
 
 	/**
 	 * Caches actions specified as arguments
-	 * @access	public
-	 * @param		string	$action,...	Names of actions to cache
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  string $action,... Names of actions to cache
+	 * @return return
 	 */
 	function caches_action() {
 		$view = View::instance();
@@ -110,14 +130,37 @@ class Controller_Base extends Base {
 			$view -> action_caches[] = array( &$this -> controllerName, $action );
 	}
 
+	/**
+	 * Gets global var with index $index
+	 *
+	 * @access public
+	 * @param  mixed $index Index
+	 * @return mixed
+	 */
 	function &__get( $index ) {
 		return $this -> globals[ $index ];
 	}
 
+	/**
+	 * Sets var $index to value $value
+	 *
+	 * @access public
+	 * @param  mixed $index Index
+	 * @param  mixed $value Value
+	 * @return object
+	 */
 	function __set( $index, $value ) {
 		$this -> globals[ $index ] = $value;
+		return $this;
 	}
 
+	/**
+	 * Tests if global var with index $index exists
+	 *
+	 * @access public
+	 * @param  mixed $index Index
+	 * @return object
+	*/
 	function __isset( $index ) {
 		return isset( $this -> globals[ $index ] );
 	}

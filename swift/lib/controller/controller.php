@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,25 +14,38 @@
  *
  * This class controls running actions, and maintains security
  *
- * @package			Swift
- * @subpackage	Controller
- * @author			Swift dev team
+ * @author      Swift dev team
+ * @package     Swift
+ * @subpackage  Controller
  */
 
 class Controller extends Base {
+	/**
+	 * Current controller
+	 */
 	var $controller = NULL;
+	/**
+	 * Current action
+	 */
 	var $action = NULL;
+	/**
+	 * Current controller instance
+	 */
 	var $object = NULL;
+	/**
+	 * Current CSRF token
+	 */
 	var $csrf_token;
 
 	/**
 	 * Runs a controller
-	 * @access	public
-	 * @param		string	controller	Name of controller
-	 * @param		string	action			Name of action
-	 * @param		array		data				Contains data
-	 * @return	void
-	 * @todo		Move filterXSS to somewhere else, since now, it'll be run more times
+	 *
+	 * @access public
+	 * @param  string controller Name of controller
+	 * @param  string action     Name of action
+	 * @param  array  data       Contains data
+	 * @return void
+	 * @todo   Move filterXSS to somewhere else, since now, it'll be run more times
 	 */
 	function run( $controller, $action, $data = array() ) {
 		$this -> clean();
@@ -61,8 +74,8 @@ class Controller extends Base {
 
 	/**
 	 * Renders 404
-	 * @access	public
-	 * @return	void
+	 * @access public
+	 * @return void
 	 */
 	function render404() {
 		ob_clean();
@@ -72,8 +85,8 @@ class Controller extends Base {
 
 	/**
 	 * Clean globals
-	 * @access	public
-	 * @return	void
+	 * @access public
+	 * @return void
 	 */
 	function clean() {
 		if( empty( $this -> object ) ) return;
@@ -82,7 +95,5 @@ class Controller extends Base {
 	}
 
 }
-
-$controller = new Controller;
 
 ?>
