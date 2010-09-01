@@ -1,34 +1,37 @@
 <?php
 
 /**
- * Swift
+ * Swift framework
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
  * Swift Cache Class - Memcache
  *
- * This class gives Memcache features to Swift Cache Class
+ * This class allows using memcache as cache
  *
- * @package			Swift
- * @subpackage	Cache
- * @author			Swift dev team
+ * @author      Swift dev team
+ * @package     Swift
+ * @subpackage  Cache
  */
 
 class Cache_Memcache extends Base {
+	/**
+	 * Resource which contains connection to memcache
+	*/
 	var $conn;
 
 	/**
 	 * Constructor
 	 * Connects to memcache
 	 
-	 * @access	public
-	 * @param		string	$options	Options for this adapter
-	 * @return	void
+	 * @access public
+	 * @param  string $options Options for this adapter
+	 * @return void
 	 */
 	function __construct( $options ) {
 		$this -> conn = memcache_pconnect( $options[ 'host' ], $options[ 'port' ] );
@@ -37,8 +40,9 @@ class Cache_Memcache extends Base {
 	/**
 	 * Destructor
 	 * Disconnects from memcache
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function __destruct() {
 		memcache_close( $this -> conn );
@@ -46,9 +50,10 @@ class Cache_Memcache extends Base {
 
 	/**
 	 * Returns value of $key from cache
-	 * @access	public
-	 * @param		string	$key	Key
-	 * @return	object
+	 *
+	 * @access public
+	 * @param  string $key Key
+	 * @return object
 	 */
 	function get( $key ) {
 		return $this -> conn -> get( $key );
@@ -56,25 +61,26 @@ class Cache_Memcache extends Base {
 
 	/**
 	 * Sets $key to $value, and also puts $expire
-	 * @access	public
-	 * @param		string	$key	Key
-	 * @param 	string	$value	New Value
-	 * @param		integer	$expire	Expires in $expire seconds
-	 * @return	object
+	 *
+	 * @access public
+	 * @param  string $ke     Key
+	 * @param  string $value  New Value
+	 * @param  int    $expire Expires in $expire seconds
+	 * @return object
 	 */
 	function set( $key, $value, $expire = 0 ) {
 		$result = $this -> conn -> replace( $key, $value, 0, $expire );
-		if( $result == FALSE )
-			$this -> conn -> set( $key, $value, 0, $expire );
+		if( $result == FALSE ) $this -> conn -> set( $key, $value, 0, $expire );
 
 		return $this;
 	}
 
 	/**
-	 * Returns TRUE if $key exists in cache
-	 * @access	public
-	 * @param		string	$key	Key
-	 * @return	bool
+	 * Returns true if $key exists in cache
+	 *
+	 * @access public
+	 * @param  string $key Key
+	 * @return bool
 	 */
 	function exists( $key ) {
 		return $this -> get( $key ) === FALSE;
@@ -82,29 +88,46 @@ class Cache_Memcache extends Base {
 
 	/**
 	 * Deletes value for $key
-	 * @access	public
-	 * @param		string	$key	Key
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $key Key
+	 * @return object
 	 */
 	function delete( $key ) {
 		$this -> conn -> delete( $key ); 
+
+		return $this;
 	}
 
 	/**
 	 * Clears whole cache
-	 * @access	public
-	 * @param		string	$type	Type of cache it clears, default user
-	 * @return	void
+	 *
+	 * @access public
+	 * @param	 string $type Type of cache it clears, default user
+	 * @return object
 	 */
 	function clear() {
 		$this -> conn -> flush();
+
+		return $this;
 	}
 
+	/**
+	 * Pushes $what to array with key $key
+	 *
+	 * @access public
+	 * @param	 string $key   Key in memcache
+	 * @param	 mixed  $value Value which should be pushed
+	 * @return object
+	*/
 	function push( $key, $what ) {
-		$curr = $this -> $key;
-		if( !is_array( $curr ) ) $curr = array();
-		$curr[] = $what;
+		$array = $this -> $key;
+		if( !is_array( $array ) ) $array = array();
+
+		$array[] = $what;
 		$this -> $key = $curr;
+
+		return $this;
 	}
 }
 
