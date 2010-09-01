@@ -3,10 +3,10 @@
 /**
  * Swift framework
  *
- * @package    Swift
  * @author     Swift dev team
  * @copyright  Copyright (c) 2010, Swift dev team
  * @license    LICENSE
+ * @package    Swift
  */
 
 /**
@@ -15,9 +15,9 @@
  * This class allows you to measure time needed for certain
  * part of code to run
  *
+ * @author      Swift dev team
  * @package     Swift
  * @subpackage  Benchmark
- * @author      Swift dev team
  */
 
 class Benchmark extends Base {
