@@ -32,10 +32,6 @@ class Controller extends Base {
 	 * Current controller instance
 	 */
 	var $object = NULL;
-	/**
-	 * Current CSRF token
-	 */
-	var $csrf_token;
 
 	/**
 	 * Runs a controller
