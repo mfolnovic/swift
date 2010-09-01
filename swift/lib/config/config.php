@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,20 +14,21 @@
  *
  * This class is used for loading configuration and routes
  *
- * @package			Swift
- * @subpackage	Config
- * @author			Swift dev team
- * @todo				Implement YAML support
- * @todo				Cache!
+ * @author     Swift dev team
+ * @package	   Swift
+ * @subpackage Config
+ * @todo       Implement YAML support
+ * @todo       Cache!
  */
 
 class Config extends Base {
 	var $options = array();
 
 	/**
-	 * Loads configurations and routes
-	 * @access	public
-	 * @return	void
+	 * Loads configuration filess and routes
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function load() {
 		$files = array( 'application' );
@@ -43,9 +44,10 @@ class Config extends Base {
 
 	/**
 	 * Gets passed indexes from configuration
-	 * @access	public
-	 * @param		mixed	index1, ...	Indexes
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  mixed index1, ... Indexes
+	 * @return return
 	 */
 	function get() {
 		$curr =& $this -> options;
@@ -56,7 +58,5 @@ class Config extends Base {
 		return $curr;
 	}
 }
-
-$config = new Config;
 
 ?>
