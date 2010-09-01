@@ -33,8 +33,9 @@ class Benchmark extends Base {
 
 	/**
 	 * This function marks start point with name $name
+	 *
 	 * @access public
-	 * @param string $name Mark name
+	 * @param  string $name Mark name
 	 * @static
 	 * @return string
 	 */
@@ -49,9 +50,10 @@ class Benchmark extends Base {
 	/**
 	 * This function calculates difference between time from mark $name
 	 * to current time and returns it
+	 *
 	 * @access public
-	 * @param string $name  Mark name
-	 * @param int    $round Number of decimal digits to round to
+	 * @param  string $name  Mark name
+	 * @param  int    $round Number of decimal digits to round to
 	 * @static
 	 * @return int
 	 */
