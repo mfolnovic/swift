@@ -17,7 +17,6 @@
  * @author     Swift dev team
  * @package	   Swift
  * @subpackage Config
- * @todo       Implement YAML support
  * @todo       Cache!
  */
 
