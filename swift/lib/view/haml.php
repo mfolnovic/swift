@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @package   Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
  */
 
 /**
@@ -14,26 +14,42 @@
  *
  * This class is responsible for parsing haml files
  *
- * @package			Swift
- * @subpackage	View
- * @author			Swift dev team
- * @todo				Support blocks, e.g. partial cache
+ * @package    Swift
+ * @subpackage View
+ * @author     Swift dev team
+ * @todo       Support blocks, e.g. partial cache
  */
 
 class View_Haml {
+	/**
+	 * All HTML tags which don't need closing tag
+	 */
 	var $ommitCloseTag = array( "br" => 1, "input" => 2, "link" => 3, "meta" => 4, 'colgroup' => 5, 'td' => 6, 'tr' => 7, 'th' => 8, 'hr' => 9, "li" => 10 );
-	var $structures = array( "foreach", "if", "else" );
+	/**
+	 * PHP control structures
+	 * Used internally for putting brackets automatically
+	 */
+	var $structures = array( "foreach", "for", "if", "else" );
+	/**
+	 * Current line parsing
+	 */
 	var $line;
+	/**
+	 * Parsed until now
+	 */
 	var $parsed;
+	/**
+	 * Contains array of all tags which should be closed on specific depth
+	*/
 	var $tree;
-	static $instance = NULL;
 
 	/**
 	 * Parses file $from, and writes to $to
-	 * @access	public
-	 * @param		string	from	Haml file to parse
-	 * @param		string	to		Output
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $from Haml file to parse
+	 * @param  string $to   Output
+	 * @return void
 	 */
 	function parse( $from, $to ) {
 		Dir::make_dir( $to );
@@ -62,8 +78,9 @@ class View_Haml {
 
 	/**
 	 * Parses current line
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function parseLine() {
 		$ret = '';
@@ -179,11 +196,12 @@ class View_Haml {
 	/**
 	 * Pushes value $value to $data with key $attr
 	 * Used internally to push html attributes
-	 * @access	public
-	 * @param		array		data	Data array, mostly attributes
-	 * @param		string	attr	Key
-	 * @param		mixed		value	New value
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  array  $data  Data array, mostly attributes
+	 * @param  string $attr  Key
+	 * @param  mixed  $value New value
+	 * @return void
 	 */
 	function pushValue( &$data, $attr, $value ) {
 		if( !isset( $data[ $attr ] ) ) $data[ $attr ] = '';
@@ -193,13 +211,16 @@ class View_Haml {
 
 	/**
 	 * Parses HTML, used only to parse variables and put <?php ?> around those
-	 * @access	public
-	 * @param		string	string	String to parse
-	 * @return	string
-	 * @todo		Optimize!
+	 *
+	 * @access public
+	 * @param  string $string String to parse
+	 * @return string
+	 * @todo   Optimize!
 	 */
 	function parseHtml( $string ) {
-		$ret = ''; $phpOpen = false;
+		$ret = ''; 
+		$phpOpen = false;
+
 		for( $i = 0, $len = strlen( $string ); $i < $len; ++ $i ) {
 			if( substr( $string, $i, 5 ) == "<?php" ) $phpOpen = true;
 			else if( substr( $string, $i, 2 ) == "?>" ) $phpOpen = false;
@@ -219,9 +240,10 @@ class View_Haml {
 
 	/**
 	 * Parses array of attributes to HTML
-	 * @access	public
-	 * @param		string	attributes	Attributes to parse
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  string $attributes Attributes to parse
+	 * @return return
 	 */
 	function attributesToHTML( &$attributes ) {
 		$ret = '';
@@ -230,16 +252,6 @@ class View_Haml {
 			$ret .= " $id=\"$val\"";
 
 		return $ret;
-	}
-
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new View_Haml;
-		return self::$instance;
 	}
 }
 
