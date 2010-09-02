@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
- * @package		Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,11 +14,10 @@
  *
  * This class is responsible for filtering data from XSS, checking if it's CSRF attack etc.
  *
- * @author			Swift dev team
- * @package			Swift
- * @subpackage	Security
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Security
  */
-
 
 class Security extends Base {
 	/**
@@ -27,14 +26,17 @@ class Security extends Base {
 	var $csrf_token;
 	/**
 	 * Time in seconds after which csrf token expires
+	 *
+	 * @todo    Make it constant
 	 */
-	var $token_expiration = 3600; // 1 hour
+	var $token_expiration = 3600;
 
 	/**
 	 * Constructor
-	 * 
-	 * @access	public
-	 * @return	void
+	 * Filters $_POST and generates CSRF token
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function __construct() {
 		$this -> filter( $_POST );
@@ -44,8 +46,8 @@ class Security extends Base {
 	/**
 	 * Checks if CSRF token is correct
 	 *
-	 * @access	public
-	 * @return	void
+	 * @access public
+	 * @return void
 	 */
 	function checkCsrf() {
 		if( empty( $_POST ) ) return;
@@ -63,8 +65,8 @@ class Security extends Base {
 	/**
 	 * This function generates csrf token
 	 *
-	 * @access	public
-	 * @return	void
+	 * @access public
+	 * @return void
 	 */
 	function csrfToken() {
 		$this -> csrf_token = md5( mt_rand() );
@@ -76,9 +78,9 @@ class Security extends Base {
 	/**
 	 * Fitlers array $array from XSS
 	 *
-	 * @access	public
-	 * @param		array	$array	Array to filter
-	 * @return	array
+	 * @access public
+	 * @param  array $array Array to filter
+	 * @return array
 	 */
 	function filter( &$array ) {
 		if( is_string( $array ) ) return $array = htmlentities( $array, ENT_COMPAT, 'utf-8' );
