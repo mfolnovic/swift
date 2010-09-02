@@ -78,8 +78,8 @@ function partial( $name ) {
 	View::instance() -> render( null, '_' . $name );
 }
 
-function render( $c = NULL, $a = NULL ) {
-	View::instance() -> render( $c, $a );
+function render( $controller = NULL, $action = NULL ) {
+	View::instance() -> render( $controller, $action );
 }
 
 function xss_clean( $string ) {
