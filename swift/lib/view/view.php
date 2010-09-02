@@ -60,14 +60,14 @@ class View extends Base {
 			if( empty( $controller ) ) $controller = Controller::instance() -> controller;
 			if( empty( $action ) ) $action = Controller::instance() -> action;
 
-			$path = $controller . '/' . $a . '.php';
+			$path = $controller . '/' . $action . '.php';
 		} else
 			$path = $this -> render . '.php';
 
 		$cache = TMP_DIR . "caches/" . str_replace( '/', '_', $path );
 		$template = VIEWS_DIR . $path;
 		$compiled = TMP_DIR . "views/$path";
-		
+
 		if( file_exists( $cache ) ) return include $cache;
 
 		if( !file_exists( $compiled ) || !Config::instance() -> get( 'cache_views' ) ) {
