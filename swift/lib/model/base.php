@@ -77,7 +77,7 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * Constructor
 	 *
 	 * @access public
-	 * @param  string tableName Name of the table
+	 * @param  string $tableName Name of the table
 	 * @param  mixed  $newRow   if it's new row, and NULL if it's not
 	 * @return void
 	 */
@@ -97,7 +97,7 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * Provides model getter
 	 *
 	 * @access public
-	 * @param  string	key	Key to get
+	 * @param  string $key Key to get
 	 * @return mixed
 	 */
 	function __get( $key ) {
@@ -243,8 +243,8 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * Handles specific association
 	 *
 	 * @access public
-	 * @param  string name  Name of association
-	 * @param  bool   assoc TRUE if called from association
+	 * @param  string $name  Name of association
+	 * @param  bool   $assoc TRUE if called from association
 	 * @return void
 	 * @todo   Avoid $assoc
 	 */
