@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @package   Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
  */
 
 /**
@@ -14,58 +14,51 @@
  *
  * Usual view helpers
  *
- * @package			Swift
- * @subpackage	View
- * @author			Swift dev team
+ * @package    Swift
+ * @subpackage View
+ * @author     Swift dev team
  */
 
 function javascript() {
-	global $config;
-	$args = func_get_args();
+	$version = Config::instance() -> get( 'static_version' );
 
-	$opt =& $config -> options[ 'other' ];
-	$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
-
-	if( $version != '' && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
+	if( !empty( $version ) && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
 		echo "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/all$version.js\"></script>";
 	else {
 		$ret = '';
-		foreach( $args as $val )
+
+		foreach( func_get_args() as $val )
 			$ret .= "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/$val\"></script>";
+
 		echo $ret;
 	}
 }	
 
 function stylesheet() {
-	global $config;
-	$opt =& $config -> options[ 'other' ];
-	$version = !isset( $opt[ 'static_version' ] ) || $opt[ 'static_version' ] === false ? '' : '.' . $opt[ 'static_version' ];
+	$version = Config::instance() -> get( 'static_version' );
 
-	if( $version != '' && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
+	if( !empty( $version ) && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
 		echo "<link href=\"" . URL_PREFIX . "stylesheets/all$version.css\" rel=\"stylesheet\" type=\"text/css\">";
 	else {
 		$ret = '';
 
 		foreach( func_get_args() as $val )
 			$ret .= "<link href=\"" . URL_PREFIX . "stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
-			echo $ret;
+
+		echo $ret;
 	}
 }
 
 function favicon( $icon ) {
-	global $config;
 	echo '<link rel="icon" href="' . URL_PREFIX . 'favicon.ico">';
 }
 
 function image( $image, $options = array() ) {
-	if( strpos( $image, '/' ) === false ) $image = "images/$image";
-	$options = _attributes( $options );
-	echo "<img src=\"" . URL_PREFIX . "$image\" $options>";
+	echo "<img src=\"" . URL_PREFIX . "$image\" " . _attributes( $options ) . ">";
 }
 
 function format_time( $timestamp ) {
-	global $config;
-	echo date( $config -> options[ 'other' ][ 'format_date' ], $timestamp );
+	echo date( Config::instance() -> get( 'format_date' ), $timestamp );
 }
 
 function form( $url, $options = array() ) {
@@ -78,8 +71,7 @@ function _formEnd() {
 }
 
 function ahref( $title, $href, $options = array() ) {
-	$options = _attributes( $options );
-	echo '<a href="' . URL_PREFIX . str_replace( " ", "+", $href ) . '" ' . $options . '>' . $title . '</a>';
+	echo '<a href="' . URL_PREFIX . str_replace( " ", "+", $href ) . '" ' . _attributes( $options ) . '>' . $title . '</a>';
 }
 
 function partial( $name ) {
