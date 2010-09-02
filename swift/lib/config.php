@@ -12,7 +12,7 @@
 /**
  * Swift Configuration Class
  *
- * This class is used for loading configuration and routes
+ * This class is used for loading configuration
  *
  * @author     Swift dev team
  * @package	   Swift
@@ -24,7 +24,7 @@ class Config extends Base {
 	var $options = array();
 
 	/**
-	 * Loads configuration filess and routes
+	 * Loads configuration filess
 	 *
 	 * @access public
 	 * @return void
