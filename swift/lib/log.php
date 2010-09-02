@@ -61,15 +61,13 @@ class Log extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function write( $message, $type = NOTICE, $benchmark = NULL ) {
+	static function write( $message, $type = NULL, $benchmark = NULL ) {
 		if( self::$adapter === NULL ) self::init();
 
-		if( !empty( $type ) ) $type = "[$type]";
+		if( !empty( $type ) ) $type = "[$type] ";
+		if( !empty( $benchmark ) ) $benchmark = '(' . Benchmark::end( $benchmark ) . ' seconds)';
 
-		if( !empty( $benchmark ) ) $time = '(' . Benchmark::end( $benchmark ) . ' seconds)';
-		else $time = '';
-
-		self::$adapter -> write( "$type $time: $message" );
+		self::$adapter -> write( "$type$benchmark" . ( !empty( $benchmark) || !empty( $type ) ? ':' : '' ) . $message );
 	}
 
 	/**
