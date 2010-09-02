@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package   Swift
  * @author    Swift dev team
  * @copyright Copyright (c) 2010, Swift dev team
  * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,9 +14,9 @@
  *
  * This class is responsible for parsing haml files
  *
+ * @author     Swift dev team
  * @package    Swift
  * @subpackage View
- * @author     Swift dev team
  * @todo       Support blocks, e.g. partial cache
  */
 
