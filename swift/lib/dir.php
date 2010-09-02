@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,17 +14,19 @@
  *
  * Gives internal directory manipulation to Swift
  *
- * @package			Swift
- * @subpackage	Directory
- * @author			Swift dev team
+ * @author      Swift dev team
+ * @package     Swift
+ * @subpackage  Directory
  */
 
 class Dir {
 	/**
 	 * Returns all files in directory $path
-	 * @access	public
-	 * @param		string	path	Directory to search in
-	 * @return	array
+	 *
+	 * @access public
+	 * @param  string $path Directory to search in
+	 * @return array
+	 * @todo   Almost same function as dirs, try to merge them?
 	 */
 	static function files( $path ) {
 		$ret = array();
@@ -39,9 +41,11 @@ class Dir {
 
 	/**
 	 * Returns all directories in directory $path
-	 * @access	public
-	 * @param		string	path	Directory to search in
-	 * @return	array
+	 *
+	 * @access public
+	 * @param  string $path Directory to search in
+	 * @return array
+	 * @todo   Rename to directories?
 	 */
 	static function dirs( $path ) {
 		$ret = array();
@@ -56,9 +60,10 @@ class Dir {
 
 	/**
 	 * Returns all files and directories in directory $path
-	 * @access	public
-	 * @param		string	path	Directory to search in
-	 * @return	array
+	 *
+	 * @access public
+	 * @param  string $path Directory to search in
+	 * @return array
 	 */
 	static function all( $path ) {
 		return array_slice( scandir( $path ), 2 );
@@ -66,12 +71,13 @@ class Dir {
 
 	/**
 	 * Reads from file
-	 * @access	public
+	 *
+	 * @access public
 	 * @deprecated
-	 * @param		string	string	directory
-	 * @param		string	file		file
-	 * @return	string
-	 * @todo		Move to class file
+	 * @param  string $dir  directory
+	 * @param  string $file file
+	 * @return string
+	 * @todo   Move to class file
 	 */
 	static function read( $dir, $file ) {
 		return file_get_contents( $dir . '/' . $file );
@@ -79,9 +85,10 @@ class Dir {
 
 	/**
 	 * Create directory $dir if it doesn't exist
-	 * @access	public
-	 * @param		dir	string	Directory
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  dir $string Directory
+	 * @return void
 	 */
 	static function make_dir( $dir ) {
 		if( file_exists( $dir ) ) return;
