@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,21 +14,30 @@
  *
  * Gives LDAP functionalities to Swift
  *
- * @package			Swift
- * @subpackage	Database
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Database
  */
 
 class Db_Ldap extends Base {
+	/**
+	 * Connection to LDAP
+	 */
 	var $conn = NULL;
+	/**
+	 * Options in configuration file
+	 */
 	var $options;
+	/**
+	 * Cache instance use internally
+	 */
 	var $cache;
 
 	/**
 	 * Constructor
-	 * @access	public
-	 * @param		options	Options from configuration file
-	 * @return	void
+	 * @access public
+	 * @param  array options Options from configuration file
+	 * @return void
 	 */
 	function __construct( $options ) {
 		$this -> options = $options;
@@ -37,8 +46,9 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Destructor - Disconnects from LDAP
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function __destruct() {
 		if( !empty( $this -> conn ) )
@@ -47,9 +57,10 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Connects to LDAP and binds as admin
+	 *
+	 * @access public
+	 * @return void
 	 * @see bindAdmin
-	 * @access	public
-	 * @return	void
 	 */
 	function connect() {
 		$this -> conn = @ldap_connect( $this -> options[ 'host' ], $this -> options[ 'port' ] );
@@ -63,8 +74,9 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Binds as username/passwords specified in config
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function bindAdmin() {
 		if( @ldap_bind( $this -> conn, $this -> options[ 'username' ], $this -> options[ 'password' ] ) === FALSE ) 
@@ -73,9 +85,10 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Queries LDAP with conditions based on current relation
-	 * @access	public
-	 * @param		object	base	Model
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  object $base Model
+	 * @return void
 	 */
 	function select( &$base ) {
 		$table = &Model::instance() -> tables[ $base -> tableName ];
@@ -119,9 +132,10 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Generates conditions
-	 * @access	public
-	 * @param		object	base	Model
-	 * @return	string
+	 *
+	 * @access public
+	 * @param  object $base Model
+	 * @return string
 	 */
 	function generateConditions( &$base ) {
 		if( empty( $base -> relation[ 'where' ] ) ) return '(webid=*)';
@@ -140,9 +154,10 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Saves changes to LDAP
-	 * @access	public
-	 * @param		string	base	Model
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $base Model
+	 * @return void
 	 */
 	function save( &$base ) {
 		global $cache;
@@ -159,10 +174,11 @@ class Db_Ldap extends Base {
 
 	/**
 	 * Tries to authenticate with username and password in $data, and returns TRUE if it succeeded, FALSE if it didn't
-	 * @access	public
-	 * @param		string	base	Model
-	 * @param		array		data	Username and password
-	 * @return	bool
+	 *
+	 * @access public
+	 * @param  string $base Model
+	 * @param  array  $data Username and password
+	 * @return bool
 	 */
 	function authenticate( &$base, $data ) {
 		if( !$this -> conn ) $this -> connect();

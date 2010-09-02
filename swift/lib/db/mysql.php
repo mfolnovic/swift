@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,9 +14,9 @@
  *
  * Gives Mysql functionalities to Swift
  *
- * @package			Swift
- * @subpackage	Database
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Database
  */
 
 class Db_Mysql extends Base {
@@ -28,9 +28,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Constructor
-	 * @access	public
-	 * @param		string	options	Options from configuration file
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $options Options from configuration file
+	 * @return void
 	 */
 	function __construct( $options ) {
 		$this -> options = $options;
@@ -39,8 +40,9 @@ class Db_Mysql extends Base {
 	/**
 	 * Destructor 
 	 * Disconnects from mysql database
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function __destruct() {
 		if( $this -> connected )
@@ -49,9 +51,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Secures string from sql injection
-	 * @access	public
-	 * @param		string	string	String to secure
-	 * @return	string
+	 *
+	 * @access public
+	 * @param  string $string String to secure
+	 * @return string
 	 */
 	function safe( $string ) {
 		if( empty( $string ) ) return "''";
@@ -64,8 +67,9 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Connects to mysql database
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function connect() {
 		$this -> conn = @new mysqli( $this -> options[ 'host' ], $this -> options[ 'username' ], $this -> options[ 'password' ], $this -> options[ 'database' ] );
@@ -80,9 +84,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Runs query to mysql database
-	 * @access	public
-	 * @param		string	query	Query to run
-	 * @return	resource
+	 *
+	 * @access public
+	 * @param  string $query Query to run
+	 * @return resource
 	 */
 	function query( $query ) {
 		if( !$this -> conn ) $this -> connect();
@@ -98,8 +103,9 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Generates where part of query based on current relation
-	 * @access	public
-	 * @param		object	base	Model
+	 *
+	 * @access public
+	 * @param  object $base Model
 	 */
 	function generateWhere( &$base ) {
 		$ret = '';
@@ -110,8 +116,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Generates parts of query: limit, groupby, order
-	 * @access	public
-	 * @todo		Implement it
+	 *
+	 * @access public
+	 * @param  object $base Model	 
+	 * @todo   Implement it
 	 */
 	function generateExtra( &$base ) {
 		$relation =& $base -> relation;
@@ -120,9 +128,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Generates joins
-	 * @access	public
-	 * @param		string	base	Model
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  object $base Model
+	 * @return return
 	 */
 	function generateJoins( &$base ) {
 		$ret  = '';
@@ -136,9 +145,9 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Does query based on current relation
-	 * @access	public
-	 * @param		base	Model
-	 * @return	void
+	 * @access public
+	 * @param  object $base Model
+	 * @return void
 	*/
 	function select( &$base ) {
 		if( $base -> relationChanged === FALSE ) return;
@@ -165,9 +174,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Saves changes to Mysql
-	 * @access	public
-	 * @param		string	base	Model
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  object $base Model
+	 * @return void
 	 */
 	function save( &$base ) {
 		if( !empty( $base -> newRecord ) ) {
@@ -201,9 +211,10 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Deletes row
-	 * @access	public
-	 * @param		string	base	Model
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $base Model
+	 * @return void
 	 */
 	function delete( &$base ) {
 		$this -> query( "DELETE FROM {$base -> tableName}" . $this -> generateWhere( $base ) );
@@ -237,18 +248,19 @@ class Db_Mysql extends Base {
 
 	/**
 	 * Generates values based on type of object
-	 * @access	public
-	 * @param		string	object	Object
-	 * @return	return
 	 * <code>
 	 * value( '123' ) => " = '123'"
 	 * value( "'hello'" ) => " = \'hello\'"
 	 * value( array( 1, 2, 3 ) ) => " IN (1,2,3)"
 	 * </code>
+	 *
+	 * @access public
+	 * @param  string $object Object
+	 * @return return
 	 */
-	protected function value( $o ) {
-		if( !is_array( $o ) ) return " = " . $this -> safe( $o );
-		else return " IN ( " . implode( ',', $o ) . " )";
+	protected function value( $object ) {
+		if( !is_array( $object ) ) return " = " . $this -> safe( $object );
+		else return " IN ( " . implode( ',', $object ) . " )";
 	}
 }
 
