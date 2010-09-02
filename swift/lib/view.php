@@ -40,6 +40,7 @@ class View extends Base {
 	 */
 	function __destruct() {
 		if( !empty( Errors::$errors ) ) return;
+
 		ob_start( 'gz_handler' );
 		echo $this -> output;
 		ob_end_flush();
@@ -57,20 +58,25 @@ class View extends Base {
 	function render( $controller = NULL, $action = NULL ) {
 		$view_id = Benchmark::start();
 
-		if( $this -> render === FALSE ) return;
-		else if( $this -> render === TRUE ) {
+		if( $this -> render === FALSE ) {
+			return;
+		} else if( $this -> render === TRUE ) {
 			if( empty( $controller ) ) $controller = Controller::instance() -> controller;
 			if( empty( $action ) ) $action = Controller::instance() -> action;
 
 			$path = $controller . '/' . $action . '.php';
-		} else
+		} else {
 			$path = $this -> render . '.php';
+		}
 
-		$cache = TMP_DIR . "caches/" . str_replace( '/', '_', $path );
-		$template = VIEWS_DIR . $path;
+		$cache    = TMP_DIR . "caches/" . str_replace( '/', '_', $path );
 		$compiled = TMP_DIR . "views/$path";
+		$template = VIEWS_DIR . $path;
 
-		if( file_exists( $cache ) ) return include $cache;
+		if( file_exists( $cache ) ) {
+			include $cache;
+			return;
+		}
 
 		if( !file_exists( $compiled ) || !Config::instance() -> get( 'cache_views' ) ) {
 			$haml_id = Benchmark::start();
@@ -83,7 +89,6 @@ class View extends Base {
 
 		$this -> end();
 		ob_start();
-		$view = View::instance();
 		include $compiled;
 
 		if( in_array( array( $controller, $action ), $this -> action_caches ) ) {
@@ -96,7 +101,7 @@ class View extends Base {
 			$this -> end();
 		}
 
-		ob_start(); // don't understand why I need this
+		ob_start();
 
 		Log::write( $path, 'Render', $view_id );
 	}
