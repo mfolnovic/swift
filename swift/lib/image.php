@@ -29,6 +29,7 @@ class Image extends Base {
 
 	/**
 	 * Constructor
+	 *
 	 * @access public
 	 * @param  string $path Path to image
 	 * @return void
@@ -42,6 +43,7 @@ class Image extends Base {
 
 	/**
 	 * Write current image to $name
+	 *
 	 * @access public
 	 * @param  string $name Name of new image
 	 * @return void
@@ -54,6 +56,7 @@ class Image extends Base {
 
 	/**
 	 * Resize image proportionally, and then crop what's redundant
+	 *
 	 * @access public
 	 * @param  int $width Width of new image
 	 * @param  int $height Height of new image
