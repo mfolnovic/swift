@@ -20,7 +20,10 @@
  */
 
 class Router extends Base {
-	var $routes, $path, $url, $root, $continueRouting;
+	var $routes;
+	var $path;
+	var $root;
+	var $continueRouting;
 
 	function __construct() {
 		$this -> loadRoutes();
