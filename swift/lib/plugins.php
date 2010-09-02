@@ -1,15 +1,40 @@
 <?php
 
+<?php
+
+/**
+ * Swift
+ *
+ * @package   Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ */
+
+/**
+ * Swift Plugins Class
+ *
+ * This class handles all plugins
+ *
+ * @package    Swift
+ * @subpackage Plugins
+ * @author     Swift dev team
+ */
+
 class Plugins extends Base {
+	/**
+	 * List of all classes which extended other class
+	*/
 	var $extends     = array();
 	var $manifest    = array();
 	static $instance = NULL;
 
 	/**
 	 * Loads plugin $name
-	 * @access	public
-	 * @param		string	name	Plugin name
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $name Plugin name
+	 * @return void
 	 */
 	function loadPlugin( $name ) {
 		if( strpos( '/', $name ) === FALSE ) $name .= '/' . $name;
@@ -24,8 +49,10 @@ class Plugins extends Base {
 
 	/**
 	 * Loads manifest files for all plugins
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
+	 * @todo   Cache
 	 */
 	function loadManifests() {
 		$plugins = Dir::dirs( PLUGIN_DIR );
@@ -44,9 +71,10 @@ class Plugins extends Base {
 
 	/**
 	 * Returns list of extensions of class $class
-	 * @access	public
-	 * @param		string	class	Class for which to return extensions
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  string $class Class for which to return extensions
+	 * @return return
 	 */
 	function extensions( $class ) {
 		return isset( self::instance() -> extends[ $class ] ) ? self::instance() -> extends[ $class ] : array();
