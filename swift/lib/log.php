@@ -51,11 +51,12 @@ class Log extends Base {
 	 * @static
 	 */
 	static function destroy() {
-		self::$adapter -> write( 'Request done in ' . Benchmark::end( 'request' ) . ' seconds', NULL );
+		self::write( 'Request done in ' . Benchmark::end( 'request' ) . ' seconds' );
 	}
 
 	/**
 	 * Writes to log
+	 *
 	 * @access public
 	 * @param	 string $message Message to write
 	 * @return void
@@ -67,29 +68,31 @@ class Log extends Base {
 		if( !empty( $type ) ) $type = "[$type] ";
 		if( !empty( $benchmark ) ) $benchmark = '(' . Benchmark::end( $benchmark ) . ' seconds)';
 
-		self::$adapter -> write( "$type$benchmark" . ( !empty( $benchmark) || !empty( $type ) ? ':' : '' ) . $message );
+		self::$adapter -> write( "$type$benchmark" . ( !empty( $benchmark) || !empty( $type ) ? ': ' : '' ) . $message );
 	}
 
 	/**
 	 * Write error to log
+	 *
 	 * @access public
 	 * @param  string $message Message to write with flag error
 	 * @return void
 	 * @static
 	 */
 	static function error( $message ) {
-		self::$adapter -> write( $message, ERROR );
+		self::write( $message, ERROR );
 	}
 
 	/**
 	 * Write notice to log
+	 *
 	 * @access public
 	 * @param  string $message Message to write with flag notice
 	 * @return void
 	 * @static
 	 */
 	static function notice( $message ) {
-		self::$adapter -> write( $message, NOTICE );
+		self::write( $message, NOTICE );
 	}
 }
 

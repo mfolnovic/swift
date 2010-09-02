@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,43 +14,44 @@
  *
  * This class allows writing logs in files
  *
- * @package			Swift
- * @subpackage	Log
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Log
  */
 
 class Log_File extends Base {
-	var $handle = NULL;
 	var $options = NULL;
 	var $output = '';
 
 	/**
 	 * Constructor
-	 * @access	public
-	 * @param		array	options	Options
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  array options Options
+	 * @return void
 	 */
-	function __construct( $options ) {
-		$this -> options	= $options;
+	function __construct( &$options ) {
+		$this -> options = $options;
 	}
 
 	/**
 	 * Destructor
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
+	 * @todo   Avoid calling Log::destroy()
 	 */
 	function __destruct() {
-		Log::destroy(); // any better way?
-		$handle = fopen( LOG_DIR . $this -> options[ 'file' ], "a" );
-		fwrite( $handle, $this -> output );
-		fclose( $handle );
+		Log::destroy();
+		file_put_contents( LOG_DIR . $this -> options[ 'file' ], $this -> output, FILE_APPEND );
 	}
 
 	/**
 	 * Writes message
-	 * @access	public
-	 * @param		string	message	Message to write
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  string $message Message to write
+	 * @return return
 	 */
 	function write( $message ) {
 		$this -> output .= $message . PHP_EOL;
