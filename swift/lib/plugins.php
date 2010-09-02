@@ -24,8 +24,10 @@ class Plugins extends Base {
 	 * List of all classes which extended other class
 	*/
 	var $extends     = array();
+	/**
+	 * Parset .manifest files
+	 */
 	var $manifest    = array();
-	static $instance = NULL;
 
 	/**
 	 * Loads plugin $name
@@ -75,7 +77,7 @@ class Plugins extends Base {
 	 * @return return
 	 */
 	function extensions( $class ) {
-		return isset( self::instance() -> extends[ $class ] ) ? self::instance() -> extends[ $class ] : array();
+		return isset( $this -> extends[ $class ] ) ? $this -> extends[ $class ] : array();
 	}
 }
 
