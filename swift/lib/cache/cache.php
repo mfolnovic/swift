@@ -34,7 +34,7 @@ class Cache extends Base {
 	 * If cache for page with url. $url exists, load it.
    *
 	 * @access public
-	 * @param  string name description
+	 * @param  string $name description
 	 * @static
 	 * @return return
 	 */
