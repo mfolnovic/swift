@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @package   Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
  */
 
 /* 
@@ -21,9 +21,9 @@ include LIB_DIR . "view/helpers.php";
  *
  * This class is resposible for all rendering
  *
- * @package			Swift
- * @subpackage	View
- * @author			Swift dev team
+ * @package    Swift
+ * @subpackage View
+ * @author     Swift dev team
  */
 
 class View extends Base {
@@ -34,8 +34,9 @@ class View extends Base {
 
 	/**
 	 * Destructor
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
 	 */
 	function __destruct() {
 		if( !empty( Errors::$errors ) ) return;
@@ -46,11 +47,12 @@ class View extends Base {
 
 	/**
 	 * This function is responsible for rendering and caching
-	 * @access	public
-	 * @param		string	c	Controller
-	 * @param		string	a	Action
-	 * @return	void
-	 * @todo		fix caching, filename should be current url
+	 *
+	 * @access public
+	 * @param  string	$controller	Controller
+	 * @param  string	$action	Action
+	 * @return void
+	 * @todo   fix caching, filename should be current url
 	 */
 	function render( $controller = NULL, $action = NULL ) {
 		$view_id = Benchmark::start();
@@ -98,7 +100,13 @@ class View extends Base {
 
 		Log::write( $path, 'Render', $view_id );
 	}
-	
+
+	/**
+	 * Outputs and clears all ob buffers
+	 *
+	 * @access public
+	 * @return void
+	*/
 	function end() {
 		while( ob_get_level() > 0 )
 			$this -> output .= ob_get_clean();
