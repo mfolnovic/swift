@@ -54,7 +54,7 @@ function favicon( $icon ) {
 }
 
 function image( $image, $options = array() ) {
-	echo "<img src=\"" . URL_PREFIX . "$image\" " . _attributes( $options ) . ">";
+	echo "<img src=\"" . URL_PREFIX . "images/$image\" " . _attributes( $options ) . ">";
 }
 
 function format_time( $timestamp ) {
