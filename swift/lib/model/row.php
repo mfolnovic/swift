@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -15,17 +15,18 @@
  * Simple class for a database row
  * Gives class like access, like $row -> name instead of $row['name']
  *
- * @package			Swift
- * @subpackage	Model
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Model
  */
 
 class Model_Row {
 	/**
 	 * Constructor
-	 * @access	public
-	 * @param		array	row	Row
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  array row Row
+	 * @return void
 	 */
 	function __construct( $row = array() ) {
 		foreach( $row as $index => $value ) 

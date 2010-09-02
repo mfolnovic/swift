@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -44,10 +44,10 @@
  * ?>
  * </code>
  *
- * @package			Swift
- * @subpackage	Model
- * @author			Swift dev team
- * @todo				__set_state?
+ * @package    Swift
+ * @subpackage Model
+ * @author     Swift dev team
+ * @todo       __set_state?
  */
 
 class Model_Base extends Base implements IteratorAggregate {
@@ -75,10 +75,11 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Constructor
-	 * @access	public
-	 * @param		string	tableName	Name of the table
-	 * @param		mixed		Array			if it's new row, and NULL if it's not
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string tableName Name of the table
+	 * @param  mixed  $newRow   if it's new row, and NULL if it's not
+	 * @return void
 	 */
 	function __construct( $tableName, $newRow = NULL ) {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
@@ -94,9 +95,10 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Provides model getter
-	 * @access	public
-	 * @param		string	key	Key to get
-	 * @return	mixed
+	 *
+	 * @access public
+	 * @param  string	key	Key to get
+	 * @return mixed
 	 */
 	function __get( $key ) {
 		if( empty( $this -> resultSet ) && $this -> relationChanged ) $this -> first();
@@ -110,10 +112,11 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Provides model setter
-	 * @access	public
-	 * @param		string	key		Key to set
-	 * @param		mixed		value	New value
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string $key   Key to set
+	 * @param  mixed  $value New value
+	 * @return void
 	 */
 	function __set( $key, $value ) {
 		reset( $this -> resultSet );
@@ -125,10 +128,11 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Allows calls like find_by_id, find_by_title and changing relation like $model -> where( ... ) etc.
-	 * @access	public
-	 * @param		string	function	Function name
-	 * @param		array		arguments	Passed arguments to this function
-	 * @return	return
+	 *
+	 * @access public
+	 * @param  string $function  Function name
+	 * @param  array  $arguments Passed arguments to this function
+	 * @return return
 	 */
 	function __call( $function, $arguments ) {
 		if( parent::__call( $function, $arguments ) ) return $this;
@@ -155,16 +159,18 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Allows iterating through model
-	 * @access	public
-	 * @return	object
+	 *
+	 * @access public
+	 * @return object
 	 */
 	function getIterator() {
 		return new ArrayIterator( $this -> all() );
 	}
 	/**
 	 * Returns first row based on current relation
-	 * @access	public
-	 * @return	array
+	 *
+	 * @access public
+	 * @return array
 	 */
 	function first() {
 		$this -> limit( 1 );
@@ -175,8 +181,9 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Returns last row based on current relation
-	 * @access	public
-	 * @return	array
+	 *
+	 * @access public
+	 * @return array
 	 */
 	function last() {
 		$this -> order( 'id', 'desc' ) -> limit( 1 );
@@ -187,8 +194,9 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Returns all rows based on current relation
-	 * @access	public
-	 * @return	array
+	 *
+	 * @access public
+	 * @return array
 	 */
 	function all() {
 		$this -> link -> select( $this );
@@ -204,9 +212,10 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * $this -> model( 'articles' ) -> find_by_id( 5 ) -> values( array( 'title' => 'New title', 'content' => 'New content' ) );
 	 * ?>
 	 * </code>
-	 * @access	public
-	 * @param		array	values	Values to change
-	 * @return	object
+	 *
+	 * @access public
+	 * @param  array values Values to change
+	 * @return object
 	 */
 	function values( $values ) {
 		foreach( $values as $id => $val )
@@ -217,8 +226,9 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Handles associations has_many, has_one
-	 * @access	public
-	 * @return	object
+	 *
+	 * @access public
+	 * @return object
 	 */
 	function handleAssociations() {
 		foreach( $this -> relation[ 'includes' ] as $name => $assoc ) {
@@ -231,11 +241,12 @@ class Model_Base extends Base implements IteratorAggregate {
 
 	/**
 	 * Handles specific association
-	 * @access	public
-	 * @param		string	name	Name of association
-	 * @param		bool		assoc	TRUE if called from association
-	 * @return	void
-	 * @todo		Avoid $assoc
+	 *
+	 * @access public
+	 * @param  string name  Name of association
+	 * @param  bool   assoc TRUE if called from association
+	 * @return void
+	 * @todo   Avoid $assoc
 	 */
 	function handleAssociation( $name, $assoc = NULL ) {
 		if( isset( $this -> hasMany[ $name ] ) ) { $association = &$this -> hasMany[ $name ]; $type = 'hasMany'; }
