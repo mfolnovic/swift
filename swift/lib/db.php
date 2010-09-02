@@ -33,6 +33,7 @@ class Db extends Base {
 	 * @param  string $adapter Adapter name
 	 * @return object
 	 * @static
+	 * @todo   Cache has almost same function, try to move it to Base
 	 */
 	static function factory( $adapter ) {
 		if( !isset( self::$adapters[ $adapter ] ) ) {
