@@ -17,6 +17,7 @@
  */
 
 function __autoload( $name ) {
+	$name = strtolower( $name );
 	$path = LIB_DIR . str_replace( '_', '/', $name ) . ".php";
 	
 	if( file_exists( $path ) )

@@ -19,7 +19,7 @@ include LIB_DIR . "base.php";
 Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
 
 include LIB_DIR . "helpers.php";
-include LIB_DIR . "errors/errors.php";
+include LIB_DIR . "errors.php";
 include LIB_DIR . "constants.php";
 
 Config::instance() -> load();
