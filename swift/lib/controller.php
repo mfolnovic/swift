@@ -37,9 +37,9 @@ class Controller extends Base {
 	 * Runs a controller
 	 *
 	 * @access public
-	 * @param  string controller Name of controller
-	 * @param  string action     Name of action
-	 * @param  array  data       Contains data
+	 * @param  string $controller Name of controller
+	 * @param  string $action     Name of action
+	 * @param  array  $data       Contains data
 	 * @return void
 	 * @todo   Move filterXSS to somewhere else, since now, it'll be run more times
 	 */
