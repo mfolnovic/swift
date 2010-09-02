@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,22 +14,25 @@
  *
  * Maintains application log
  *
- * @package			Swift
- * @subpackage	Log
- * @author			Swift dev team
+ * @author      Swift dev team
+ * @package     Swift
+ * @subpackage  Log
  */
 
 class Log extends Base {
+	/**
+	 * Instance of log adapter
+	 */
 	static $adapter;
 
 	/**
 	 * Init function
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
+	 * @static
 	 */
 	static function init() {
-		global $config;
-
 		$options = Config::instance() -> get( 'log' );
 		if( $options === FALSE ) return;
 
@@ -42,8 +45,10 @@ class Log extends Base {
 
 	/**
 	 * Destroy function
-	 * @access	public
-	 * @return	return
+	 *
+	 * @access public
+	 * @return void
+	 * @static
 	 */
 	static function destroy() {
 		self::$adapter -> write( 'Request done in ' . Benchmark::end( 'request' ) . ' seconds', NULL );
@@ -51,11 +56,12 @@ class Log extends Base {
 
 	/**
 	 * Writes to log
-	 * @access	public
-	 * @param		string	message	Message to write
-	 * @return	objectg
+	 * @access public
+	 * @param	 string $message Message to write
+	 * @return void
+	 * @static
 	 */
-	static function write( $message, $type = NULL, $benchmark = NULL ) {
+	static function write( $message, $type = NOTICE, $benchmark = NULL ) {
 		if( self::$adapter === NULL ) self::init();
 
 		if( !empty( $type ) ) $type = "[$type]";
@@ -68,26 +74,24 @@ class Log extends Base {
 
 	/**
 	 * Write error to log
-	 * @access	public
-	 * @param		string	message	Message to write with flag error
-	 * @return	object
+	 * @access public
+	 * @param  string $message Message to write with flag error
+	 * @return void
+	 * @static
 	 */
 	static function error( $message ) {
-		self::$adapter -> write( $message, 'ERROR' );
-
-		return $this;
+		self::$adapter -> write( $message, ERROR );
 	}
 
 	/**
 	 * Write notice to log
-	 * @access	public
-	 * @param		string	message	Message to write with flag notice
-	 * @return	object
+	 * @access public
+	 * @param  string $message Message to write with flag notice
+	 * @return void
+	 * @static
 	 */
 	static function notice( $message ) {
-		self::$adapter -> write( $message, 'NOTICE' );
-
-		return $this;
+		self::$adapter -> write( $message, NOTICE );
 	}
 }
 
