@@ -64,7 +64,7 @@ class Base {
 	 * Adds new before_filter
 	 *
 	 * @access public
-	 * @param	 string function Function which should be run as before_filter
+	 * @param	 string $function1, ... Function which should be run as before_filter
 	 * @return void
 	 * @todo   Options as last argument?
 	 * @todo   More DRY between before_filter and after_filter
@@ -80,7 +80,7 @@ class Base {
 	 * Adds new after filter
 	 *
 	 * @access public
-	 * @param  string function Function which should be run as after_filter
+	 * @param  string $function1, ... Function which should be run as after_filter
 	 * @return void
 	 * @todo   Options as last argument?
 	 */
@@ -95,8 +95,8 @@ class Base {
 	 * Searches through all plugins and finds that function
 	 *
 	 * @access public
-	 * @param  string name Function name
-	 * @param  array  args Arguments
+	 * @param  string $name Function name
+	 * @param  array  $args Arguments
 	 * @return void
 	 */
 	function __call( $name, $args ) {
@@ -124,8 +124,8 @@ class Base {
 	 * Same as above, but for static calls
 	 *
 	 * @access public
-	 * @param  string name Function name
-	 * @param  array  args Arguments
+	 * @param  string $name Function name
+	 * @param  array  $args Arguments
 	 * @return void
 	 * @todo   Implement it
 	 * @todo   Optimize, call_user-func_array is slow!
@@ -138,7 +138,7 @@ class Base {
 	 * Global singleton
 	 *
 	 * @access public
-	 * @param  string args Optional arguments passed to constructor
+	 * @param  string $args Optional arguments passed to constructor
 	 * @return object
 	 */
 	static function instance( $args = NULL ) {

@@ -3,27 +3,30 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
  * Tests if this request was requested by ajax
  * Currently only works with javascripts frameworks (jquery tested only)
- * @return	bool
- * @todo		Doesn't work while file upload using malsup form plugin
+ *
+ * @return bool
+ * @todo   Doesn't work while file upload using malsup form plugin (plugin bug?)
  */
 function isAjax() {
 	return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
 }
 
 /**
- * Returns same prefixed from $str1 and $str2
- * @param		string	str1	First string
- * @param		string	str2	Second string
- * @return	string
+ * Returns same prefix from $str1 and $str2
+ *
+ * @param  string $str1 First string
+ * @param  string $str2 Second string
+ * @return string
+ * @todo   Benchmark against substr
  */
 function samePrefix( $str1, $str2 ) {
 	$ret = '';
@@ -36,9 +39,10 @@ function samePrefix( $str1, $str2 ) {
 
 /**
  * Removes same prefix of $str1 and $str2 from $str1 and returns it
- * @param		string	str1	First string
- * @param		string	str2	Second string
- * @return	string
+ *
+ * @param  string $str1 First string
+ * @param  string $str2 Second string
+ * @return string
  */
 function removeSamePrefix( $str1, $str2 ) {
 	return substr( $str1, 0, strlen( samePrefix( $str1, $str2 ) ) );
@@ -46,14 +50,22 @@ function removeSamePrefix( $str1, $str2 ) {
 
 /**
  * For a given filename, returns file extension
- * @access	public
- * @param		string	filename	Name of file
- * @return	return
+ *
+ * @access public
+ * @param  string $filename Name of file
+ * @return return
  */
 function extension( $filename ) {
 	return substr( $filename, - strpos( '.', $filename ) );
 }
 
+/**
+ * Returns all parent classes
+ * If Class1 extended Class2, and Class2 extended Class3, then this function would return array( 'Class1', 'Class2', 'Class3' )
+ *
+ * @access public
+ * @param  string $class Name of class
+ */
 function get_parent_classes( $class ) {
 	$ret = array( $class );
 

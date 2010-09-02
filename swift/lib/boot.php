@@ -3,19 +3,22 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
+// @todo Make class Session which should do this
 session_start();
 
+// @todo Move this
 if( empty( $_GET[ 'url' ] ) ) $_GET[ 'url' ] = '';
 
 include LIB_DIR . "autoload.php";
 include LIB_DIR . "base.php";
 
+// @todo Try to avoid benchmarking request via Benchmark class
 Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
 
 include LIB_DIR . "helpers.php";
@@ -28,6 +31,7 @@ Plugins::instance() -> loadManifests();
 //Cache::pageCache( $_GET[ 'url' ] );
 Security::instance();
 
+// @todo Better way to distinguish HTTP requests and testing
 if( ENV & ENV_HTTP ) {
 	// Route
 	Router::instance() -> route( $_GET[ 'url' ] );
@@ -42,6 +46,7 @@ if( ENV & ENV_TEST ) {
 	$scripts -> call( $argv );
 }
 
+// @todo Avoid calling this
 Errors::show();
 
 ?>
