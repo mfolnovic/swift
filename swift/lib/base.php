@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -15,21 +15,32 @@
  * Each class is inherited by this one
  * Provides before_filter and after_filter (rails-like)
  *
- * @package			Swift
- * @subpackage	Base
- * @author			Swift dev team
+ * @author      Swift dev team
+ * @package     Swift
+ * @subpackage  Base
  */
 
 class Base {
+	/**
+	 * Contains all before_filters
+	 */
 	var $before_filters = array();
-	var $after_filters  = array();
-	static $instance    = array();
+	/**
+	 * Contains all after_filters
+	 */
+	var $after_filters = array();
+	/**
+	 * Contains all singleton instances
+	*/
+	static $instance = array();
 
 	/**
 	 * Constructor
 	 * Runs before_filters
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
+	 * @todo   before_filters should be called before every call, not just constructing
 	 */
 	function __construct() {
 		foreach( $this -> before_filters as $function )
@@ -39,8 +50,10 @@ class Base {
 	/**
 	 * Destructor
 	 * Runs after_filters
-	 * @access	public
-	 * @return	void
+	 *
+	 * @access public
+	 * @return void
+	 * @todo   after_filters should be called after every call, not just destructing
 	 */
 	function __destruct() {
 		foreach( $this -> after_filters as $function )
@@ -49,10 +62,12 @@ class Base {
 
 	/**
 	 * Adds new before_filter
-	 * @access	public
-	 * @param		string	function	Function which should be run as before_filter
-	 * @return	void
-	 * @todo	Options as last argument?
+	 *
+	 * @access public
+	 * @param	 string function Function which should be run as before_filter
+	 * @return void
+	 * @todo   Options as last argument?
+	 * @todo   More DRY between before_filter and after_filter
 	 */
 	function before_filter() {
 		$functions = func_get_args();
@@ -63,10 +78,11 @@ class Base {
 
 	/**
 	 * Adds new after filter
-	 * @access	public
-	 * @param		string	function	Function which should be run as after_filter
-	 * @return	void
-	 * @todo	Options as last argument?
+	 *
+	 * @access public
+	 * @param  string function Function which should be run as after_filter
+	 * @return void
+	 * @todo   Options as last argument?
 	 */
 	function after_filter( $function ) {
 		$functions = func_get_args();
@@ -77,10 +93,11 @@ class Base {
 
 	/**
 	 * Searches through all plugins and finds that function
-	 * @access	public
-	 * @param		string	name	Function name
-	 * @param 	array		args	Arguments
-	 * @return	void
+	 *
+	 * @access public
+	 * @param  string name Function name
+	 * @param  array  args Arguments
+	 * @return void
 	 */
 	function __call( $name, $args ) {
 		$plugins = Plugins::instance();
@@ -105,12 +122,13 @@ class Base {
 
 	/**
 	 * Same as above, but for static calls
-	 * @access	public
-	 * @param		string	name	Function name
-	 * @param 	array		args	Arguments
-	 * @return	void
-	 * @todo		Implement it
-	 * @todo		Optimize, call_user-func_array is slow!
+	 *
+	 * @access public
+	 * @param  string name Function name
+	 * @param  array  args Arguments
+	 * @return void
+	 * @todo   Implement it
+	 * @todo   Optimize, call_user-func_array is slow!
 	 */
 	static function __callStatic( $name, $args ) {
 //		call_user_func_array( array( __CLASS__, $name ), $args );
@@ -118,9 +136,10 @@ class Base {
 
 	/**
 	 * Global singleton
-	 * @access	public
-	 * @param		string	args	Optional arguments passed to constructor
-	 * @return	object
+	 *
+	 * @access public
+	 * @param  string args Optional arguments passed to constructor
+	 * @return object
 	 */
 	static function instance( $args = NULL ) {
 		$name = get_called_class();
