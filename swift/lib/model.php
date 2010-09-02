@@ -3,34 +3,38 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
  * Swift Model Class
  *
- * Proxy for all models, and stores all rows in one place
+ * Singleton for all models, and stores all rows in one place
  * In future, this will provide easier caching
  *
- * @package			Swift
- * @subpackage	Model
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Model
  */
 
-class Model {
+class Model extends Base {
+	/**
+	 * Model_Table instances for all tables
+	*/
 	var $tables = array();
-	static $instance = NULL;
 
 	/**
 	 * Creates new table
-	 * @access	public
-	 * @param		string	tableName	Name of table
-	 * @param		bool		newRow		Is it new row?
-	 * @return	object
-	 * @todo		__invoke?
+	 *
+	 * @access public
+	 * @param  string tableName Name of table
+	 * @param  array/null   newRow    If not NULL, then it signals it's a new row
+	 * @return object
+	 * @todo   __invoke?
+	 * @todo  Avoid new row
 	 */
 	function create( $tableName, $newRow = NULL ) {
 		if( !isset( $this -> tables[ $tableName ] ) ) {
@@ -44,16 +48,6 @@ class Model {
 		}
 
 		return new $tableName( $tableName, $newRow );
-	}
-
-	/**
-	 * Singleton
-	 * @access	public
-	 * @return	object
-	 */
-	static function instance() {
-		if( empty( self::$instance ) ) self::$instance = new Model;
-		return self::$instance;
 	}
 }
 
