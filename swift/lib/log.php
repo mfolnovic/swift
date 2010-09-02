@@ -14,9 +14,9 @@
  *
  * Maintains application log
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Log
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Log
  */
 
 class Log extends Base {
