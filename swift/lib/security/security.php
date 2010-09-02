@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
  * @author		Swift dev team
  * @copyright	Copyright (c) 2010, Swift dev team
  * @license		LICENSE
+ * @package		Swift
  */
 
 /**
@@ -14,18 +14,25 @@
  *
  * This class is responsible for filtering data from XSS, checking if it's CSRF attack etc.
  *
+ * @author			Swift dev team
  * @package			Swift
  * @subpackage	Security
- * @author			Swift dev team
  */
 
 
 class Security extends Base {
+	/**
+	 * Current CSRF token
+	 */
 	var $csrf_token;
+	/**
+	 * Time in seconds after which csrf token expires
+	 */
 	var $token_expiration = 3600; // 1 hour
 
 	/**
 	 * Constructor
+	 * 
 	 * @access	public
 	 * @return	void
 	 */
@@ -36,6 +43,7 @@ class Security extends Base {
 
 	/**
 	 * Checks if CSRF token is correct
+	 *
 	 * @access	public
 	 * @return	void
 	 */
@@ -54,6 +62,7 @@ class Security extends Base {
 
 	/**
 	 * This function generates csrf token
+	 *
 	 * @access	public
 	 * @return	void
 	 */
@@ -66,6 +75,7 @@ class Security extends Base {
 
 	/**
 	 * Fitlers array $array from XSS
+	 *
 	 * @access	public
 	 * @param		array	$array	Array to filter
 	 * @return	array
