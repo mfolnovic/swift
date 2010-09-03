@@ -39,10 +39,8 @@ class Log_File extends Base {
 	 *
 	 * @access public
 	 * @return void
-	 * @todo   Avoid calling Log::destroy()
 	 */
 	function __destruct() {
-		Log::destroy();
 		file_put_contents( LOG_DIR . $this -> options[ 'file' ], $this -> output, FILE_APPEND );
 	}
 

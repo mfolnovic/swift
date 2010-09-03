@@ -96,4 +96,6 @@ class Log extends Base {
 	}
 }
 
+register_shutdown_function( "Log::destroy" );
+
 ?>
