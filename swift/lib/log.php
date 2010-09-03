@@ -58,7 +58,7 @@ class Log extends Base {
 	 * Writes to log
 	 *
 	 * @access public
-	 * @param	 string $message Message to write
+	 * @param  string $message Message to write
 	 * @return void
 	 * @static
 	 */
