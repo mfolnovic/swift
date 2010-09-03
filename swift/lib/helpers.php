@@ -75,4 +75,17 @@ function get_parent_classes( $class ) {
 	return $ret;
 }
 
+
+/**
+ * Returns instance of model $name, and can also create new row from data $data
+ *
+ * @access public
+ * @param  string $name Name of model
+ * @param  array  $data New row
+ * @return object
+*/
+function model( $name, $data = array() ) {
+	return Model::instance() -> create( $name, $data );
+}
+
 ?>
