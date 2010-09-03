@@ -20,7 +20,7 @@
  * @todo       Support blocks, e.g. partial cache
  */
 
-class View_Haml {
+class View_Haml extends Base {
 	/**
 	 * All HTML tags which don't need closing tag
 	 */
