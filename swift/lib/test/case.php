@@ -1,12 +1,12 @@
 <?php
 
-class TestCase {
+class Test_Case {
 	function assert( $result, $message = '' ) {
-		TestSuite::instance() -> addResult( $result, $message );
+		Test_Suite::instance() -> addResult( $result, $message );
 	}
 	
 	function assertEqual( $actual, $expected, $message = '' ) {
-		$instance = TestSuite::instance();
+		$instance = Test_Suite::instance();
 
 		$instance -> actual = $actual;
 		$instance -> expected = $expected;

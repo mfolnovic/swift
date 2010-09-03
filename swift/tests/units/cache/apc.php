@@ -8,7 +8,7 @@ class TempObject {
 	}
 }
 
-class apcTest extends TestCase {
+class apcTest extends Test_Case {
 	function test_clear() {
 		$apc = Cache::factory( 'apc' );
 		$apc -> clear(); // Just to make sure tests run cleanly

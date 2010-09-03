@@ -1,6 +1,6 @@
 <?php
 
-class TestSuite extends Base {
+class Test_Suite extends Base {
 	var $results = array();
 	var $currentTest = '';
 	var $currentClass = '';
@@ -76,7 +76,7 @@ class TestSuite extends Base {
 	}
 	
 	function parseMessage( $message ) {
-		return preg_replace_callback( '!\{\{(\w+)\}\}!', function( $match ) { $index = $match[ 1 ]; return TestSuite::getInstance() -> $index; }, $message );
+		return preg_replace_callback( '!\{\{(\w+)\}\}!', function( $match ) { $index = $match[ 1 ]; return Test_Suite::instance() -> $index; }, $message );
 	}
 }
 

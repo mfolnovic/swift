@@ -1,6 +1,6 @@
 <?php
 
-class hamlTest extends TestCase {
+class hamlTest extends Test_Case {
 	function init() {
 	}
 	

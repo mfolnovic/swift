@@ -41,9 +41,8 @@ if( ENV & ENV_HTTP ) {
 }
 
 if( ENV & ENV_TEST ) {
-	include_once LIB_DIR . "scripts/scripts.php";
 	array_shift( $argv );
-	$scripts -> call( $argv );
+	Scripts::call( $argv );
 }
 
 // @todo Avoid calling this

@@ -1,0 +1,35 @@
+database:
+  default:
+    host: localhost
+    username: root
+    password: pass
+    database: petasite
+    adapter: mysql
+  ldap:
+    adapter: ldap
+    host: 10.16.88.3
+    port: 389
+    username: ldapuser@peta.local
+    password: i80960RM
+    dn: dc=peta,dc=local
+    domain: peta.local
+    cache: 3600
+    cache_store: default
+
+cache:
+  apc:
+    adapter: apc
+  memcache:
+    adapter: memcache
+    host: localhost
+    port: 11211
+
+log:
+  adapter: file
+  file: application.log
+
+cache_views: false
+cache_config: false
+format_date: d.m.y H:i:s
+static_version: 1
+
