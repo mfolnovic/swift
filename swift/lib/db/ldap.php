@@ -93,7 +93,7 @@ class Db_Ldap extends Base {
 	function select( &$base ) {
 		$table = &Model::instance() -> tables[ $base -> tableName ];
 		$base -> resultSet = array();
-		$q = $this -> generateConditions( $base );
+		$q = $this -> toQuery( $base );
 
 		Benchmark::start( 'query' );
 		$entries = $this -> cache -> get( $q );
@@ -103,7 +103,7 @@ class Db_Ldap extends Base {
 			$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
 
 			if( $res === false ) return $base -> resultSet;
-			$entries = ldap_get_entries( $this -> conn, $res );
+			$entries = @ldap_get_entries( $this -> conn, $res );
 
 			for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
 				$entry = array();
@@ -137,7 +137,7 @@ class Db_Ldap extends Base {
 	 * @param  object $base Model
 	 * @return string
 	 */
-	function generateConditions( &$base ) {
+	function toQuery( &$base ) {
 		if( empty( $base -> relation[ 'where' ] ) ) return '(webid=*)';
 		
 		$where = '';
@@ -167,7 +167,7 @@ class Db_Ldap extends Base {
 			print_r( $base -> currentDataSet );
 		} else {
 			$this -> select( $base );
-			$this -> cache -> delete( $this -> generateConditions( $base ) );
+			$this -> cache -> delete( $this -> toQuery( $base ) );
 			ldap_modify( $this -> conn, $base -> dn, $base -> update );
 		}
 	}
@@ -183,7 +183,7 @@ class Db_Ldap extends Base {
 	function authenticate( &$base, $data ) {
 		if( !$this -> conn ) $this -> connect();
 
-		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0] . $this -> options[ 'domain' ], $data[ 1 ] ) == true;
+		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0] . '@' . $this -> options[ 'domain' ], $data[ 1 ] ) == true;
 	}
 }
 

@@ -101,6 +101,11 @@ class Db_Mysql extends Base {
 		return $resource;
 	}
 
+	function count( &$base ) {
+		$res = $this -> query( "SELECT COUNT( * ) as count FROM {$base -> tableName}" . $this -> generateWhere( $base ) ) -> fetch_assoc();
+		return $res[ 'count' ];
+	}
+
 	/**
 	 * Generates where part of query based on current relation
 	 *
@@ -123,7 +128,7 @@ class Db_Mysql extends Base {
 	 */
 	function generateExtra( &$base ) {
 		$relation =& $base -> relation;
-		return ( empty( $relation[ 'limit' ] ) ? '' : ' LIMIT ' . implode( $relation[ 'limit' ] ) );
+		return ( empty( $relation[ 'limit' ] ) ? '' : ' LIMIT ' . implode( ',', $relation[ 'limit' ] ) );
 	}
 
 	/**
@@ -155,12 +160,8 @@ class Db_Mysql extends Base {
 		$base -> resultSet = array();
 		$base -> relationChanged = FALSE;
 		$table =& Model::instance() -> tables[ $base -> tableName ];
-		$relation =& $base -> relation;
 
-		if( empty( $relation[ 'select' ] ) ) $select = '*';
-		else $select = ( !empty( $relation[ 'join' ] ) ? '' : 'id,' ) . implode( ',', $relation[ 'select' ] );
-
-		$res = $this -> query( "SELECT " . $select . " FROM " . $base -> tableName . $this -> generateJoins( $base ) . $this -> generateWhere( $base ) . $this -> generateExtra( $base ) . ';' );
+		$res = $this -> query( $this -> toQuery( $base ) );
 
 		for( $i = 0; $i < $res -> num_rows; ++ $i ) {
 			$row = $res -> fetch_assoc();
@@ -172,6 +173,15 @@ class Db_Mysql extends Base {
 		$base -> handleAssociations();
 	}
 
+	function toQuery( &$base ) {
+		$relation =& $base -> relation;
+
+		if( empty( $relation[ 'select' ] ) ) $select = '*';
+		else $select = ( !empty( $relation[ 'join' ] ) ? '' : 'id,' ) . implode( ',', $relation[ 'select' ] );
+
+		return "SELECT " . $select . " FROM " . $base -> tableName . $this -> generateJoins( $base ) . $this -> generateWhere( $base ) . $this -> generateExtra( $base ) . ';';
+	}
+
 	/**
 	 * Saves changes to Mysql
 	 *
@@ -180,11 +190,12 @@ class Db_Mysql extends Base {
 	 * @return void
 	 */
 	function save( &$base ) {
-		if( !empty( $base -> newRecord ) ) {
+		if( isset( $base -> resultSet[ -1 ] ) ) {
 			$columns = '';
 			$values = '';
+			$newRecord =& $base -> resultSet[ -1 ];
 
-			foreach( $base -> newRecord as $id => $val ) {
+			foreach( $newRecord as $id => $val ) {
 				if( $values != '' ) {
 					$columns	.= ',';
 					$values		.= ',';
@@ -195,12 +206,12 @@ class Db_Mysql extends Base {
 			}
 
 			$this -> query( "INSERT INTO {$base -> tableName} ($columns) VALUES ($values)" );
-			$base -> newRecord -> id = $this -> conn -> insert_id;
+			$newRecord -> id = $this -> conn -> insert_id;
 			
 			$table =& Model::instance() -> tables[ $base -> tableName ];
-			$table[ $base -> newRecord -> id ] = $base -> newRecord;
-			$base -> resultSet[ $base -> newRecord -> id ] = & $table[ $base -> newRecord -> id ];
-			$base -> newRecord = FALSE;
+			$table[ $newRecord -> id ] = $base -> newRecord;
+			$base -> resultSet[ $newRecord -> id ] = & $table[ $newRecord -> id ];
+			unset( $newRecord );
 		} else {
 			$set = '';
 			foreach( $base -> update as $id => $val ) 
@@ -220,7 +231,7 @@ class Db_Mysql extends Base {
 		$this -> query( "DELETE FROM {$base -> tableName}" . $this -> generateWhere( $base ) );
 	}
 
-	function dropAndCreateTable( &$base ) {
+	function recreateTable( &$base ) {
 		$this -> query( "DROP TABLE IF EXISTS " . $base -> tableName );
 		
 		$q = "CREATE TABLE " . $base -> tableName . " (";

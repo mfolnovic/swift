@@ -52,7 +52,7 @@
 
 class Model_Base extends Base implements IteratorAggregate {
 	var $tableName;
-	var $resultSet = array();
+	var $resultSet = NULL;
 	var $update = array();
 	var $validations = array();
 	var $relation = array( 
@@ -68,10 +68,10 @@ class Model_Base extends Base implements IteratorAggregate {
 	var $schema;
 	var $hasOne = array();
 	var $hasMany = array();
+	var $hasAndBelongsToMany = array();
 	var $connection = 'default';
 	var $link;
-	var $newRecord = false;
-	var $relationChanged = true;
+	var $relationChanged = false;
 
 	/**
 	 * Constructor
@@ -81,16 +81,9 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @param  mixed  $newRow   if it's new row, and NULL if it's not
 	 * @return void
 	 */
-	function __construct( $tableName, $newRow = NULL ) {
+	function __construct( $tableName ) {
 		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
 		$this -> link = DB::factory( $this -> connection );
-
-/*		if( $this -> connection == 'default' ) {
-			$res = $this -> link -> query( "SHOW TABLES LIKE '%{$this -> tableName}%'" );
-			if( $res -> num_rows == 0 ) $this -> link -> dropAndCreateTable( $this );
-		}*/
-
-		if( !empty( $newRow ) )	$this -> newRecord = new Model_Row( $newRow );
 	}
 
 	/**
@@ -101,13 +94,12 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return mixed
 	 */
 	function __get( $key ) {
-		if( empty( $this -> resultSet ) && $this -> relationChanged ) $this -> first();
-		if( isset( $this -> hasOne[ $key ] ) || isset( $this -> hasMany[ $key ] ) ) $this -> handleAssociation( $key ); // workaround
+		if( !$this -> relationChanged && $this -> resultSet === NULL ) return NULL;
+		if( $this -> resultSet == array() && $this -> relationChanged ) $this -> first();
 
-		reset( $this -> resultSet );
-		$tmp = current( $this -> resultSet );
-		if( !isset( $tmp -> $key ) ) return NULL;
-		return $tmp -> $key;
+		$tmp = reset( $this -> resultSet );
+		if( !isset( $tmp -> $key ) ) $this -> handleAssociation( $key );
+		return isset( $tmp -> $key ) ? $tmp -> $key : NULL;
 	}
 
 	/**
@@ -119,9 +111,14 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return void
 	 */
 	function __set( $key, $value ) {
-		reset( $this -> resultSet );
-		$row_id = key( $this -> resultSet );
-		if( $row_id === NULL ) $this -> resultSet[ $row_id ] = new Model_Row;
+		if( empty( $this -> resultSet ) ) {
+			$row_id = -1;
+			$this -> resultSet[ $row_id ] = new Model_Row;
+		} else {
+			reset( $this -> resultSet );
+			$row_id = key( $this -> resultSet );
+		}
+
 		$this -> resultSet[ $row_id ] -> $key = $value;
 		$this -> update[ $key ] = & $this -> resultSet[ $row_id ] -> $key;
 	}
@@ -199,7 +196,10 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return array
 	 */
 	function all() {
-		$this -> link -> select( $this );
+		if( $this -> resultSet === NULL ) {
+			$this -> relationChanged = TRUE;
+			$this -> link -> select( $this );
+		}
 
 		return $this -> resultSet;
 	}
@@ -232,8 +232,8 @@ class Model_Base extends Base implements IteratorAggregate {
 	 */
 	function handleAssociations() {
 		foreach( $this -> relation[ 'includes' ] as $name => $assoc ) {
-			if( is_numeric( $name ) ) { $name = $assoc; $assoc = NULL; }
-			$this -> handleAssociation( $name, $assoc );
+			if( is_numeric( $name ) ) $name = $assoc;
+			$this -> handleAssociation( $name );
 		}
 
 		return $this;
@@ -244,14 +244,25 @@ class Model_Base extends Base implements IteratorAggregate {
 	 *
 	 * @access public
 	 * @param  string $name  Name of association
-	 * @param  bool   $assoc TRUE if called from association
 	 * @return void
 	 * @todo   Avoid $assoc
 	 */
-	function handleAssociation( $name, $assoc = NULL ) {
-		if( isset( $this -> hasMany[ $name ] ) ) { $association = &$this -> hasMany[ $name ]; $type = 'hasMany'; }
-		else if( isset( $this -> hasOne[ $name ] ) ) { $association = &$this -> hasOne[ $name ]; $type = 'hasOne'; }
-		else return false;
+	function handleAssociation( $name ) {
+		if( isset( $this -> hasMany[ $name ] ) ) { 
+			$association =& $this -> hasMany[ $name ]; 
+			$type        =  'hasMany'; 
+		} else if( isset( $this -> hasOne[ $name ] ) ) { 
+			$association =& $this -> hasOne[ $name ]; 
+			$type        =  'hasOne'; 
+		} else if( isset( $this -> hasAndBelongsToMany[ $name ] ) ) { 
+			$association =& $this -> hasAndBelongsToMany[ $name ];
+			$type        =  'hasAndBelongsToMany';
+		} else {
+			return;
+		}
+
+		if( isset( $this -> relation[ 'includes' ][ $name ] ) ) $assoc = $this -> relation[ 'includes' ][ $name ];
+		else $assoc = NULL;
 
 		$association = array_merge( array( 'primaryKey' => 'id', 'foreignKey' => 'id' ), $association );
 
@@ -264,15 +275,12 @@ class Model_Base extends Base implements IteratorAggregate {
 			if( !isset( $ids[ $row -> $primaryKey ] ) ) $ids[ $row -> $primaryKey ] = array();
 
 			$ids[ $row -> $primaryKey ][] = $id;
+			$row -> $name = model( $className );
+			$row -> $name -> resultSet = array();
 		}
 
 		$assocModel = Model::instance() -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
 		if( !empty( $assoc ) ) $assocModel -> includes( $assoc );
-
-		foreach( $this -> resultSet as $id => $val ) {
-			$val -> $name = new $className( $className );
-			$val -> $name -> relationChanged = false;
-		}
 
 		foreach( $assocModel -> all() as $id => $row )
 			foreach( $ids[ $row -> $foreignKey ] as $key => $dataID )
