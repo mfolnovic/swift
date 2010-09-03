@@ -3,7 +3,7 @@ database:
     host: localhost
     username: root
     password: pass
-    database: petasite
+    database: swift
     adapter: mysql
   ldap:
     adapter: ldap

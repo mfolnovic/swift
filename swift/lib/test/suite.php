@@ -36,6 +36,7 @@ class Test_Suite extends Base {
 		$obj = substr( $file, 0, -4 ) . 'Test';
 		$this -> currentClass = $obj;
 		$case = new $obj;
+		$case -> setup();
 		$methods = get_class_methods( $case );
 
 		foreach( $methods as $method ) {
