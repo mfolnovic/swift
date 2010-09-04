@@ -103,7 +103,10 @@ class Router extends Base {
 		$this -> continueRouting = false;
 		$i = 0;
 		foreach( $route[ 0 ] as $val ) {
-			if( !isset( $path[ $i ] ) ) break;
+			if( !isset( $path[ $i ] ) ) {
+				if( $val[ 1 ] === false ) return false;
+				break;
+			}
 
 			if( $val[ 1 ] === false && $val[ 0 ] != $path[ $i ] )
 				return false;
