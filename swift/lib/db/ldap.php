@@ -97,7 +97,6 @@ class Db_Ldap extends Base {
 
 		Benchmark::start( 'query' );
 		$entries = $this -> cache -> get( $q );
-		var_dump( $entries );exit;
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
 
@@ -126,9 +125,9 @@ class Db_Ldap extends Base {
 				$base -> resultSet[ $id ] = &$table[ $id ];
 			}
 		}
-		
+
 		Log::write( $q, 'LDAP', 'query' );
-		$this -> cache -> set( $q, $base -> resultSet, Config::instance() -> get( 'database', 'ldap', 'cache' ) );
+		$this -> cache -> set( $q, $base -> resultSet, $this -> options[ 'cache' ] );
 	}
 
 	/**
