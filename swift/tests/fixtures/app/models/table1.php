@@ -9,7 +9,7 @@ class Table1 extends Model_Base {
 		'id' => array( 'type' => 'int', 'size' => 11, 'auto_increment' => true ),
 		'number' => array( 'type' => 'int', 'size' => 11 ),
 		'string' => array( 'type' => 'varchar', 'size' => 50 ),
-		'time' => array( 'type' => 'time', 'default' => 'CURRENT_TIMESTAMP' )
+		'time' => array( 'type' => 'timestamp', 'default' => 'CURRENT_TIMESTAMP' )
 	);
 	
 	var $schema_keys = array( 
