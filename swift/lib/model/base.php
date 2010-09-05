@@ -99,7 +99,7 @@ class Model_Base extends Base implements IteratorAggregate {
 
 		$tmp = reset( $this -> resultSet );
 		if( !isset( $tmp -> $key ) ) $this -> handleAssociation( $key );
-		return isset( $tmp -> $key ) ? $tmp -> $key : NULL;
+		return $tmp -> $key;
 	}
 
 	/**
@@ -113,14 +113,14 @@ class Model_Base extends Base implements IteratorAggregate {
 	function __set( $key, $value ) {
 		if( empty( $this -> resultSet ) ) {
 			$row_id = -1;
-			$this -> resultSet[ $row_id ] = new Model_Row;
+			$this -> resultSet = array( $row_id => new Model_Row( get_class( $this ) ) );
 		} else {
 			reset( $this -> resultSet );
 			$row_id = key( $this -> resultSet );
 		}
 
 		$this -> resultSet[ $row_id ] -> $key = $value;
-		$this -> update[ $key ] = & $this -> resultSet[ $row_id ] -> $key;
+		$this -> update[ $key ] = $this -> resultSet[ $row_id ] -> $key;
 	}
 
 	/**

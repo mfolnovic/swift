@@ -37,6 +37,7 @@ class Model extends Base {
 	 * @todo  Avoid new row
 	 */
 	function create( $tableName, $newRow = NULL ) {
+		$tableName = strtolower( $tableName );
 		if( !isset( $this -> tables[ $tableName ] ) ) {
 			$path = MODEL_DIR . $tableName . '.php';
 			if( file_exists( $path ) ) {
@@ -48,6 +49,13 @@ class Model extends Base {
 		}
 
 		return new $tableName( $tableName, $newRow );
+	}
+
+	static function schema( $tableName, $field = NULL ) {
+		$schema = model( $tableName ) -> schema;
+		if( !empty( $field ) ) $schema = isset( $schema[ $field ] ) ? $schema[ $field ] : array( 'type' => 'integer' ); // just an workaround for now, doesn't work for joins
+
+		return $schema;
 	}
 }
 

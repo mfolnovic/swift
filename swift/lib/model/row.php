@@ -20,7 +20,9 @@
  * @subpackage Model
  */
 
-class Model_Row {
+class Model_Row implements IteratorAggregate {
+	var $row = array();
+	var $tableName = NULL;
 	/**
 	 * Constructor
 	 *
@@ -28,9 +30,71 @@ class Model_Row {
 	 * @param  array row Row
 	 * @return void
 	 */
-	function __construct( $row = array() ) {
-		foreach( $row as $index => $value ) 
+	function __construct( $tableName, $row = array() ) {
+		$this -> tableName = $tableName;
+		$schema = Model::schema( $tableName );
+
+		foreach( $row as $index => $value ) {
+			if( isset( $schema[ $index ] ) && $schema[ $index ][ 'type' ] == 'timestamp' ) {
+				$value = new DateTime( $value );
+				$value = $value -> format( 'U' );
+			}
+
 			$this -> $index = $value;
+		}
+	}
+
+	/**
+	 * Gets value with index $index
+	 *
+	 * @access  public
+	 * @param   string $index Index
+	 * @return  mixed
+	 */
+	function __get( $index ) {
+		if( !isset( $this -> row[ $index ] ) ) { trigger_error( "$index doesn't exist!", NOTICE ); return NULL; }
+
+		$field = Model::schema( $this -> tableName, $index );
+		$value = $this -> row[ $index ];
+		if( $field[ 'type' ] == 'timestamp' && !( $value instanceof DateTime ) ) $value = DateTime::createFromFormat( 'U', $value );
+
+		return $value;
+	}
+
+	/**
+	 * Sets $index to $value
+	 *
+	 * @access  public
+	 * @param   mixed $index Index
+	 * @param   mixed $value New value
+	 * @return  object
+	 */
+	function __set( $index, $value ) {
+		$field = Model::schema( $this -> tableName, $index );
+		if( $field[ 'type' ] == 'timestamp' && $value instanceof DateTime ) $value = $value -> format( "%u" );
+
+		$this -> row[ $index ] = $value;
+		return $this;
+	}
+
+	/**
+	 * Isset
+	 * @access  public
+	 * @param   string $index Index
+	 * @return  return
+	 */
+	function __isset( $index ) {
+		return isset( $this -> row[ $index ] );
+	}
+
+	/**
+	 * Allows iterating through model
+	 *
+	 * @access public
+	 * @return object
+	 */
+	function getIterator() {
+		return new ArrayIterator( $this -> row );
 	}
 }
 

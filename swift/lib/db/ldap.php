@@ -41,7 +41,7 @@ class Db_Ldap extends Base {
 	 */
 	function __construct( $options ) {
 		$this -> options = $options;
-		$this -> cache = Cache::instance( $this -> options[ 'cache_store' ] );
+		$this -> cache = Cache::factory( $this -> options[ 'cache_store' ] );
 	}
 
 	/**
@@ -97,6 +97,7 @@ class Db_Ldap extends Base {
 
 		Benchmark::start( 'query' );
 		$entries = $this -> cache -> get( $q );
+		var_dump( $entries );exit;
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
 
@@ -116,7 +117,7 @@ class Db_Ldap extends Base {
 					}
 				}
 
-				$table[ $i ] = new Model_Row( $entry );
+				$table[ $i ] = new Model_Row( get_class( $base ), $entry );
 				$base -> resultSet[ $i ] = &$table[ $i ];
 			}
 		} else {
@@ -163,7 +164,7 @@ class Db_Ldap extends Base {
 		global $cache;
 		if( !$this -> conn ) $this -> connect();
 
-		if( $base -> newRecord ) {
+		if( !$base -> relationChanged ) {
 			print_r( $base -> currentDataSet );
 		} else {
 			$this -> select( $base );

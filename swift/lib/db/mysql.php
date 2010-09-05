@@ -166,7 +166,7 @@ class Db_Mysql extends Base {
 		for( $i = 0; $i < $res -> num_rows; ++ $i ) {
 			$row = $res -> fetch_assoc();
 
-			$table[ $row[ 'id' ] ] = new Model_Row( $row );
+			$table[ $row[ 'id' ] ] = new Model_Row( get_class( $base ), $row );
 			$base -> resultSet[ $row[ 'id' ] ] = &$table[ $row[ 'id' ] ];
 		}
 		
@@ -190,7 +190,7 @@ class Db_Mysql extends Base {
 	 * @return void
 	 */
 	function save( &$base ) {
-		if( isset( $base -> resultSet[ -1 ] ) ) {
+		if( !$base -> relationChanged ) {
 			$columns = '';
 			$values = '';
 			$newRecord =& $base -> resultSet[ -1 ];
