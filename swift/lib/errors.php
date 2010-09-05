@@ -56,6 +56,7 @@ class Errors extends Base {
 			}
 
 			self::$errors[] = array( 'number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => array_slice( debug_backtrace(), 1 ), 'type' => $type );
+			LOG::write( $message . ' | ' . $file . ' | ' . $line, $type );
 			if( $number === E_USER_ERROR || $number == E_ERROR ) self::show();
 		}
 	}
