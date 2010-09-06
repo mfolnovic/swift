@@ -63,6 +63,8 @@ class Db_Ldap extends Base {
 	 * @see bindAdmin
 	 */
 	function connect() {
+		if( !empty( $this -> conn ) ) return;
+
 		$this -> conn = @ldap_connect( $this -> options[ 'host' ], $this -> options[ 'port' ] );
 
 		if( $this -> conn === FALSE ) trigger_error( "Failed to connect to LDAP server {$this -> options[ 'host' ]}:{$this -> options[ 'port' ]}!", ERROR );
@@ -96,7 +98,8 @@ class Db_Ldap extends Base {
 		$q = $this -> toQuery( $base );
 
 		Benchmark::start( 'query' );
-		$entries = $this -> cache -> get( $q );
+//		$entries = $this -> cache -> get( $q );
+		$entries = false;
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
 
@@ -168,7 +171,24 @@ class Db_Ldap extends Base {
 		} else {
 			$this -> select( $base );
 			$this -> cache -> delete( $this -> toQuery( $base ) );
-			ldap_modify( $this -> conn, $base -> dn, $base -> update );
+
+			$delete = array();
+			$modify = array();
+			$add    = array();
+
+			foreach( $base -> update as $id => $val ) {
+				if( empty( $val ) ) $delete[$id] = $val;
+				else if( $base -> $id === NULL ) $add[ $id ] = $val;
+				else $modify[ $id ] = $val;
+			}
+
+			if( !$this -> conn ) $this -> connect();
+			$this -> bindAsAdmin();
+
+			if( !empty( $add ) ) ldap_mod_add( $this -> conn, $base -> dn, $add );
+			if( !empty( $modify ) ) ldap_mod_replace( $this -> conn, $base -> dn, $modify );
+			if( !empty( $delete ) ) ldap_mod_del( $this -> conn, $base -> dn, $delete );
+			$base -> resultSet = array();
 		}
 	}
 
@@ -183,7 +203,10 @@ class Db_Ldap extends Base {
 	function authenticate( &$base, $data ) {
 		if( !$this -> conn ) $this -> connect();
 
-		return !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0] . '@' . $this -> options[ 'domain' ], $data[ 1 ] ) == true;
+		$ret = !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0] . '@' . $this -> options[ 'domain' ], $data[ 1 ] ) == true;
+		ldap_unbind( $this -> conn ); unset( $this -> conn );
+		$this -> connect();
+		return $ret;
 	}
 }
 

@@ -212,6 +212,7 @@ class Db_Mysql extends Base {
 			$table[ $newRecord -> id ] = $base -> newRecord;
 			$base -> resultSet[ $newRecord -> id ] = & $table[ $newRecord -> id ];
 			unset( $newRecord );
+			$base -> resultSet = array();
 		} else {
 			$set = '';
 			foreach( $base -> update as $id => $val ) 

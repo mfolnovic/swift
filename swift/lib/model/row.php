@@ -52,7 +52,7 @@ class Model_Row implements IteratorAggregate {
 	 * @return  mixed
 	 */
 	function __get( $index ) {
-		if( !isset( $this -> row[ $index ] ) ) { trigger_error( "$index doesn't exist!", NOTICE ); return NULL; }
+		if( !isset( $this -> row[ $index ] ) ) return NULL;
 
 		$field = Model::schema( $this -> tableName, $index );
 		$value = $this -> row[ $index ];

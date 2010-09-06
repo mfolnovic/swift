@@ -36,12 +36,11 @@ class Db extends Base {
 	 * @todo   Cache has almost same function, try to move it to Base
 	 */
 	static function factory( $adapter ) {
-		if( !isset( self::$adapters[ $adapter ] ) ) {
-			$options = Config::instance() -> get( 'database', $adapter );
-			$adapter = 'Db_' . ucfirst( $options[ 'adapter' ] );
+		$options = Config::instance() -> get( 'database', $adapter );
+		$adapter = 'Db_' . ucfirst( $options[ 'adapter' ] );
 
+		if( !isset( self::$adapters[ $adapter ] ) )
 			self::$adapters[ $adapter ] = new $adapter( $options );
-		}
 
 		return self::$adapters[ $adapter ];
 	}

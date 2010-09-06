@@ -99,7 +99,7 @@ class Model_Base extends Base implements IteratorAggregate {
 
 		$tmp = reset( $this -> resultSet );
 		if( !isset( $tmp -> $key ) ) $this -> handleAssociation( $key );
-		return $tmp -> $key;
+		return isset( $tmp -> $key ) ? $tmp -> $key : NULL;
 	}
 
 	/**
