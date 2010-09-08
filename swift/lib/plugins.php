@@ -28,6 +28,8 @@ class Plugins extends Base {
 	 * Parset .manifest files
 	 */
 	var $manifest    = array();
+	var $controllers = NULL;
+	var $models      = array();
 
 	/**
 	 * Loads plugin $name
@@ -55,7 +57,7 @@ class Plugins extends Base {
 	 * @todo   Cache
 	 */
 	function loadManifests() {
-		$plugins = Dir::dirs( PLUGIN_DIR );
+		$plugins = $this -> pluginList();
 		foreach( $plugins as $plugin ) {
 			$manifest = simplexml_load_file( PLUGIN_DIR . $plugin . '/manifest.xml' );
 			$extends  =& $this -> extends;
@@ -78,6 +80,50 @@ class Plugins extends Base {
 	 */
 	function extensions( $class ) {
 		return isset( $this -> extends[ $class ] ) ? $this -> extends[ $class ] : array();
+	}
+
+	/**
+	 * List of plugins
+	 * @access  public
+	 * @return  array
+	 */
+	function pluginList() {
+		return Dir::dirs( PLUGIN_DIR );
+	}
+
+	/**
+	 * Load list of controllers
+	 * @access  public
+	 * @return  void
+	 */
+	function listControllers() {
+		$plugins = $this -> pluginList();
+		$this -> controllers = array();
+		foreach( $plugins as $plugin ) {
+			$dir = PLUGIN_DIR . $plugin . '/app/controllers/';
+			if( !file_exists( $dir ) ) continue;
+
+			$controllers = Dir::files( $dir );
+
+			foreach( $controllers as $controller ) {
+				$this -> controllers[ filename( $controller ) ] = $plugin;
+			}
+		}
+	}
+
+	/**
+	 * Load controller from plugin
+	 * @access  public
+	 * @param   string $controller Controller name
+	 * @return  string
+	 */
+	function loadController( $controller ) {
+		if( $this -> controllers === NULL ) $this -> listControllers();
+		if( !isset( $this -> controllers[ $controller ] ) ) return false;
+
+		$plugin = $this -> controllers[ $controller ];
+		include_once PLUGIN_DIR . "$plugin/app/controllers/$controller.php";
+		return $plugin;
 	}
 }
 
