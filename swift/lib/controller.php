@@ -50,7 +50,9 @@ class Controller extends Base {
 		$path = CONTROLLERS_DIR . $controller . ".php";
 		if( file_exists( $path ) )
 			include_once $path;
-		else {
+		else if( $plugin = Plugins::instance() -> loadController( $controller ) ) {
+			View::instance() -> view_path = PLUGIN_DIR . $plugin . '/app/views/';
+		} else {
 			Router::instance() -> continueRouting = true;
 			return;
 		}
