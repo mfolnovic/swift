@@ -56,7 +56,18 @@ function removeSamePrefix( $str1, $str2 ) {
  * @return return
  */
 function extension( $filename ) {
-	return substr( $filename, - strpos( '.', $filename ) );
+	return substr( $filename, strlen( filename( $filename ) ) + 1 );
+}
+
+/**
+ * For a given filename, return file name
+ *
+ * @access  public
+ * @param   string $filename Name of file
+ * @return  string
+ */
+function filename( $filename ) {
+	return substr( $filename, 0, strpos( $filename, '.' ) );
 }
 
 /**
