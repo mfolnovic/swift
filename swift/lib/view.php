@@ -31,6 +31,7 @@ class View extends Base {
 	var $render = true;
 	var $action_caches = array();
 	var $output = '';
+	var $view_path = NULL;
 
 	/**
 	 * Destructor
@@ -71,7 +72,7 @@ class View extends Base {
 
 		$cache    = TMP_DIR . "caches/" . str_replace( '/', '_', $path );
 		$compiled = TMP_DIR . "views/$path";
-		$template = VIEWS_DIR . $path;
+		$template = ( $this -> view_path ? $this -> view_path : VIEWS_DIR ) . $path;
 
 		if( file_exists( $cache ) ) {
 			include $cache;
