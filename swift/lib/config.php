@@ -30,6 +30,7 @@ class Config extends Base {
 	 * @return void
 	 */
 	function load() {
+		if( !empty( $this -> options ) ) return;
 		$files = array( 'application' );
 
 		foreach( $files as $file ) {
@@ -49,6 +50,7 @@ class Config extends Base {
 	 * @return return
 	 */
 	function get() {
+		if( empty( $this -> options ) ) $this -> load();
 		$curr =& $this -> options;
 
 		foreach( func_get_args() as $index )
