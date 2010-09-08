@@ -35,11 +35,6 @@ class Model_Row implements IteratorAggregate {
 		$schema = Model::schema( $tableName );
 
 		foreach( $row as $index => $value ) {
-			if( isset( $schema[ $index ] ) && $schema[ $index ][ 'type' ] == 'timestamp' ) {
-				$value = new DateTime( $value );
-				$value = $value -> format( 'U' );
-			}
-
 			$this -> $index = $value;
 		}
 	}
@@ -52,13 +47,7 @@ class Model_Row implements IteratorAggregate {
 	 * @return  mixed
 	 */
 	function __get( $index ) {
-		if( !isset( $this -> row[ $index ] ) ) return NULL;
-
-		$field = Model::schema( $this -> tableName, $index );
-		$value = $this -> row[ $index ];
-		if( $field[ 'type' ] == 'timestamp' && !( $value instanceof DateTime ) ) $value = DateTime::createFromFormat( 'U', $value );
-
-		return $value;
+		return isset( $this -> row[ $index ] ) ? $this -> row[ $index ] : NULL;
 	}
 
 	/**
@@ -71,7 +60,7 @@ class Model_Row implements IteratorAggregate {
 	 */
 	function __set( $index, $value ) {
 		$field = Model::schema( $this -> tableName, $index );
-		if( $field[ 'type' ] == 'timestamp' && $value instanceof DateTime ) $value = $value -> format( "%u" );
+		if( $field[ 'type' ] == 'timestamp' && !( $value instanceof Model_Type_Timestamp ) ) $value = new Model_Type_Timestamp( $value );
 
 		$this -> row[ $index ] = $value;
 		return $this;

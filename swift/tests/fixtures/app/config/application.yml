@@ -30,6 +30,6 @@ log:
 
 cache_views: false
 cache_config: false
-format_date: d.m.y H:i:s
-static_version: 1
-
+format_date: d.m.y. H:i:s
+timezone: Europe/Zagreb
+version: 1

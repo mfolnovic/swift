@@ -279,6 +279,8 @@ class Model_Base extends Base implements IteratorAggregate {
 			$row -> $name -> resultSet = array();
 		}
 
+		if( empty( $ids ) ) return;
+
 		$assocModel = Model::instance() -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
 		if( !empty( $assoc ) ) $assocModel -> includes( $assoc );
 

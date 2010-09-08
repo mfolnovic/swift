@@ -58,11 +58,12 @@ class Db_Mysql extends Base {
 	 */
 	function safe( $string ) {
 		if( empty( $string ) ) return "''";
+		if( is_numeric( $string ) ) return $string;
+		if( $string instanceof Model_Type_Timestamp ) $string = $string -> toDatabase();
 		if( $string[ 0 ] == '`' ) return $string;
-		if( !$this -> conn ) $this -> connect();
-		if( !is_numeric( $string ) ) $string = "'" . mysqli_real_escape_string( $this -> conn, $string ) . "'";
 
-		return $string;
+		if( !$this -> conn ) $this -> connect();
+		if( !is_numeric( $string ) ) return  "'" . mysqli_real_escape_string( $this -> conn, $string ) . "'";
 	}
 
 	/**
@@ -115,7 +116,7 @@ class Db_Mysql extends Base {
 	function generateWhere( &$base ) {
 		$ret = '';
 		foreach( $base -> relation[ 'where' ] as $id => $val )
-			$ret .= ( $ret == '' ? ' WHERE ' : ' AND ' ) . '`' . $id . '`' . $this -> value( $val );
+			$ret .= ( $ret == '' ? ' WHERE ' : ' AND ' ) . ( is_numeric( $id ) ? $val : '`' . $id . '`' . $this -> value( $val ) );
 		return $ret;
 	}
 
@@ -143,7 +144,7 @@ class Db_Mysql extends Base {
 		$join =& $base -> relation[ 'join' ];
 
 		for( $i = 0, $size = count( $join ); $i < $size; $i += 2 )
-			$ret .= " INNER JOIN {$join[ $i ]} ON {$join[ $i + 1 ]}";
+			$ret .= " LEFT JOIN {$join[ $i ]} ON {$join[ $i + 1 ]}";
 
 		return $ret;
 	}
@@ -191,33 +192,36 @@ class Db_Mysql extends Base {
 	 */
 	function save( &$base ) {
 		if( !$base -> relationChanged ) {
-			$columns = '';
-			$values = '';
+			$columns   = '';
+			$values    = '';
 			$newRecord =& $base -> resultSet[ -1 ];
 
 			foreach( $newRecord as $id => $val ) {
-				if( $values != '' ) {
-					$columns	.= ',';
-					$values		.= ',';
+				if( !empty( $columns ) ) {
+					$columns  .= ',';
+					$values   .= ',';
 				}
 				
-				$columns	.= "`$id`";
-				$values		.= $this -> safe( $val );
+				$columns .= "`$id`";
+				$values  .= $this -> safe( $val );
 			}
 
 			$this -> query( "INSERT INTO {$base -> tableName} ($columns) VALUES ($values)" );
 			$newRecord -> id = $this -> conn -> insert_id;
+			$base -> where( array( 'id' => $newRecord -> id ) );
+			$base -> relationChanged = true;
 			
 			$table =& Model::instance() -> tables[ $base -> tableName ];
 			$table[ $newRecord -> id ] = $base -> newRecord;
 			$base -> resultSet[ $newRecord -> id ] = & $table[ $newRecord -> id ];
 			unset( $newRecord );
-			$base -> resultSet = array();
+			$base -> update = array();
 		} else {
 			$set = '';
 			foreach( $base -> update as $id => $val ) 
 				$set .= ( $set == '' ? '' : ',' ) . "`$id`=" . $this -> safe( $val );
 			$this -> query( "UPDATE {$base -> tableName} SET $set " . $this -> generateWhere( $base ) );
+			$base -> update = array();
 		}
 	}
 
