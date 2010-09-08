@@ -31,7 +31,7 @@ class Model_Type_Timestamp extends DateTime {
 		if( empty( $value ) ) $value = time();
 		if( is_numeric( $value ) ) $value = "@$value";
 
-		return parent::__construct( $value, new DateTimeZone( Config::instance() -> get( 'timezone' ) ) );
+		parent::__construct( $value, new DateTimeZone( Config::instance() -> get( 'timezone' ) ) );
 	}
 	/**
 	 * Ran when you try to echo instance of this class

@@ -42,6 +42,24 @@ class table1Test extends Test_Case {
 		$this -> assertEqual( $row -> string, 'hello' );
 		$this -> assertEqual( $row -> time, new Model_Type_Timestamp() );
 	}
+
+	function test_update() {
+		$row = model( 'table1' ) -> find_by_id( 1 ) -> values( array( 'number' => 4 ) );
+
+		$this -> assertEqual( $row -> number, 4 );
+		$row -> save();
+
+		$row = model( 'table1' ) -> find_by_id( 1 );
+		$this -> assertEqual( $row -> number, 4 );
+		$this -> assertEqual( $row -> string, 'foo' );
+	}
+
+	function test_delete() {
+		model( 'table1' ) -> find_by_id( 1 ) -> delete();
+		$row = model( 'table1' ) -> find_by_id( 1 ) -> first();
+
+		$this -> assertEmpty( $row );
+	}
 }
 
 ?>

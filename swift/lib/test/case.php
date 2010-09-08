@@ -17,6 +17,10 @@ class Test_Case {
 
 		$instance -> addResult( $actual == $expected, $message );
 	}
+
+	function assertEmpty( $result, $message ) {
+		Test_Suite::instance() -> addResult( empty( $result ), $message );
+	}
 }
-	
+
 ?>
