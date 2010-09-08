@@ -42,6 +42,6 @@ if( empty( $_SERVER[ 'REQUEST_URI' ] ) ) {
 	define( 'FULL_URL', 'http://'. $_SERVER[ 'SERVER_NAME' ] . URL );
 }
 
-define( 'URL_PREFIX', removeSamePrefix( URL, $_SERVER[ 'PHP_SELF' ] ) );
+define( 'URL_PREFIX', Dir::sameFolders( URL, $_SERVER[ 'PHP_SELF' ] ) );
 
 ?>

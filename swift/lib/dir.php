@@ -103,6 +103,29 @@ class Dir {
 					trigger_error( "Couldn't make directory $current" );
 		}
 	}
+
+	/**
+	 * Returns part of both path where both paths have same directories
+	 * @access  public
+	 * @param   string $path1 First path
+	 * @param   string $path2 Second path
+	 * @return  return
+	 */
+	function sameFolders( $path1, $path2 ) {
+		$ret = '';
+		$tmp = '';
+
+		for( $i = 0, $size = min( strlen( $path1 ), strlen( $path2 ) ); $i < $size; ++ $i ) {
+			if( $path1[ $i ] != $path2[ $i ] ) break;
+			else if( $path1[ $i ] == '/' ) {
+				$ret .= $tmp;
+				$tmp  = '/';
+			} else
+				$tmp .= $path1[ $i ];
+		}
+
+		return $ret . '/';
+	}
 }
 
 ?>
