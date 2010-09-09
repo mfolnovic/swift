@@ -31,8 +31,8 @@ class Model_Row implements IteratorAggregate {
 	 * @return void
 	 */
 	function __construct( $tableName, $row = array() ) {
-		$this -> tableName = $tableName;
-		$schema = Model::schema( $tableName );
+		$this -> tableName = strtolower( $tableName );
+		$schema = Model::schema( $this -> tableName );
 
 		foreach( $row as $index => $value ) {
 			$this -> $index = $value;
