@@ -68,6 +68,7 @@ class Model_Row implements IteratorAggregate {
 
 	/**
 	 * Isset
+	 *
 	 * @access  public
 	 * @param   string $index Index
 	 * @return  return
