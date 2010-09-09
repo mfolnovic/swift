@@ -103,24 +103,25 @@ class Db_Ldap extends Base {
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
 
-			$res = ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
+			$res = @ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
 
-			if( $res === false ) return $base -> resultSet;
-			$entries = @ldap_get_entries( $this -> conn, $res );
-
-			for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
-				$entry = array();
-				foreach( $entries[ $i ] as $id => $val ) {
-					if( !is_numeric( $id ) && $id != 'count' ) {
-						if( $val[ 'count' ] == 1 ) $val = $val[ 0 ];
-						else if( is_array( $val ) ) array_shift( $val );
-					
-						$entry[ $id ] = $val;
+			if( $res !== false ) {
+				$entries = @ldap_get_entries( $this -> conn, $res );
+	
+				for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
+					$entry = array();
+					foreach( $entries[ $i ] as $id => $val ) {
+						if( !is_numeric( $id ) && $id != 'count' ) {
+							if( $val[ 'count' ] == 1 ) $val = $val[ 0 ];
+							else if( is_array( $val ) ) array_shift( $val );
+						
+							$entry[ $id ] = $val;
+						}
 					}
+	
+					$table[ $i ] = new Model_Row( get_class( $base ), $entry );
+					$base -> resultSet[ $i ] = &$table[ $i ];
 				}
-
-				$table[ $i ] = new Model_Row( get_class( $base ), $entry );
-				$base -> resultSet[ $i ] = &$table[ $i ];
 			}
 		} else {
 			foreach( $entries as $id => $val ) {
@@ -144,13 +145,17 @@ class Db_Ldap extends Base {
 		if( empty( $base -> relation[ 'where' ] ) ) return '(webid=*)';
 		
 		$where = '';
+		$cnt   = 0;
 		foreach( $base -> relation[ 'where' ] as $field => $value ) {
+			++ $cnt;
 			if( !is_array( $value ) ) $value = array( $value );
 			foreach( $value as $val ) {
 				if( is_numeric( $field ) ) $where .= "($val)";
 				else $where .= "($field=$val)";
 			}
 		}
+
+		if( $cnt > 0 ) $where = "(|$where)";
 
 		return $where;
 	}
