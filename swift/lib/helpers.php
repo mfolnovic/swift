@@ -92,11 +92,10 @@ function get_parent_classes( $class ) {
  *
  * @access public
  * @param  string $name Name of model
- * @param  array  $data New row
  * @return object
 */
-function model( $name, $data = array() ) {
-	return Model::instance() -> create( $name, $data );
+function model( $name ) {
+	return Model::instance() -> create( $name );
 }
 
 ?>

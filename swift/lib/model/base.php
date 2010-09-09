@@ -44,17 +44,32 @@
  * ?>
  * </code>
  *
+ * @author     Swift dev team
  * @package    Swift
  * @subpackage Model
- * @author     Swift dev team
  * @todo       __set_state?
  */
 
 class Model_Base extends Base implements IteratorAggregate {
+	/**
+	 * Table name
+	 */
 	var $tableName;
+	/**
+	 * Current set of results (rows)
+	 */
 	var $resultSet = NULL;
+	/**
+	 * Array of fields that were updated
+	 */
 	var $update = array();
+	/**
+	 * Array containing all validations that are run before each saving
+	 */
 	var $validations = array();
+	/**
+	 * Array containing current relation
+	 */
 	var $relation = array( 
 		'where' => array(), 
 		'order' => array(), 
@@ -65,12 +80,34 @@ class Model_Base extends Base implements IteratorAggregate {
 		'includes' => array(),
 		'join' => array()
 	);
+	/**
+	 * Schema for this table
+	 */
 	var $schema;
+	/**
+	 * Belongs to relationships
+	 */
+	var $belongsTo = array();
+	/**
+	 * Has one relationships
+	 */
 	var $hasOne = array();
+	/**
+	 * Has many relationships
+	 */
 	var $hasMany = array();
+	/**
+	 * Has and belongs to many relationships
+	 */
 	var $hasAndBelongsToMany = array();
+	/**
+	 * Connection specified in application.yml
+	 */
 	var $connection = 'default';
 	var $link;
+	/**
+	 * Is relation changed?
+	 */
 	var $relationChanged = false;
 
 	/**
@@ -81,8 +118,11 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @param  mixed  $newRow   if it's new row, and NULL if it's not
 	 * @return void
 	 */
-	function __construct( $tableName ) {
-		if( empty( $this -> tableName ) ) $this -> tableName = $tableName;
+	function __construct() {
+		if( empty( $this -> tableName ) ) {
+			$this -> tableName = strtolower( get_class( $this ) );
+		}
+
 		$this -> link = DB::factory( $this -> connection );
 	}
 
@@ -94,11 +134,19 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return mixed
 	 */
 	function __get( $key ) {
-		if( !$this -> relationChanged && $this -> resultSet === NULL ) return NULL;
-		if( $this -> resultSet == array() && $this -> relationChanged ) $this -> first();
+		if( !$this -> relationChanged && $this -> resultSet === NULL ) {
+			return NULL;
+		}
+
+		if( $this -> resultSet == array() && $this -> relationChanged ) {
+			$this -> first();
+		}
 
 		$tmp = reset( $this -> resultSet );
-		if( !isset( $tmp -> $key ) ) $this -> handleAssociation( $key );
+		if( !isset( $tmp -> $key ) ) {
+			$this -> handleAssociation( $key );
+		}
+
 		return isset( $tmp -> $key ) ? $tmp -> $key : NULL;
 	}
 
@@ -132,24 +180,36 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return return
 	 */
 	function __call( $function, $arguments ) {
-		if( parent::__call( $function, $arguments ) ) return $this;
+		if( parent::__call( $function, $arguments ) ) {
+			return $this;
+		}
 
 		if( in_array( $function, array_keys( $this -> relation ) ) ) {
-			if( is_array( $arguments[ 0 ] ) ) $args = $arguments[ 0 ];
-			else $args = $arguments;
+			if( is_array( $arguments[ 0 ] ) ) {
+				$args = $arguments[ 0 ];
+			} else { 
+				$args = $arguments;
+			}
 
 			$this -> relation[ $function ] = $args;
 			$this -> relationChanged = true;
 		} else if( $function == 'find' || substr( $function, 0, 8 ) == 'find_by_' ) {
 			$field = substr( $function, 8 );
-			if( empty( $field ) ) $field = 'id';
+			if( empty( $field ) ) {
+				$field = 'id';
+			}
 			
 			$this -> relation[ 'where' ] = array_merge( $this -> relation[ 'where' ], array( $field => ( count( $arguments ) == 1 ? $arguments[ 0 ] : $arguments ) ) );
 			$this -> relationChanged = true;
 		} else if( method_exists( $this -> link, $function ) ) {
 			$ret = $this -> link -> $function( $this, $arguments );
-			if( $ret !== null ) return $ret;
-		}	else trigger_error( "Unknown function $function!" );
+
+			if( $ret !== null ) {
+				return $ret;
+			}
+		}	else {
+			trigger_error( "Unknown function $function!" );
+		}
 		
 		return $this;
 	}
@@ -218,8 +278,9 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return object
 	 */
 	function values( $values ) {
-		foreach( $values as $id => $val )
+		foreach( $values as $id => $val ) {
 			$this -> $id = $val;
+		}
 
 		return $this;
 	}
@@ -232,7 +293,10 @@ class Model_Base extends Base implements IteratorAggregate {
 	 */
 	function handleAssociations() {
 		foreach( $this -> relation[ 'includes' ] as $name => $assoc ) {
-			if( is_numeric( $name ) ) $name = $assoc;
+			if( is_numeric( $name ) ) {
+				$name = $assoc;
+			}
+
 			$this -> handleAssociation( $name );
 		}
 
@@ -261,8 +325,11 @@ class Model_Base extends Base implements IteratorAggregate {
 			return;
 		}
 
-		if( isset( $this -> relation[ 'includes' ][ $name ] ) ) $assoc = $this -> relation[ 'includes' ][ $name ];
-		else $assoc = NULL;
+		if( isset( $this -> relation[ 'includes' ][ $name ] ) ) {
+			$assoc = $this -> relation[ 'includes' ][ $name ];
+		} else { 
+			$assoc = NULL;
+		}
 
 		$association = array_merge( array( 'primaryKey' => 'id', 'foreignKey' => 'id' ), $association );
 
@@ -275,18 +342,24 @@ class Model_Base extends Base implements IteratorAggregate {
 			if( !isset( $ids[ $row -> $primaryKey ] ) ) $ids[ $row -> $primaryKey ] = array();
 
 			$ids[ $row -> $primaryKey ][] = $id;
-			$row -> $name = model( $className );
-			$row -> $name -> resultSet = array();
+			$row -> $name                 = model( $className );
+			$row -> $name -> resultSet    = array();
 		}
 
-		if( empty( $ids ) ) return;
+		if( empty( $ids ) ) {
+			return;
+		}
 
 		$assocModel = Model::instance() -> create( $className ) -> where( array( $association[ 'foreignKey' ] => array_keys( $ids ) ) );
-		if( !empty( $assoc ) ) $assocModel -> includes( $assoc );
+		if( !empty( $assoc ) ) {
+			$assocModel -> includes( $assoc );
+		}
 
-		foreach( $assocModel -> all() as $id => $row )
-			foreach( $ids[ $row -> $foreignKey ] as $key => $dataID )
+		foreach( $assocModel -> all() as $id => $row ) {
+			foreach( $ids[ $row -> $foreignKey ] as $key => $dataID ) {
 				$this -> resultSet[ $dataID ] -> $name -> resultSet[ $id ] = $row;
+			}
+		}
 	}
 }
 

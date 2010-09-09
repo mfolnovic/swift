@@ -23,19 +23,24 @@ class Model_Type_Timestamp extends DateTime {
 	/**
 	 * Better constructor
 	 *
-	 * @access  public
-	 * @param   mixed value Value
-	 * @return  void
+	 * @access public
+	 * @param  mixed value Value
+	 * @return void
 	 */
 	function __construct( $value = NULL ) {
-		if( empty( $value ) ) $value = time();
-		if( is_numeric( $value ) ) $value = "@$value";
+		if( empty( $value ) ) {
+			$value = time();
+		}
+
+		if( is_numeric( $value ) ) {
+			$value = "@$value";
+		}
 
 		parent::__construct( $value );
 		parent::setTimeZone( new DateTimeZone( Config::instance() -> get( 'timezone' ) ) );
 	}
 	/**
-	 * Ran when you try to echo instance of this class
+	 * Used for printing this object
 	 *
 	 * @access public
 	 * @return string
@@ -45,6 +50,7 @@ class Model_Type_Timestamp extends DateTime {
 	}
 	/**
 	 * Database format
+	 * Used internally to store datetime to database
 	 *
 	 * @access public
 	 * @return string
@@ -54,6 +60,7 @@ class Model_Type_Timestamp extends DateTime {
 	}
 	/**
 	 * Unix timestamp
+	 *
 	 * @access public
 	 * @return int
 	 */
