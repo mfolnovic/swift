@@ -9,22 +9,22 @@ The goal of this project is to help developers build their web applications in a
 - database backend (LDAP, MySQL)
 - MVC
 - views (haml)
-- relationships between models
-- tests
-- caching (page, fragment, objects in memcache/files/apc)
-- validations
+- relationships between models (has one, has many, belongs to)
+- unit testing
+- caching (page, action, fragment, objects in memcache/files/apc)
+- model validations
+- database migrations
 - generators
 - i18n
-- database migrations
 - and plenty more
 
 ## Documentation
 
 Because documentation is often changed, we currently don't provide it.
 If you want to generate it, run:
-phpdoc -d lib -t doc/ -ti "Swift Documentation" -q -dn Swift -s
+phpdoc -d swift/lib -t app/public/doc/ -ti "Swift Documentation" -q -dn Swift -s
 
 ## Notice
 
-This is an alpha ( preview ) release of Swift. It isn't stable for production yet!
-If you feel like contributing in this project, contact me ( Matija Folnovic ) on mail below. Thank you!
+This is an alpha (preview) release of Swift. It isn't stable for production yet!
+If you feel like contributing in this project, contact author on matijafolnovic at gmail dot com. Thank you!
