@@ -45,7 +45,4 @@ if( ENV & ENV_TEST ) {
 	Scripts::call( $argv );
 }
 
-// @todo Avoid calling this
-Errors::show();
-
 ?>

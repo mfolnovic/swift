@@ -80,5 +80,6 @@ class Errors extends Base {
 }
 
 set_error_handler( array( 'Errors', 'error' ) );
+register_shutdown_function( array( 'Errors', 'show' ) );
 
 ?>
