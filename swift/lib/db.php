@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
- * @package		Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,9 +14,9 @@
  *
  * This class works as factory class for all cache adapters
  *
- * @author			Swift dev team
- * @package			Swift
- * @subpackage	Database
+ * @author     Swift dev team
+ * @package	   Swift
+ * @subpackage Database
  */
 
 class Db extends Base {
@@ -39,8 +39,9 @@ class Db extends Base {
 		$options = Config::instance() -> get( 'database', $adapter );
 		$adapter = 'Db_' . ucfirst( $options[ 'adapter' ] );
 
-		if( !isset( self::$adapters[ $adapter ] ) )
+		if( !isset( self::$adapters[ $adapter ] ) ) {
 			self::$adapters[ $adapter ] = new $adapter( $options );
+		}
 
 		return self::$adapters[ $adapter ];
 	}
