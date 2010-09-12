@@ -72,8 +72,10 @@ class Base {
 	function before_filter() {
 		$functions = func_get_args();
 		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
+		else $options = array();
 
-		$this -> before_filters += $function;
+		foreach( $functions as $function )
+			$this -> before_filters += array( $function, $options );
 	}
 
 	/**
@@ -87,8 +89,10 @@ class Base {
 	function after_filter( $function ) {
 		$functions = func_get_args();
 		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
+		else $options = array();
 
-		$this -> after_filters += $function;
+		foreach( $functions as $function )
+			$this -> after_filters += array( $function, $options );
 	}
 
 	/**
