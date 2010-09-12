@@ -90,7 +90,9 @@ function _attributes( $array ) {
 	$ret = '';
 
 	foreach( $array as $id => $val ) {
+		if( $ret === false ) continue;
 		if( $ret != '' ) $ret .= ' ';
+
 		$ret .= "$id=\"$val\"";
 	}
 

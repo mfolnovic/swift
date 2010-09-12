@@ -42,6 +42,10 @@ class View_Haml extends Base {
 	 * Contains array of all tags which should be closed on specific depth
 	*/
 	var $tree;
+	/**
+	 * Is PHP tag open?
+	 */
+	var $phpOpen = false;
 
 	/**
 	 * Parses file $from, and writes to $to
@@ -83,19 +87,21 @@ class View_Haml extends Base {
 	 * @return void
 	 */
 	function parseLine() {
-		$ret = '';
-		$line = & $this -> line; // for easier typing
+		$ret  = '';
+		$line =& $this -> line; // for easier typing
 		$line = ' ' . substr( $line, 0, -1 ); // remove newline
 		$size = strlen( $line );
 		$data = array( 'tag' => '', 'attributes' => array(), 'html' => '' );
 
-		if( $size == 1 ) return;
-		if( $line[ 1 ] == '#' ) return;
+		if( $size == 1 || $line[ 1 ] == '#' ) }{
+			return;
+		
 
 		// count tabs
 		for( $tabs = 1; $tabs < $size && $line[ $tabs ] == "\t"; ++ $tabs );
+
 		while( !empty( $this -> tree ) && $tabs <= $this -> tree[ 0 ][ 0 ] ) {
-			$curr = array_shift( $this -> tree );
+			$curr            = array_shift( $this -> tree );
 			$this -> parsed .= $curr[ 1 ];
 		}
 
@@ -104,15 +110,28 @@ class View_Haml extends Base {
 			return;
 		}
 
-		if( $tabs == $size ) return;
+		if( $tabs == $size ) {
+			return;
+		}
 
 		if( $line[ $tabs ] == '-' || $line[ $tabs ] == '=' ) {
-			$rest = substr( $line, $tabs + 1 );
-			$command = trim( substr( $rest, 0, strpos( $rest, '(' ) ) );
-			$structure = in_array( $command, $this -> structures );
-			$this -> parsed .= "<?php " . ( $line[ $tabs ] == '=' ? 'echo ' : '' ) . ltrim( $rest ) . ( $structure ? " { " : ";" ) . " ?>";
-			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
-			if( !empty( $command ) && function_exists( '_' . $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo _' . $command . 'End(); ?>' ) );
+			$rest            = substr( $line, $tabs + 1 );
+			$command         = trim( substr( $rest, 0, strpos( $rest, '(' ) ) );
+			$structure       = in_array( $command, $this -> structures );
+			$this -> parsed .= "<?php " 
+			                .  ( $line[ $tabs ] == '=' ? 'echo ' : '' )
+			                .  ltrim( $rest )
+			                .  ( $structure ? " { " : ";" )
+			                .  " ?>";
+
+			if( $structure ) {
+				array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
+			}
+
+			if( !empty( $command ) && function_exists( '_' . $command . 'End' ) ) {
+				array_unshift( $this -> tree, array( $tabs, '<?php echo _' . $command . 'End(); ?>' ) );
+			}
+
 			return;
 		}
 
@@ -120,55 +139,84 @@ class View_Haml extends Base {
 		// parse tag
 		if( $line[ $pos ] == '%' || $line[ $pos ] == '#' || $line[ $pos ] == '.' ) {
 			$data[ 'tag' ] = 'div'; // default tag
-			$type = ''; $str = '';
+			$type          = '';
+			$str           = '';
+
 			for( $pos = $tabs; $pos < $size; ++ $pos ) {
 				$symbol = $line[ $pos ] == '%' || $line[ $pos ] == '#' || $line[ $pos ] == '.' || $line[ $pos ] == ' ';
-				if( $line[ $pos ] == '\\' ) { ++ $pos; $symbol = false; }
-				if( !$symbol ) $str .= $line[ $pos ]; 
+
+				if( $line[ $pos ] == '\\' ) {
+					++ $pos; $symbol = false;
+				}
+
+				if( !$symbol ) {
+					$str .= $line[ $pos ];
+				}
+
 				if( $symbol || $pos + 1 == $size ) {
 					if( $type != '' ) {
-						if( $type == '%' ) $data[ 'tag' ] = $str;
-						else if( $type == '#' ) $this -> pushValue( $data[ 'attributes' ], 'id', $str );
-						else if( $type == '.' ) $this -> pushValue( $data[ 'attributes' ], 'class', $str );
-					} else $data[ 'html' ] .= $str;
+						if( $type == '%' ) {
+							$data[ 'tag' ] = $str;
+						} else if( $type == '#' ) {
+							$this -> pushValue( $data[ 'attributes' ], 'id', $str );
+						} else if( $type == '.' ) {
+							$this -> pushValue( $data[ 'attributes' ], 'class', $str );
+						}
+					} else {
+						$data[ 'html' ] .= $str;
+					}
 
 					$type = $line[ $pos ];
-					$str = '';
+					$str  = '';
 
-					if( $line[ $pos ] == ' ' ) { $pos ++; break; }
+					if( $line[ $pos ] == ' ' ) { 
+						$pos ++;
+						break;
+					}
 				}
 			}
 		}
 
 		// parse attributes
 		$attributesStart = strpos( $line, "{", $pos );
-		$attributesEnd = strpos( $line, "}", $pos );
+		$attributesEnd   = strpos( $line, "}", $pos );
 
 		if( $attributesStart !== FALSE && $attributesEnd !== FALSE ) {
 			$attributes = trim( substr( $line, $attributesStart + 1, $attributesEnd - $attributesStart - 1 ) );
-			$pos += $attributesEnd - $attributesStart + 1;
+			$pos       += $attributesEnd - $attributesStart + 1;
+			$status     = 1;
 
-			$status = 1;
 			for( $i = 0, $attributesLen = strlen( $attributes ); $i < $attributesLen; ++ $i ) {
 				for( ; $attributes[ $i ] == ' '; ++ $i );
+
 				if( $attributes[ $i ] == ':' && $status ) {
-					$end = strpos( $attributes, '=>', $i );
+					$end   = strpos( $attributes, '=>', $i );
 					$index = trim( substr( $attributes, $i + 1, $end - $i - 1 ) );
+
 					for( $i = $end + 2; $attributes[ $i + 1 ] == ','; ++ $i );
 				} else {
-					$char = $attributes[ $i ];
+					$char      = $attributes[ $i ];
 					$is_string = $char == "'" || $char == '"';
+
 					if( $is_string ) {
 						$start = $i + 1;
-						$end = strpos( $attributes, $char, $i + 1 );
+						$end   = strpos( $attributes, $char, $i + 1 );
+
 						if( $end === false ) $end = $attributesLen;
 					} else {
-						$start = $i; $cnt = 0;
+						$start = $i; 
+						$cnt   = 0;
+
 						for( $end = $i + 1; $end < $attributesLen; ++ $end ) {
-							if( $attributes[ $end ] == '(' ) ++ $cnt;
-							else if( $attributes[ $end ] == ')' ) -- $cnt;
-							else if( $status && $attributes[ $end ] == '=' && $attributes[ $end + 1 ] == '>' && $cnt == 0 ) break;
-							else if( !$status && $attributes[ $end ] == ',' && $cnt == 0 ) break;
+							if( $attributes[ $end ] == '(' ) {
+								++ $cnt;
+							} else if( $attributes[ $end ] == ')' ) {
+								-- $cnt;
+							} else if( $status && $attributes[ $end ] == '=' && $attributes[ $end + 1 ] == '>' && $cnt == 0 ) {
+								break;
+							} else if( !$status && $attributes[ $end ] == ',' && $cnt == 0 ) {
+								break;
+							}
 						}
 					}
 
@@ -176,20 +224,30 @@ class View_Haml extends Base {
 					if( !$is_string ) $tmp = "<?php echo $tmp; ?>";
 					$i = $end + 1;
 
-					if( $status ) { $index = $tmp; $i += 2; }
-					else $value = $tmp;
+					if( $status ) {
+						$index = $tmp; 
+						$i    += 2;
+					}
+					else {
+						$value = $tmp;
+					}
 
-					if( !$status ) $this -> pushValue( $data[ 'attributes' ], $index, $value );
+					if( !$status ) {
+						$this -> pushValue( $data[ 'attributes' ], $index, $value );
+					}
 				}
 
 				$status = !$status;
 			}
 		}
+
 		$data[ 'html' ] .= substr( $line, $pos );
+
 		if( !empty( $data[ 'tag' ] ) ) {
 			$this -> parsed .= "<{$data[ 'tag' ] }" . $this -> attributesToHTML( $data[ 'attributes' ] ) . ">";
 			array_unshift( $this -> tree, array( $tabs, isset( $this -> ommitCloseTag[ $data[ 'tag' ] ] ) ? "" : "</{$data[ 'tag' ]}>" ) );
 		}
+
 		$this -> parsed .= $this -> parseHtml( $data[ "html" ] );
 	}
 
@@ -204,8 +262,14 @@ class View_Haml extends Base {
 	 * @return void
 	 */
 	function pushValue( &$data, $attr, $value ) {
-		if( !isset( $data[ $attr ] ) ) $data[ $attr ] = '';
-		if( $data[ $attr ] != '' ) $data[ $attr ] .= ' ';
+		if( !isset( $data[ $attr ] ) ) {
+			$data[ $attr ] = '';
+		}
+
+		if( $data[ $attr ] != '' ) {
+			$data[ $attr ] .= ' ';
+		}
+
 		$data[ $attr ] .= $value;
 	}
 
@@ -218,20 +282,27 @@ class View_Haml extends Base {
 	 * @todo   Optimize!
 	 */
 	function parseHtml( $string ) {
-		$ret = ''; 
+		$ret     = ''; 
 		$phpOpen = false;
 
 		for( $i = 0, $len = strlen( $string ); $i < $len; ++ $i ) {
-			if( substr( $string, $i, 5 ) == "<?php" ) $phpOpen = true;
-			else if( substr( $string, $i, 2 ) == "?>" ) $phpOpen = false;
+			if( substr( $string, $i, 5 ) == "<?php" ) {
+				$phpOpen = true;
+			} else if( substr( $string, $i, 2 ) == "?>" ) {
+				$phpOpen = false;
+			}
 			
 			if( $string[ $i ] == '$' ) {
 				preg_match( '/[a-zA-Z->_\[\]\' ]+/', $string, $matches, null, $i + 1 );
+
 				$str = "echo \${$matches[0]};";
-				if( !$phpOpen ) $str = "<?php $str ?>";
+				if( !$phpOpen ) {
+					$str = "<?php $str ?>";
+				}
+
 				$length = strlen( $matches[ 0 ] );
 				$string = substr_replace( $string, $str, $i, $length + 1 );
-				$i += strlen( $str ) - $length;
+				$i     += strlen( $str ) - $length;
 			}
 		}
 		
@@ -248,8 +319,9 @@ class View_Haml extends Base {
 	function attributesToHTML( &$attributes ) {
 		$ret = '';
 
-		foreach( $attributes as $id => $val )
+		foreach( $attributes as $id => $val ) {
 			$ret .= " $id=\"$val\"";
+		}
 
 		return $ret;
 	}
