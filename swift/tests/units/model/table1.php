@@ -10,7 +10,8 @@ class table1Test extends Test_Case {
 
 		$array = array(
 			array( 'number' => 2, 'string' => 'foo', 'time' => $this -> time ),
-			array( 'number' => 1, 'string' => 'bar', 'time' => $this -> time + 10 )
+			array( 'number' => 1, 'string' => 'bar', 'time' => $this -> time + 10 ),
+			array( 'number' => 3, 'string' => 'heh', 'time' => '17.03.1993. 22:04' )
 		);
 
 		foreach( $array as $row ) {
@@ -37,7 +38,7 @@ class table1Test extends Test_Case {
 		model( 'table1' ) -> values( array( 'number' => 3, 'string' => 'hello' ) ) -> save();
 		$row = model( 'table1' ) -> find_by_string( 'hello' );
 
-		$this -> assertEqual( $row -> id, 3 );
+		$this -> assertEqual( $row -> id, 4 );
 		$this -> assertEqual( $row -> number, 3 );
 		$this -> assertEqual( $row -> string, 'hello' );
 		$this -> assertEqual( $row -> time, new Model_Type_Timestamp() );
