@@ -35,7 +35,7 @@ class Image extends Base {
 	 * @return void
 	 */
 	function __construct( $path ) {
-		$this -> dir = realpath( $path ) . '/';
+		$this -> dir = dirname( $path ) . '/';
 		$this -> image  = new Imagick( $path );
 		$this -> width  = $this -> image -> getImageWidth();
 		$this -> height = $this -> image -> getImageHeight();
@@ -64,6 +64,14 @@ class Image extends Base {
 	 */
 	function resizeAndCrop( $width, $height ) {
 		$this -> image -> cropThumbnailImage( $width, $height );
+
+		return $this;
+	}
+
+	function resize( $width, $height ) {
+		$this -> image -> scaleImage( $width, $height );
+		$this -> width  = $this -> image -> getImageWidth();
+		$this -> height = $this -> image -> getImageHeight();
 
 		return $this;
 	}
