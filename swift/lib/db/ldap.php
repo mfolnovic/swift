@@ -106,8 +106,8 @@ class Db_Ldap extends Base {
 		$q = $this -> toQuery( $base );
 
 		Benchmark::start( 'query' );
-		$entries = $this -> cache -> get( $q );
-		$entries = false;
+		$entries = $this -> cache -> get( "$basedn|$q" );
+
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
 			$res = @ldap_search( $this -> conn, $basedn, $q, $base -> relation[ 'select' ] );
@@ -138,7 +138,7 @@ class Db_Ldap extends Base {
 		}
 
 		Log::write( $q, 'LDAP', 'query' );
-		$this -> cache -> set( array( $basedn, $q ), $base -> resultSet, $this -> options[ 'cache' ] );
+		$this -> cache -> set( "$basedn|$q", $base -> resultSet, $this -> options[ 'cache' ] );
 	}
 
 	/**
