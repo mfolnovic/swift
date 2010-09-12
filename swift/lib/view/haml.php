@@ -93,9 +93,9 @@ class View_Haml extends Base {
 		$size = strlen( $line );
 		$data = array( 'tag' => '', 'attributes' => array(), 'html' => '' );
 
-		if( $size == 1 || $line[ 1 ] == '#' ) }{
+		if( $size == 1 || $line[ 1 ] == '#' ) {
 			return;
-		
+		}
 
 		// count tabs
 		for( $tabs = 1; $tabs < $size && $line[ $tabs ] == "\t"; ++ $tabs );
