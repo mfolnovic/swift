@@ -110,9 +110,9 @@ class View_Haml extends Base {
 			$rest = substr( $line, $tabs + 1 );
 			$command = trim( substr( $rest, 0, strpos( $rest, '(' ) ) );
 			$structure = in_array( $command, $this -> structures );
-			$this -> parsed .= "<?php " . $rest . ( $structure ? " { " : ";" ) . " ?>";
+			$this -> parsed .= "<?php " . ( $structure || strpos( $rest, 'echo' ) !== false ? '' : 'echo ' ) . ltrim( $rest ) . ( $structure ? " { " : ";" ) . " ?>";
 			if( $structure ) array_unshift( $this -> tree, array( $tabs, "<?php } ?>" ) );
-			if( !empty( $command ) && function_exists( '_' . $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php _' . $command . 'End(); ?>' ) );
+			if( !empty( $command ) && function_exists( '_' . $command . 'End' ) ) array_unshift( $this -> tree, array( $tabs, '<?php echo _' . $command . 'End(); ?>' ) );
 			return;
 		}
 
