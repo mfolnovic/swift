@@ -78,7 +78,8 @@ class Model_Base extends Base implements IteratorAggregate {
 		'group' => array(),
 		'having' => array(), 
 		'includes' => array(),
-		'join' => array()
+		'join' => array(),
+		'basedn' => array() // used in ldap
 	);
 	/**
 	 * Schema for this table

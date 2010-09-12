@@ -94,23 +94,30 @@ class Db_Ldap extends Base {
 	 */
 	function select( &$base ) {
 		$table = &Model::instance() -> tables[ $base -> tableName ];
+		$count = count( $table );
 		$base -> resultSet = array();
+		
+		if( empty( $base -> relation[ 'basedn' ] ) ) {
+			$basedn = $this -> options[ 'dn' ];
+		} else {
+			$basedn = $base -> relation[ 'basedn' ][ 0 ];
+		}
+
 		$q = $this -> toQuery( $base );
 
 		Benchmark::start( 'query' );
-//		$entries = $this -> cache -> get( $q );
+		$entries = $this -> cache -> get( $q );
 		$entries = false;
 		if( $entries === false ) {
 			if( !$this -> conn ) $this -> connect();
-
-			$res = @ldap_search( $this -> conn, $this -> options[ 'dn' ], $q );
+			$res = @ldap_search( $this -> conn, $basedn, $q, $base -> relation[ 'select' ] );
 
 			if( $res !== false ) {
-				$entries = @ldap_get_entries( $this -> conn, $res );
-	
-				for( $i = 0; $i < $entries[ 'count' ]; ++ $i ) {
+				$rows = @ldap_get_entries( $this -> conn, $res );
+
+				for( $i = 0; $i < $rows[ 'count' ]; ++ $i ) {
 					$entry = array();
-					foreach( $entries[ $i ] as $id => $val ) {
+					foreach( $rows[ $i ] as $id => $val ) {
 						if( !is_numeric( $id ) && $id != 'count' ) {
 							if( $val[ 'count' ] == 1 ) $val = $val[ 0 ];
 							else if( is_array( $val ) ) array_shift( $val );
@@ -118,9 +125,9 @@ class Db_Ldap extends Base {
 							$entry[ $id ] = $val;
 						}
 					}
-	
-					$table[ $i ] = new Model_Row( get_class( $base ), $entry );
-					$base -> resultSet[ $i ] = &$table[ $i ];
+
+					$table[ $count + $i ] = new Model_Row( get_class( $base ), $entry );
+					$base -> resultSet[ $i ] = &$table[ $count + $i ];
 				}
 			}
 		} else {
@@ -131,7 +138,7 @@ class Db_Ldap extends Base {
 		}
 
 		Log::write( $q, 'LDAP', 'query' );
-		$this -> cache -> set( $q, $base -> resultSet, $this -> options[ 'cache' ] );
+		$this -> cache -> set( array( $basedn, $q ), $base -> resultSet, $this -> options[ 'cache' ] );
 	}
 
 	/**
@@ -142,7 +149,7 @@ class Db_Ldap extends Base {
 	 * @return string
 	 */
 	function toQuery( &$base ) {
-		if( empty( $base -> relation[ 'where' ] ) ) return '(webid=*)';
+		if( empty( $base -> relation[ 'where' ] ) ) return '(cn=*)';
 		
 		$where = '';
 		$cnt   = 0;
@@ -177,22 +184,20 @@ class Db_Ldap extends Base {
 			$this -> select( $base );
 			$this -> cache -> delete( $this -> toQuery( $base ) );
 
-			$delete = array();
-			$modify = array();
-			$add    = array();
-
-			foreach( $base -> update as $id => $val ) {
-				if( empty( $val ) ) $delete[$id] = $val;
-				else if( $base -> $id === NULL ) $add[ $id ] = $val;
-				else $modify[ $id ] = $val;
-			}
-
 			if( !$this -> conn ) $this -> connect();
 			$this -> bindAsAdmin();
 
-			if( !empty( $add ) ) ldap_mod_add( $this -> conn, $base -> dn, $add );
-			if( !empty( $modify ) ) ldap_mod_replace( $this -> conn, $base -> dn, $modify );
-			if( !empty( $delete ) ) ldap_mod_del( $this -> conn, $base -> dn, $delete );
+			foreach( $base -> update as $id => $val ) {
+				if( $id == 'unicodePwd' ) $val = $this -> encryptPassword( $val );
+				if( empty( $val ) ) ldap_mod_del( $this -> conn, $base -> dn, array( $id => $val ) );
+				else if( $base -> $id === NULL ) {
+					@ldap_mod_add( $this -> conn, $base -> dn, array( $id => $val ) );
+					if( ldap_errno( $this -> conn ) > 0 ) {
+						ldap_mod_replace( $this -> conn, $base -> dn, array( $id => $val ) );
+					}
+				}
+			}
+
 			$base -> resultSet = array();
 		}
 	}
@@ -211,6 +216,24 @@ class Db_Ldap extends Base {
 		$ret = !empty( $data[ 0 ] ) && !empty( $data[ 1 ] ) && @ldap_bind( $this -> conn, $data[0] . '@' . $this -> options[ 'domain' ], $data[ 1 ] ) == true;
 		ldap_unbind( $this -> conn ); unset( $this -> conn );
 		$this -> connect();
+		return $ret;
+	}
+
+	/**
+	 * Encrypt password
+	 *
+	 * @access  public
+	 * @param   string $password Password to encrypt
+	 * @return  string
+	 */
+	function encryptPassword( $password ) {
+		$password = "\"" . $password . "\"";
+		$ret = '';
+
+		for( $i = 0, $len = strlen( $password ); $i < $len; ++ $i )
+			$ret .= "{$password{$i}}\000";
+//		$ret = str_replace("\n", "", shell_exec("echo -n '\"" . $password . "\"' | recode latin1..utf-16le/base64"));;
+//echo $ret;exit;
 		return $ret;
 	}
 }
