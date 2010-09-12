@@ -129,7 +129,8 @@ class Db_Mysql extends Base {
 	 */
 	function generateExtra( &$base ) {
 		$relation =& $base -> relation;
-		return ( empty( $relation[ 'limit' ] ) ? '' : ' LIMIT ' . implode( ',', $relation[ 'limit' ] ) );
+		return ( empty( $relation[ 'group' ] ) ? '' : ' GROUP BY ' . implode( ',', $relation[ 'group' ] ) ) .
+		       ( empty( $relation[ 'limit' ] ) ? '' : ' LIMIT ' . implode( ',', $relation[ 'limit' ] ) );
 	}
 
 	/**
