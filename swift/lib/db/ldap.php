@@ -132,8 +132,8 @@ class Db_Ldap extends Base {
 			}
 		} else {
 			foreach( $entries as $id => $val ) {
-				$table[ $id ] = $val;
-				$base -> resultSet[ $id ] = &$table[ $id ];
+				$table[ $count + $id ] = $val;
+				$base -> resultSet[ $id ] = &$table[ $count + $id ];
 			}
 		}
 
