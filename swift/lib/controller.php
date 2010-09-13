@@ -65,8 +65,11 @@ class Controller extends Base {
 			$this -> object           = new $controllerName;
 			$this -> object -> data   = array_merge( $_POST, $data );
 
-			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) )
+			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) ) {
+				$this -> object -> run_before_filters();
 				$this -> object -> $action();
+				$this -> object -> run_after_filters();
+			}
 		}
 	}
 

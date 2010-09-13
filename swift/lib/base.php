@@ -22,78 +22,9 @@
 
 class Base {
 	/**
-	 * Contains all before_filters
-	 */
-	var $before_filters = array();
-	/**
-	 * Contains all after_filters
-	 */
-	var $after_filters = array();
-	/**
 	 * Contains all singleton instances
 	*/
 	static $instance = array();
-
-	/**
-	 * Constructor
-	 * Runs before_filters
-	 *
-	 * @access public
-	 * @return void
-	 * @todo   before_filters should be called before every call, not just constructing
-	 */
-	function __construct() {
-		foreach( $this -> before_filters as $function )
-			call_user_func( array( $this, $function ) );
-	}
-
-	/**
-	 * Destructor
-	 * Runs after_filters
-	 *
-	 * @access public
-	 * @return void
-	 * @todo   after_filters should be called after every call, not just destructing
-	 */
-	function __destruct() {
-		foreach( $this -> after_filters as $function )
-			call_user_func( array( $this, $function ) );
-	}
-
-	/**
-	 * Adds new before_filter
-	 *
-	 * @access public
-	 * @param	 string $function1, ... Function which should be run as before_filter
-	 * @return void
-	 * @todo   Options as last argument?
-	 * @todo   More DRY between before_filter and after_filter
-	 */
-	function before_filter() {
-		$functions = func_get_args();
-		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
-		else $options = array();
-
-		foreach( $functions as $function )
-			$this -> before_filters += array( $function, $options );
-	}
-
-	/**
-	 * Adds new after filter
-	 *
-	 * @access public
-	 * @param  string $function1, ... Function which should be run as after_filter
-	 * @return void
-	 * @todo   Options as last argument?
-	 */
-	function after_filter( $function ) {
-		$functions = func_get_args();
-		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
-		else $options = array();
-
-		foreach( $functions as $function )
-			$this -> after_filters += array( $function, $options );
-	}
 
 	/**
 	 * Searches through all plugins and finds that function
