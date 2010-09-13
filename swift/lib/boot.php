@@ -26,6 +26,9 @@ include LIB_DIR . "errors.php";
 include LIB_DIR . "constants.php";
 
 Config::instance() -> load();
+
+setlocale( LC_ALL, Config::instance() -> get( 'locale' ) );
+
 Plugins::instance() -> loadManifests();
 
 //Cache::pageCache( $_GET[ 'url' ] );

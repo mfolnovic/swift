@@ -17,5 +17,6 @@ log:
 cache_views: false
 cache_config: false
 format_date: d.m.y. H:i:s
+locale: en_EN.utf8
 timezone: Europe/Zagreb
 version: 1
