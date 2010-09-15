@@ -57,8 +57,8 @@ class Db_Mysql extends Base {
 	 * @return string
 	 */
 	function safe( $string ) {
-		if( empty( $string ) ) return "''";
 		if( is_numeric( $string ) ) return $string;
+		if( empty( $string ) ) return "''";
 		if( $string instanceof Model_Type_Timestamp ) $string = $string -> toDatabase();
 		if( $string[ 0 ] == '`' ) return $string;
 
