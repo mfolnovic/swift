@@ -23,7 +23,7 @@ class Log extends Base {
 	/**
 	 * Instance of log adapter
 	 */
-	static $adapter;
+	static $adapter = NULL;
 
 	/**
 	 * Init function
@@ -33,6 +33,8 @@ class Log extends Base {
 	 * @static
 	 */
 	static function init() {
+		if( !empty( self::$adapter ) ) return;
+
 		$options = Config::instance() -> get( 'log' );
 		if( $options === FALSE ) return;
 
@@ -63,7 +65,8 @@ class Log extends Base {
 	 * @static
 	 */
 	static function write( $message, $type = NULL, $benchmark = NULL ) {
-		if( self::$adapter === NULL ) self::init();
+		self::init();
+		if( self::$adapter === NULL ) return;
 
 		if( !empty( $type ) ) $type = "[$type] ";
 		if( !empty( $benchmark ) ) $benchmark = '(' . Benchmark::end( $benchmark ) . ' seconds)';
