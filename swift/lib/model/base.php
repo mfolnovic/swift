@@ -139,7 +139,8 @@ class Model_Base extends Base implements IteratorAggregate {
 			return NULL;
 		}
 
-		if( $this -> resultSet == array() && $this -> relationChanged ) {
+		$newRecord = isset( $this -> resultSet[ -1 ] );
+		if( count( $this -> resultSet ) == $newRecord && $this -> relationChanged ) {
 			$this -> first();
 		}
 
