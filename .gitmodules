@@ -1,0 +1,3 @@
+[submodule "swift/vendor/spyc"]
+	path = swift/vendor/spyc
+	url = git://github.com/mfolnovic/spyc-git.git
