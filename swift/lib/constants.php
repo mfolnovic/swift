@@ -13,12 +13,13 @@
  * Provides internal constants
  */
 
-define( 'ENV_HTTP', 1 );
-define( 'ENV_CLI', 2 );
 define( 'ENV_DEVELOPMENT', 4 );
 define( 'ENV_PRODUCTION', 8 );
 define( 'ENV_TEST', 16 );
 define( 'ENV_INTERNAL', 32 );
+
+define( 'ENV_CLI', php_sapi_name() == 'cli' );
+define( 'ENV_HTTP', !ENV_CLI );
 
 define( 'ERROR', E_USER_ERROR );
 define( 'WARNING', E_USER_WARNING );
