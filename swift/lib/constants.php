@@ -26,6 +26,7 @@ define( 'WARNING', E_USER_WARNING );
 define( 'NOTICE', E_USER_NOTICE );
 
 define( 'APP_DIR', DIR . 'app/' );
+define( 'VENDOR_DIR', ROOT_DIR . 'swift/vendor/' );
 define( 'CONFIG_DIR', APP_DIR . 'config/' );
 define( 'CONTROLLERS_DIR', APP_DIR . 'controllers/' );
 define( 'LOG_DIR', APP_DIR . 'log/' );

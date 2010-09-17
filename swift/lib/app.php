@@ -22,8 +22,9 @@
 class App {
 	static $load_paths = array(
 	                      'library' => array( LIB_DIR ),
-	                      'controllers' => array( CONTROLLERS_DIR ),
-	                      'models' => array( MODEL_DIR )
+	                      'controller' => array( CONTROLLERS_DIR ),
+	                      'model' => array( MODEL_DIR ),
+	                      'vendor' => array( VENDOR_DIR )
 	                     );
 
 	/**
@@ -58,7 +59,13 @@ class App {
 			$class_path = str_replace( '_', '/', $class );
 
 			foreach( self::$load_paths[ $type ] as $directory ) {
-				$path = $directory . '/' . $class_path . '.php';
+				$path = $directory . $class_path;
+
+				if( !file_exists( $path . '.php' ) && is_dir( $path ) ) {
+					$path .= '/' . $class;
+				}
+
+				$path .= '.php';
 
 				if( file_exists( $path ) ) {
 					include $path;
@@ -71,7 +78,7 @@ class App {
 				}
 			}
 
-			if( !class_exists( $class ) ) {
+			if( !class_exists( $class, false ) ) {
 				trigger_error( "Couldn't load class $class!", ERROR );
 			}
 		}

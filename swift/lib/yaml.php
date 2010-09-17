@@ -31,7 +31,13 @@ class Yaml {
 	 * @static
 	 */
 	static function parse( $path ) {
-		return yaml_parse_file( $path );
+		/* Use native if available */
+		if( function_exists( 'yaml_parse_file' ) ) {
+			return yaml_parse_file( $path );
+		} else {
+			App::load( 'vendor', 'spyc' );
+			return spyc_load_file( $path );
+		}
 	}
 }
 
