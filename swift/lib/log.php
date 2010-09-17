@@ -53,6 +53,7 @@ class Log extends Base {
 	 * @static
 	 */
 	static function destroy() {
+		Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
 		self::write( 'Request done in ' . Benchmark::end( 'request' ) . ' seconds' );
 	}
 
