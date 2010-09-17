@@ -44,11 +44,11 @@ class App {
 	 * @access  public
 	 * @param   string $type, ...  Type of class to load
 	 * @param   string $class, ... Class to load
-	 * @return  return
+	 * @return  void
 	 */
 	static function load() {
 		$classes = func_get_args();
-		$type = array_shift( $classes );
+		$type    = array_shift( $classes );
 
 		foreach( $classes as $class ) {
 			if( class_exists( $class, false ) ) {
