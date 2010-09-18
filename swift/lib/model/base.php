@@ -111,6 +111,8 @@ class Model_Base extends Base implements IteratorAggregate {
 	 */
 	var $relationChanged = false;
 	var $errors = array();
+	var $attr_protected = array();
+	var $_canOverride = true;
 
 	/**
 	 * Constructor
@@ -162,6 +164,10 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return void
 	 */
 	function __set( $key, $value ) {
+		if( !$this -> _canOverride && in_array( $key, $this -> attr_protected ) ) {
+			return;
+		}
+
 		if( empty( $this -> resultSet ) ) {
 			$row_id = -1;
 			$this -> resultSet = array( $row_id => new Model_Row( get_class( $this ) ) );
@@ -281,9 +287,13 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @return object
 	 */
 	function values( $values ) {
+		$this -> _canOverride = false;
+
 		foreach( $values as $id => $val ) {
 			$this -> $id = $val;
 		}
+
+		$this -> _canOverride = true;
 
 		return $this;
 	}
