@@ -21,24 +21,27 @@
  */
 
 class Config extends Base {
-	var $options = array();
+	static $options = array();
 
 	/**
 	 * Loads configuration filess
 	 *
 	 * @access public
 	 * @return void
+	 * @static
 	 */
-	function load() {
-		if( !empty( $this -> options ) ) return;
+	static function load() {
+		if( !empty( self::$options ) ) return;
 		$files = array( 'application' );
 
 		foreach( $files as $file ) {
-			$path = $dir = CONFIG_DIR . $file;
-			if( file_exists( $path . '.yml' ) )
-				$this -> options = array_merge( $this -> options, Yaml::parse( $path = $path . '.yml' ) );
-			else if( file_exists( $path . '.php' ) )
+			$path = CONFIG_DIR . $file;
+
+			if( file_exists( $path . '.yml' ) ) {
+				self::$options = array_merge( self::$options, Yaml::parse( $path = $path . '.yml' ) );
+			} else if( file_exists( $path . '.php' ) ) {
 				include $path . ".php";
+			}
 		}
 	}
 
@@ -48,13 +51,18 @@ class Config extends Base {
 	 * @access public
 	 * @param  mixed index1, ... Indexes
 	 * @return return
+	 * @static
 	 */
-	function get() {
-		if( empty( $this -> options ) ) $this -> load();
-		$curr =& $this -> options;
+	static function get() {
+		if( empty( self::$options ) ) {
+			self::load();
+		}
 
-		foreach( func_get_args() as $index )
+		$curr =& self::$options;
+
+		foreach( func_get_args() as $index ) {
 			$curr =& $curr[ $index ];
+		}
 
 		return $curr;
 	}
