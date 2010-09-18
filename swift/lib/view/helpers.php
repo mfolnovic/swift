@@ -86,6 +86,18 @@ function xss_clean( $string ) {
 	return htmlentities( $string, ENT_QUOTES, 'utf-8' );
 }
 
+function errors_for( &$base ) {
+	$content = '<div class="errors"><h2>Errors:</h2>';
+
+	foreach( $base -> errors as $error ) {
+		$content .= "<div>$error</div>";
+	}
+
+	$content .= "</div>";
+
+	return $content;
+}
+
 function _attributes( $array ) {
 	$ret = '';
 
