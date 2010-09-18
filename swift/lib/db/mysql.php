@@ -192,6 +192,8 @@ class Db_Mysql extends Base {
 	 * @return void
 	 */
 	function save( &$base ) {
+		if( $base -> invalid() ) return;
+
 		if( !$base -> relationChanged ) {
 			$columns   = '';
 			$values    = '';

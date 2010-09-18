@@ -110,6 +110,7 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * Is relation changed?
 	 */
 	var $relationChanged = false;
+	var $errors = array();
 
 	/**
 	 * Constructor
@@ -362,6 +363,39 @@ class Model_Base extends Base implements IteratorAggregate {
 				$this -> resultSet[ $dataID ] -> $name -> resultSet[ $id ] = $row;
 			}
 		}
+	}
+
+	/**
+	 * Returns TRUE if current row is valid
+	 *
+	 * @access  public
+	 * @return  bool
+	 * @todo    Avoid multiple ifs by taking those if to each function
+	 *          e.g. validates_required validates field if required validation is true
+	 */
+	function valid() {
+		foreach( $this -> update as $field => &$val ) {
+			if( !isset( $this -> validations[ $field ] ) ) {
+				continue;
+			}
+
+			foreach( $this -> validations[ $field ] as $validation ) {
+				if( $validation[ 'rule' ] == 'required' && empty( $val ) ) {
+					$this -> errors[] = $validation[ 'message' ];
+				}
+			}
+		}
+
+		return empty( $this -> errors );
+	}
+
+	/**
+	 * Returns TRUE if current row is invalid
+	 * @access  public
+	 * @return  bool
+	 */
+	function invalid() {
+		return !$this -> valid();
 	}
 }
 
