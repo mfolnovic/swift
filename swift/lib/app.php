@@ -19,7 +19,7 @@
  * @subpackage  App
  */
 
-class App {
+class App extends Base {
 	static $load_paths = array(
 	                      'library' => array( LIB_DIR ),
 	                      'controller' => array( CONTROLLERS_DIR ),
@@ -56,7 +56,7 @@ class App {
 				continue;
 			}
 
-			$class_path = str_replace( '_', '/', $class );
+			$class_path = str_replace( '_', '/', strtolower( $class ) );
 
 			foreach( self::$load_paths[ $type ] as $directory ) {
 				$path = $directory . $class_path;

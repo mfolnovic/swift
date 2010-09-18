@@ -18,15 +18,7 @@
  */
 
 function __autoload( $name ) {
-	$name = strtolower( $name );
-	$path = LIB_DIR . str_replace( '_', '/', $name ) . ".php";
-	
-	if( file_exists( $path ) )
-		include $path;
-	else if( !Plugins::instance() -> loadPlugin( $name ) )
-		trigger_error( "Couldn't load class <i>$name</i>", ERROR );
-
-	return true;
+	App::load( 'library', $name );
 }
 
 ?>
