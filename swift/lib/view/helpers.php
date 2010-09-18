@@ -54,7 +54,7 @@ function favicon( $icon ) {
 }
 
 function image( $image, $options = array() ) {
-	return "<img src=\"" . URL_PREFIX . "$image\" " . _attributes( $options ) . ">";
+	return "<img src=\"" . URL_PREFIX . "$image\"" . _attributes( $options ) . ">";
 }
 
 function format_time( $timestamp ) {
@@ -63,7 +63,7 @@ function format_time( $timestamp ) {
 
 function form( $url, $options = array() ) {
 	$options = array_merge( $options, array( 'method' => 'post' ) );
-	return "<form action=\"" . URL_PREFIX . "$url\" " . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . Controller::instance() -> object -> csrf_token . '">';
+	return "<form action=\"" . URL_PREFIX . "$url\"" . _attributes( $options ) . '><input type="hidden" name="csrf_token" value="' . Controller::instance() -> object -> csrf_token . '">';
 }
 
 function _formEnd() {
@@ -71,7 +71,7 @@ function _formEnd() {
 }
 
 function ahref( $title, $href, $options = array() ) {
-	return '<a href="' . URL_PREFIX . strtr( ' ', '+', $href ) . '" ' . _attributes( $options ) . '>' . $title . '</a>';
+	return '<a href="' . URL_PREFIX . strtr( ' ', '+', $href ) . '"' . _attributes( $options ) . '>' . $title . '</a>';
 }
 
 function partial( $name ) {
@@ -105,11 +105,8 @@ function errors_for( &$base ) {
 function _attributes( $array ) {
 	$ret = '';
 
-	foreach( $array as $id => $val ) {
-		if( $ret === false ) continue;
-		if( $ret != '' ) $ret .= ' ';
-
-		$ret .= "$id=\"$val\"";
+	foreach( $array as $id => &$val ) {
+		$ret .= " $id=\"$val\"";
 	}
 
 	return $ret;
