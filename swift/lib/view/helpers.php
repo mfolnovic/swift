@@ -87,6 +87,10 @@ function xss_clean( $string ) {
 }
 
 function errors_for( &$base ) {
+	if( empty( $base -> errors ) ) {
+		return '';
+	}
+
 	$content = '<div class="errors"><h2>Errors:</h2>';
 
 	foreach( $base -> errors as $error ) {
