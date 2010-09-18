@@ -79,7 +79,7 @@ class View extends Base {
 			return;
 		}
 
-		if( !file_exists( $compiled ) || !Config::instance() -> get( 'cache_views' ) ) {
+		if( !file_exists( $compiled ) || !Config::get( 'cache_views' ) ) {
 			$haml_id = Benchmark::start();
 			View_Haml::instance() -> parse( $template, $compiled );
 			Log::write( $path, 'HAML', $haml_id );

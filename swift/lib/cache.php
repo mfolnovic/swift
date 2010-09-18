@@ -57,7 +57,7 @@ class Cache extends Base {
 	 */
 	static function factory( $adapter ) {
 		if( !isset( self::$adapters[ $adapter ] ) ) {
-			$options = Config::instance() -> get( 'cache', $adapter );
+			$options = Config::get( 'cache', $adapter );
 			$class   = "Cache_" . ucfirst( $options[ 'adapter' ] );
 
 			self::$adapters[ $adapter ] = new $class( $options );

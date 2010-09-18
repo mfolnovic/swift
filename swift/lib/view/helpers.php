@@ -20,7 +20,7 @@
  */
 
 function javascript() {
-	$version = Config::instance() -> get( 'static_version' );
+	$version = Config::get( 'static_version' );
 
 	if( !empty( $version ) && file_exists( PUBLIC_DIR . 'javascripts/all.js' ) )
 		return "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/all$version.js\"></script>";
@@ -35,7 +35,7 @@ function javascript() {
 }	
 
 function stylesheet() {
-	$version = Config::instance() -> get( 'static_version' );
+	$version = Config::get( 'static_version' );
 
 	if( !empty( $version ) && file_exists( PUBLIC_DIR . 'stylesheets/all.css' ) )
 		return "<link href=\"" . URL_PREFIX . "stylesheets/all$version.css\" rel=\"stylesheet\" type=\"text/css\">";
@@ -58,7 +58,7 @@ function image( $image, $options = array() ) {
 }
 
 function format_time( $timestamp ) {
-	return date( Config::instance() -> get( 'format_date' ), $timestamp );
+	return date( Config::get( 'format_date' ), $timestamp );
 }
 
 function form( $url, $options = array() ) {
