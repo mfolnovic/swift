@@ -71,7 +71,7 @@ function _formEnd() {
 }
 
 function ahref( $title, $href, $options = array() ) {
-	return '<a href="' . URL_PREFIX . strtr( ' ', '+', $href ) . '"' . _attributes( $options ) . '>' . $title . '</a>';
+	return '<a href="' . URL_PREFIX . strtr( $href, ' ', '+' ) . '"' . _attributes( $options ) . '>' . $title . '</a>';
 }
 
 function partial( $name ) {
