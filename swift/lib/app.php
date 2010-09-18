@@ -14,63 +14,66 @@
  *
  * This class is responsible for loading internal classes
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  App
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage App
  */
 
 class App extends Base {
+	/**
+	 * Contains paths where each type of class might be
+	 */
 	static $load_paths = array(
-	                      'library' => array( LIB_DIR ),
-	                      'controller' => array( CONTROLLERS_DIR ),
-	                      'model' => array( MODEL_DIR ),
-	                      'vendor' => array( VENDOR_DIR )
-	                     );
+		'library'    => array(LIB_DIR),
+		'controller' => array(CONTROLLERS_DIR),
+		'model'      => array(MODEL_DIR),
+		'vendor'     => array(VENDOR_DIR)
+	);
 
 	/**
 	 * Currently, only sets correct locale
 	 *
-	 * @access  public
-	 * @return  void
+	 * @access public
+	 * @return void
 	 * @static
 	 */
 	static function boot() {
-		setlocale( LC_ALL, Config::instance() -> get( 'locale' ) );
+		setlocale(LC_ALL, Config::get('locale'));
 	}
 
 	/**
 	 * Loads classes specified as argument
 	 * First argument indicates what to load, library, controller or model
 	 *
-	 * @access  public
-	 * @param   string $type, ...  Type of class to load
-	 * @param   string $class, ... Class to load
-	 * @return  void
+	 * @access public
+	 * @param  string $type, ...  Type of class to load
+	 * @param  string $class, ... Class to load
+	 * @return void
 	 */
 	static function load() {
 		$classes = func_get_args();
-		$type    = array_shift( $classes );
+		$type    = array_shift($classes);
 
-		foreach( $classes as $class ) {
-			if( class_exists( $class, false ) ) {
+		foreach($classes as $class) {
+			if(class_exists($class, false)) {
 				continue;
 			}
 
-			$class_path = str_replace( '_', '/', strtolower( $class ) );
+			$class_path = str_replace('_', '/', strtolower($class));
 
-			foreach( self::$load_paths[ $type ] as $directory ) {
+			foreach(self::$load_paths[$type] as $directory) {
 				$path = $directory . $class_path;
 
-				if( !file_exists( $path . '.php' ) && is_dir( $path ) ) {
+				if(!file_exists($path . '.php') && is_dir($path)) {
 					$path .= '/' . $class;
 				}
 
 				$path .= '.php';
 
-				if( file_exists( $path ) ) {
+				if(file_exists($path)) {
 					include $path;
 
-					if( method_exists( $class, 'init' ) ) {
+					if(method_exists($class, 'init')) {
 						$class::init();
 					}
 
@@ -78,8 +81,8 @@ class App extends Base {
 				}
 			}
 
-			if( !class_exists( $class, false ) ) {
-				trigger_error( "Couldn't load class $class!", ERROR );
+			if(!class_exists($class, false)) {
+				trigger_error("Couldn't load class $class!", ERROR);
 			}
 		}
 	}
