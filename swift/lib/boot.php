@@ -22,8 +22,7 @@ include LIB_DIR . "helpers.php";
 App::boot();
 App::load( 'library', 'session', 'plugins', 'router', 'view', 'security' );
 
-
-Plugins::instance() -> loadManifests();
+//Plugins::instance() -> loadManifests();
 
 Security::instance();
 
