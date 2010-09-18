@@ -61,7 +61,7 @@ class View extends Base {
 
 		if( $this -> render === FALSE ) {
 			return;
-		} else if( $this -> render === TRUE ) {
+		} else if( $this -> render === TRUE || ( !empty( $controller ) && !empty( $action ) ) ) {
 			if( empty( $controller ) ) $controller = Controller::instance() -> controller;
 			if( empty( $action ) ) $action = Controller::instance() -> action;
 
