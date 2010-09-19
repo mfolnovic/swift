@@ -35,14 +35,13 @@ class Model extends Base {
 	 */
 	public function create($name) {
 		if(!isset($this -> tables[$name])) {
-			$path = MODEL_DIR . $name . '.php';
-
-			if(file_exists($path)) {
-				include $path;
-				$this -> tables[$name] = array();
-			} else {
+			try {
+				App::load('model', $name);
+			} catch(AppException $e) {
 				throw new ModelException("Model $name doesn't exist!", ERROR);
 			}
+
+			$this -> tables[$name] = array();
 		}
 
 		return new $name;
