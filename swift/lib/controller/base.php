@@ -70,9 +70,10 @@ class Controller_Base extends Base {
 	 * @return void
 	 * @todo   before_filters should be called before every call, not just constructing
 	 */
-	function run_before_filters() {
+	function run_before_filters( $action ) {
 		foreach( $this -> before_filters as $function )
-			call_user_func( array( $this, $function ) );
+			if( !isset( $function[ 1 ][ 'only' ] ) || in_array( $action, $function[ 1 ][ 'only' ] ) )
+				call_user_func( array( $this, $function[ 0 ] ) );
 	}
 
 	/**
@@ -83,9 +84,10 @@ class Controller_Base extends Base {
 	 * @return void
 	 * @todo   after_filters should be called after every call, not just destructing
 	 */
-	function run_after_filters() {
+	function run_after_filters( $action ) {
 		foreach( $this -> after_filters as $function )
-			call_user_func( array( $this, $function ) );
+			if( !isset( $function[ 1 ][ 'only' ] ) || in_array( $action, $function[ 1 ][ 'only' ] ) )
+				call_user_func( array( $this, $function[ 0 ] ) );
 	}
 
 	/**
@@ -103,7 +105,7 @@ class Controller_Base extends Base {
 		else $options = array();
 
 		foreach( $functions as $function )
-			$this -> before_filters += array( $function, $options );
+			$this -> before_filters[] = array( $function, $options );
 	}
 
 	/**
@@ -120,7 +122,7 @@ class Controller_Base extends Base {
 		else $options = array();
 
 		foreach( $functions as $function )
-			$this -> after_filters += array( $function, $options );
+			$this -> after_filters[] = array( $function, $options );
 	}
 
 	/**
