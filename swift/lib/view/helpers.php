@@ -19,6 +19,13 @@
  * @author     Swift dev team
  */
 
+/**
+ * Generate html for including passed javascript files
+ * 
+ * @access public
+ * @param  string $file1, ..Javascript files
+ * @return return
+ */
 function javascript() {
 	$version = Config::get('static_version');
 
