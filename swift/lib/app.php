@@ -12,7 +12,7 @@
 /**
  * Swift App Class
  *
- * This class is responsible for loading internal classes
+ * This class is responsible for loading classes
  *
  * @author     Swift dev team
  * @package    Swift
@@ -42,8 +42,9 @@ class App extends Base {
 	}
 
 	/**
-	 * Loads classes specified as argument
-	 * First argument indicates what to load, library, controller or model
+	 * Loads classes specified as argument.
+	 * First argument indicates what type of class it needs to load.
+	 * Possible types of classes are: library, controller, model, vendor
 	 *
 	 * @access public
 	 * @param  string $type, ...  Type of class to load
@@ -59,11 +60,14 @@ class App extends Base {
 				continue;
 			}
 
-			$class_path = str_replace('_', '/', strtolower($class));
+			$class_path = strtr(strtolower($class), '_', '/');
 
 			foreach(self::$load_paths[$type] as $directory) {
 				$path = $directory . $class_path;
 
+				/**
+				 * This allows loading classes in vendors and plugins
+				 */
 				if(!file_exists($path . '.php') && is_dir($path)) {
 					$path .= '/' . $class;
 				}
