@@ -220,7 +220,7 @@ class Model_Base extends Base implements IteratorAggregate {
 				return $ret;
 			}
 		}	else {
-			trigger_error("Unknown function $function!");
+			throw new ModelException("Unknown function $function!");
 		}
 
 		return $this;

@@ -41,7 +41,7 @@ class Model extends Base {
 				include $path;
 				$this -> tables[$name] = array();
 			} else {
-				trigger_error("Model $name doesn't exist!", ERROR);
+				throw new ModelException("Model $name doesn't exist!", ERROR);
 			}
 		}
 
@@ -59,5 +59,7 @@ class Model extends Base {
 		return $schema;
 	}
 }
+
+class ModelException extends Exception {}
 
 ?>
