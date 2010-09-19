@@ -38,7 +38,7 @@ class Model extends Base {
 			try {
 				App::load('model', $name);
 			} catch(AppException $e) {
-				throw new ModelException("Model $name doesn't exist!", ERROR);
+				throw new ModelException("Model $name doesn't exist!");
 			}
 
 			$this -> tables[$name] = array();
