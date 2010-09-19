@@ -47,7 +47,7 @@ class Controller extends Base {
 
 		try {
 			App::load( 'controller', 'application', $controller );
-		} catch( Exception $e ) {
+		} catch( AppException $e ) {
 			Router::instance() -> continueRouting = TRUE;
 		}
 
