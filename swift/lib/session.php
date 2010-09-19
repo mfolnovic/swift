@@ -26,6 +26,11 @@
 
 class Session extends Base {
 	/**
+	 * TRUE if init was already run
+	 */
+	static $init = FALSE;
+
+	/**
 	 * Initialize session
 	 * Handles flash messages between requests
 	 *
@@ -34,6 +39,12 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function init() {
+		if(self::$init) {
+			return false;
+		} else {
+			self::$init = TRUE;
+		}
+
 		session_start();
 
 		if(!isset($_SESSION['flash'])) {
@@ -49,6 +60,18 @@ class Session extends Base {
 	}
 
 	/**
+	 * Returns TRUE if session variable with index $index exists
+	 *
+	 * @access  public
+	 * @param   mixed $index Index
+	 * @return  bool
+	 * @static
+	 */
+	public static function exists($index) {
+		return isset($_SESSION[$index]);
+	}
+
+	/**
 	 * Returns session variable with index $index
 	 *
 	 * @access  public
@@ -57,6 +80,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function get($index) {
+		if(!self::$init) {
+			self::init();
+		}
+
 		return $_SESSION[$index];
 	}
 
@@ -70,6 +97,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function set($index, $value) {
+		if(!self::$init) {
+			self::init();
+		}
+
 		$_SESSION[$index] = $value;
 	}
 
@@ -83,6 +114,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function push($index, $value) {
+		if(!self::$init) {
+			self::init();
+		}
+
 		$_SESSION[$index][] = $value;
 	}
 
@@ -95,6 +130,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function increment($index) {
+		if(self::$init === FALSE) {
+			self::init();
+		}
+
 		if(!isset($_SESSION[$index])) {
 			$_SESSION[$index] = 0;
 		}
@@ -111,6 +150,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function decrement($index) {
+		if(!self::$init) {
+			self::init();
+		}
+
 		if(!isset($_SESSION[$index])) {
 			$_SESSION[$index] = 0;
 		}
@@ -127,6 +170,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function flash_get($index) {
+		if(!self::$init) {
+			self::init();
+		}
+
 		if(isset($_SESSION['flash'][$index])) {
 			return $_SESSION['flash'][$index][1];
 		} else {
@@ -144,6 +191,10 @@ class Session extends Base {
 	 * @static
 	 */
 	public static function flash_set($index, $value) {
+		if(!self::$init) {
+			self::init();
+		}
+
 		$_SESSION['flash'][$index] = array($_SESSION['flash_id'], $value + 1);
 	}
 }
