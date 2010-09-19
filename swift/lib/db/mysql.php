@@ -93,7 +93,7 @@ class Db_Mysql extends Base {
 		$this -> conn = @new mysqli($this -> options['host'], $this -> options['username'], $this -> options['password'], $this -> options['database']);
 
 		if($this -> conn -> connect_error) {
-			trigger_error("Couldn't connect to mysql server <i>{$this -> options['host']}</i> or database <i>{$this -> options['database']}</i> doesn't exist!", ERROR);
+			throw new MysqlException("Couldn't connect to mysql server <i>{$this -> options['host']}</i> or database <i>{$this -> options['database']}</i> doesn't exist!", ERROR);
 		} else {
 			$this -> connected = TRUE;
 		}
@@ -118,7 +118,7 @@ class Db_Mysql extends Base {
 		$resource = $this -> conn -> query($query);
 
 		if($resource === FALSE) {
-			trigger_error("SQL Error: $query", ERROR);
+			throw new MysqlException("SQL Error: $query", ERROR);
 		}
 
 		Log::write($query, 'MySQL', 'query');
@@ -343,5 +343,7 @@ class Db_Mysql extends Base {
 		}
 	}
 }
+
+class MysqlException extends Exception {}
 
 ?>

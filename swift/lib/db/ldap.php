@@ -71,7 +71,7 @@ class Db_Ldap extends Base {
 		$this -> conn = @ldap_connect($this -> options['host'], $this -> options['port']);
 
 		if($this -> conn === FALSE) {
-			trigger_error("Failed to connect to LDAP server {$this -> options['host']}:{$this -> options['port']}!", ERROR);
+			throw new LdapException("Failed to connect to LDAP server {$this -> options['host']}:{$this -> options['port']}!");
 		}
 
 		ldap_set_option($this -> conn, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -87,7 +87,7 @@ class Db_Ldap extends Base {
 	 */
 	public function bindAdmin() {
 		if(@ldap_bind($this -> conn, $this -> options['username'], $this -> options['password']) === FALSE) {
-			trigger_error("Ldap bind as admin was unsuccessful!", ERROR);
+			throw new LdapException("Ldap bind as admin was unsuccessful!", ERROR);
 		}
 	}
 
@@ -276,5 +276,7 @@ class Db_Ldap extends Base {
 		return $ret;
 	}
 }
+
+class LdapException extends Exception {}
 
 ?>
