@@ -30,6 +30,13 @@ class App extends Base {
 		'vendor'     => array(VENDOR_DIR)
 	);
 
+	static $append_names = array(
+		'library'    => '',
+		'controller' => 'Controller',
+		'model'      => '',
+		'vendor'     => ''
+	);
+
 	/**
 	 * Currently, only sets correct locale
 	 *
@@ -56,7 +63,9 @@ class App extends Base {
 		$type    = array_shift($classes);
 
 		foreach($classes as $class) {
-			if(class_exists($class, false)) {
+			$class_name = $class . self::$append_names[$type];
+
+			if(class_exists($class_name, false)) {
 				continue;
 			}
 
@@ -77,7 +86,7 @@ class App extends Base {
 				if(file_exists($path)) {
 					include $path;
 
-					if(method_exists($class, 'init')) {
+					if(method_exists($class_name, 'init')) {
 						$class::init();
 					}
 
@@ -85,8 +94,8 @@ class App extends Base {
 				}
 			}
 
-			if(!class_exists($class, false)) {
-				trigger_error("Couldn't load class $class!", ERROR);
+			if(!class_exists($class_name, false)) {
+				throw new Exception( "Couldn't load class $class!" );
 			}
 		}
 	}

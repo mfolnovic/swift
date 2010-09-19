@@ -45,20 +45,10 @@ class Controller extends Base {
 	public function run($controller, $action, $data = array()) {
 		$this -> clean();
 
-		/**
-		 * @todo Move this
-		 */
-		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
-
-		$path = CONTROLLERS_DIR . $controller . ".php";
-
-		if(file_exists($path)) {
-			include_once $path;
-		} else if($plugin = Plugins::instance() -> loadController($controller)) {
-			View::instance() -> view_path = PLUGIN_DIR . $plugin . '/app/views/';
-		} else {
-			Router::instance() -> continueRouting = true;
-			return;
+		try {
+			App::load( 'controller', 'application', $controller );
+		} catch( Exception $e ) {
+			Router::instance() -> continueRouting = TRUE;
 		}
 
 		$controllerName = $controller . 'Controller';
