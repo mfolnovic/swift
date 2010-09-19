@@ -12,7 +12,7 @@
 /**
  * Swift Model Class
  *
- * Singleton for all models, and stores all rows in one place
+ * Factory for all models, and stores all rows in one place
  * In future, this will provide easier caching
  *
  * @author     Swift dev team
@@ -33,7 +33,7 @@ class Model extends Base {
 	 * @param  string $name Name of model
 	 * @return object
 	 */
-	public function create($name) {
+	public function factory($name) {
 		if(!isset($this -> tables[$name])) {
 			try {
 				App::load('model', $name);

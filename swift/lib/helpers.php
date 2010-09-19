@@ -94,7 +94,7 @@ function get_parent_classes($class) {
  * @return object
 */
 function model($name) {
-	return Model::instance() -> create($name);
+	return Model::instance() -> factory($name);
 }
 
 ?>
