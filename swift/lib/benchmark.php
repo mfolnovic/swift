@@ -65,12 +65,14 @@ class Benchmark extends Base {
 	 */
 	public static function end($name, $round = 4) {
 		if(!isset(self::$marks[$name])) {
-			trigger_error("Benchmark mark with name $name doesn't exist.", WARNING); 
+			throw new BenchmarkException("Benchmark mark with name $name doesn't exist."); 
 			return 0;
 		}
 
 		return round((microtime(true) - self::$marks[$name]), $round);
 	}
 }
+
+class BenchmarkException extends Exception {}
 
 ?>
