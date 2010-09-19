@@ -54,7 +54,7 @@ class Controller_Base extends Base {
 	 * @return void
 	 */
 	public function __construct() {
-		$this -> config         =& Config::instance() -> options;
+		$this -> config         =& Config::$options;
 		$this -> controllerName =  strtolower(substr(get_class($this), 0, -10));
 		$this -> csrf_token     =  Security::instance() -> csrf_token;
 	}

@@ -20,7 +20,6 @@
  */
 
 class Plugins extends Base {
-	}
 	/**
 	 * List of all classes which extended other class
 	*/
@@ -51,6 +50,7 @@ class Plugins extends Base {
 				}
 			}
 		}
+	}
 
 	/**
 	 * Loads plugin $name

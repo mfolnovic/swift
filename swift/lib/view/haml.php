@@ -143,9 +143,9 @@ class View_Haml extends Base {
 		$pos = $tabs;
 		// parse tag
 		if($line[$pos] == '%' || $line[$pos] == '#' || $line[$pos] == '.') {
-			$data['tag']   = 'div'; // default tag
-			$type          = '';
-			$str           = '';
+			$data['tag'] = 'div'; // default tag
+			$type        = '';
+			$str         = '';
 
 			for($pos = $tabs; $pos < $size; ++ $pos) {
 				$symbol = $line[$pos] == '%' || $line[$pos] == '#' || $line[$pos] == '.' || $line[$pos] == ' ';
@@ -255,7 +255,7 @@ class View_Haml extends Base {
 		$data['html'] .= substr($line, $pos);
 
 		if(!empty($data['tag'])) {
-			$this -> parsed .= "<{$data['tag'] }" . $this -> attributesToHTML($data['attributes']) . ">";
+			$this -> parsed .= "<{$data['tag']}" . $this -> attributesToHTML($data['attributes']) . ">";
 			array_unshift($this -> tree, array($tabs, isset($this -> ommitCloseTag[$data['tag']]) ? "" : "</{$data['tag']}>"));
 		}
 
@@ -304,7 +304,7 @@ class View_Haml extends Base {
 			}
 			
 			if($string[$i] == '$') {
-				preg_match('/[a-zA-Z->_\[\]\']+/', $string, $matches, null, $i + 1);
+				preg_match('/[a-zA-Z->_\[\]\' ]+/', $string, $matches, null, $i + 1);
 
 				$str = "echo \${$matches[0]};";
 				if(!$phpOpen) {
