@@ -36,33 +36,15 @@ class Errors extends Base {
 	 * @static
 	 * @todo   Avoid switch
 	 */
-	public static function error($number, $message, $file, $line) {
-		if(error_reporting()) {
-			switch($number) {
-				case E_USER_NOTICE;
-				case E_NOTICE;
-					$type = 'notice';
-				break;
-				case E_USER_WARNING;
-				case E_WARNING;
-					$type = 'warning';
-				break;
-				case E_USER_ERROR:
-				case E_NOTICE;
-					$type = 'error';
-				break;
-				default:
-					$type = 'notice';
-			}
+	public static function error($exception) {
+			self::$errors[] = array('number' => $exception -> getCode(), 'message' => $exception -> getMessage(), 'file' => $exception -> getFile(), 'line' => $exception -> getLine(), 'backtrace' => $exception -> getTrace(), 'type' => 'error');
 
-			self::$errors[] = array('number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => array_slice(debug_backtrace(), 1), 'type' => $type);
+			LOG::write($exception -> getMessage() . ' | ' . $exception -> getFile() . ' | ' . $exception -> getLine(), 'error');
 
-			LOG::write($message . ' | ' . $file . ' | ' . $line, $type);
-
-			if($number === E_USER_ERROR || $number == E_ERROR) {
+/*			if($number === E_USER_ERROR || $number == E_ERROR) {
 				self::show();
 			}
-		}
+		}*/
 	}
 
 	/**
@@ -83,9 +65,14 @@ class Errors extends Base {
 		include PUBLIC_DIR . "500.php";
 		exit;
 	}
+
+	function exception($number, $message, $filename, $line) {
+		throw new ErrorException($message, 0, $number, $filename, $line); 
+	}
 }
 
-set_error_handler(array('Errors', 'error'));
+set_error_handler(array('Errors', 'exception'));
+set_exception_handler(array('Errors', 'error'));
 register_shutdown_function(array('Errors', 'show'));
 
 ?>
