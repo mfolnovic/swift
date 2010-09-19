@@ -4,8 +4,11 @@ class MigrateScript extends Base {
 	public static function run() {
 		$migrations = self::getMigrations();
 		$number     = self::getMigrationNumber();
+		$end        = 0;
 
 		foreach($migrations as $migration) {
+			$end = max((int) $migration, $end);
+
 			if((int) $migration > $number) {
 				$class_name = underscoreToCamelCase(filename(substr($migration,strlen((int) $migration) + 1)));
 
@@ -16,6 +19,8 @@ class MigrateScript extends Base {
 				$instance -> up();
 			}
 		}
+
+		file_put_contents(MIGRATIONS_DIR . '.migration', $end);
 		exit;
 	}
 
