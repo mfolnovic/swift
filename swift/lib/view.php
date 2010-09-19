@@ -27,11 +27,11 @@ include LIB_DIR . "view/helpers.php";
  */
 
 class View extends Base {
-	var $layout = 'application';
-	var $render = true;
+	var $layout        = 'application';
+	var $render        = true;
 	var $action_caches = array();
-	var $output = '';
-	var $view_path = NULL;
+	var $output        = '';
+	var $view_path     = NULL;
 
 	/**
 	 * Destructor
@@ -39,10 +39,12 @@ class View extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function __destruct() {
-		if( !empty( Errors::$errors ) ) return;
+	public function __destruct() {
+		if(!empty(Errors::$errors)) {
+			return;
+		}
 
-		ob_start( 'gz_handler' );
+		ob_start('gz_handler');
 		echo $this -> output;
 		ob_end_flush();
 	}
@@ -51,60 +53,61 @@ class View extends Base {
 	 * This function is responsible for rendering and caching
 	 *
 	 * @access public
-	 * @param  string	$controller	Controller
-	 * @param  string	$action	Action
+	 * @param  string $controller Controller
+	 * @param  string $action     Action
 	 * @return void
 	 * @todo   fix caching, filename should be current url
 	 */
-	function render( $controller = NULL, $action = NULL ) {
+	public function render($controller = NULL, $action = NULL) {
 		$view_id = Benchmark::start();
 
-		if( $this -> render === FALSE ) {
+		if($this -> render === FALSE) {
 			return;
-		} else if( $this -> render === TRUE || !empty( $controller ) || !empty( $action ) ) {
-			if( empty( $controller ) ) $controller = Controller::instance() -> controller;
-			if( empty( $action ) ) $action = Controller::instance() -> action;
+		} else if($this -> render === TRUE || !empty($controller) || !empty($action)) {
+			if(empty($controller)) $controller = Controller::instance() -> controller;
+			if(empty($action)) $action = Controller::instance() -> action;
 
 			$path = $controller . '/' . $action . '.php';
 		} else {
 			$path = $this -> render . '.php';
 		}
 
-		$cache    = TMP_DIR . "caches/" . str_replace( '/', '_', $path );
+		$cache    = TMP_DIR . "caches/" . str_replace('/', '_', $path);
 		$compiled = TMP_DIR . "views/$path";
-		$template = ( $this -> view_path ? $this -> view_path : VIEWS_DIR ) . $path;
+		$template = ($this -> view_path ? $this -> view_path : VIEWS_DIR) . $path;
 
-		if( file_exists( $cache ) ) {
+		if(file_exists($cache)) {
 			include $cache;
 			return;
 		}
 
-		if( !file_exists( $compiled ) || !Config::get( 'cache_views' ) ) {
+		if(!file_exists($compiled) || !Config::get('cache_views')) {
 			$haml_id = Benchmark::start();
-			View_Haml::instance() -> parse( $template, $compiled );
-			Log::write( $path, 'HAML', $haml_id );
+			View_Haml::instance() -> parse($template, $compiled);
+			Log::write($path, 'HAML', $haml_id);
 		}
 
-		if( isset( Controller::instance() -> object ) )
-			extract( Controller::instance() -> object -> globals );
+		if(isset(Controller::instance() -> object)) {
+			extract(Controller::instance() -> object -> globals);
+		}
 
 		$this -> end();
 		ob_start();
 		include $compiled;
 
-		if( in_array( array( $controller, $action ), $this -> action_caches ) ) {
+		if(in_array(array($controller, $action), $this -> action_caches)) {
 			$content = ob_get_clean();
 			$this -> output .= $content;
 
-			Dir::make_dir( $cache );
-			file_put_contents( $cache, $content );
+			Dir::make_dir($cache);
+			file_put_contents($cache, $content);
 		} else {
 			$this -> end();
 		}
 
 		ob_start();
 
-		Log::write( $path, 'Render', $view_id );
+		Log::write($path, 'Render', $view_id);
 	}
 
 	/**
@@ -113,8 +116,8 @@ class View extends Base {
 	 * @access public
 	 * @return void
 	*/
-	function end() {
-		while( ob_get_level() > 0 )
+	public function end() {
+		while(ob_get_level() > 0)
 			$this -> output .= ob_get_clean();
 	}
 }

@@ -21,7 +21,7 @@
 
 class Log_File extends Base {
 	var $options = NULL;
-	var $output = '';
+	var $output  = '';
 
 	/**
 	 * Constructor
@@ -30,7 +30,7 @@ class Log_File extends Base {
 	 * @param  array options Options
 	 * @return void
 	 */
-	function __construct( &$options ) {
+	public function __construct(&$options) {
 		$this -> options = $options;
 	}
 
@@ -40,8 +40,8 @@ class Log_File extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function __destruct() {
-		file_put_contents( LOG_DIR . $this -> options[ 'file' ], $this -> output, FILE_APPEND );
+	public function __destruct() {
+		file_put_contents(LOG_DIR . $this -> options['file'], $this -> output, FILE_APPEND);
 	}
 
 	/**
@@ -51,7 +51,7 @@ class Log_File extends Base {
 	 * @param  string $message Message to write
 	 * @return return
 	 */
-	function write( $message ) {
+	public function write($message) {
 		$this -> output .= $message . PHP_EOL;
 	}
 }

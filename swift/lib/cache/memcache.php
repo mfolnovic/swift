@@ -14,9 +14,9 @@
  *
  * This class allows using memcache as cache
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Cache
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Cache
  */
 
 class Cache_Memcache extends Base {
@@ -33,8 +33,8 @@ class Cache_Memcache extends Base {
 	 * @param  string $options Options for this adapter
 	 * @return void
 	 */
-	function __construct( $options ) {
-		$this -> conn = memcache_pconnect( $options[ 'host' ], $options[ 'port' ] );
+	public function __construct($options) {
+		$this -> conn = memcache_pconnect($options['host'], $options['port']);
 	}
 
 	/**
@@ -44,8 +44,8 @@ class Cache_Memcache extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function __destruct() {
-		memcache_close( $this -> conn );
+	public function __destruct() {
+		memcache_close($this -> conn);
 	}
 
 	/**
@@ -55,8 +55,8 @@ class Cache_Memcache extends Base {
 	 * @param  string $key Key
 	 * @return object
 	 */
-	function get( $key ) {
-		return $this -> conn -> get( $key );
+	public function get($key) {
+		return $this -> conn -> get($key);
 	}
 
 	/**
@@ -68,9 +68,12 @@ class Cache_Memcache extends Base {
 	 * @param  int    $expire Expires in $expire seconds
 	 * @return object
 	 */
-	function set( $key, $value, $expire = 0 ) {
-		$result = $this -> conn -> replace( $key, $value, 0, $expire );
-		if( $result == FALSE ) $this -> conn -> set( $key, $value, 0, $expire );
+	public function set($key, $value, $expire = 0) {
+		$result = $this -> conn -> replace($key, $value, 0, $expire);
+
+		if($result == FALSE) {
+			$this -> conn -> set($key, $value, 0, $expire);
+		}
 
 		return $this;
 	}
@@ -82,8 +85,8 @@ class Cache_Memcache extends Base {
 	 * @param  string $key Key
 	 * @return bool
 	 */
-	function exists( $key ) {
-		return $this -> get( $key ) === FALSE;
+	public function exists($key) {
+		return $this -> get($key) === FALSE;
 	}
 
 	/**
@@ -93,8 +96,8 @@ class Cache_Memcache extends Base {
 	 * @param  string $key Key
 	 * @return object
 	 */
-	function delete( $key ) {
-		$this -> conn -> delete( $key ); 
+	public function delete($key) {
+		$this -> conn -> delete($key); 
 
 		return $this;
 	}
@@ -106,7 +109,7 @@ class Cache_Memcache extends Base {
 	 * @param	 string $type Type of cache it clears, default user
 	 * @return object
 	 */
-	function clear() {
+	public function clear() {
 		$this -> conn -> flush();
 
 		return $this;
@@ -120,11 +123,14 @@ class Cache_Memcache extends Base {
 	 * @param	 mixed  $value Value which should be pushed
 	 * @return object
 	*/
-	function push( $key, $what ) {
+	public function push($key, $what) {
 		$array = $this -> $key;
-		if( !is_array( $array ) ) $array = array();
 
-		$array[] = $what;
+		if(!is_array($array)) {
+			$array = array();
+		}
+
+		$array[]      = $what;
 		$this -> $key = $curr;
 
 		return $this;

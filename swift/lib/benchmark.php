@@ -3,10 +3,10 @@
 /**
  * Swift framework
  *
- * @author     Swift dev team
- * @copyright  Copyright (c) 2010, Swift dev team
- * @license    LICENSE
- * @package    Swift
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -15,9 +15,9 @@
  * This class allows you to measure time needed for certain
  * part of code to run
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Benchmark
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Benchmark
  */
 
 class Benchmark extends Base {
@@ -29,7 +29,7 @@ class Benchmark extends Base {
 	 * Internal ID
 	 * It is used for marks that don't really need specific name
 	*/
-	static $id = 0;
+	static $id    = 0;
 
 	/**
 	 * This function marks start point with name $name
@@ -40,11 +40,16 @@ class Benchmark extends Base {
 	 * @static
 	 * @return string
 	 */
-	static function start( $name = NULL, $time = NULL ) {
-		if( empty( $name ) ) $name = ++ self::$id;
-		if( empty( $time ) ) $time = microtime( true );
+	public static function start($name = NULL, $time = NULL) {
+		if(empty($name)) {
+			$name = ++ self::$id;
+		}
 
-		self::$marks[ $name ] = $time;
+		if(empty($time)) {
+			$time = microtime(true);
+		}
+
+		self::$marks[$name] = $time;
 		return $name;
 	}
 
@@ -58,13 +63,13 @@ class Benchmark extends Base {
 	 * @static
 	 * @return int
 	 */
-	static function end( $name, $round = 4 ) {
-		if( !isset( self::$marks[ $name ] ) ) {
-			trigger_error( "Benchmark mark with name $name doesn't exist.", WARNING ); 
+	public static function end($name, $round = 4) {
+		if(!isset(self::$marks[$name])) {
+			trigger_error("Benchmark mark with name $name doesn't exist.", WARNING); 
 			return 0;
 		}
 
-		return round( ( microtime( true ) - self::$marks[ $name ] ), $round );
+		return round((microtime(true) - self::$marks[$name]), $round);
 	}
 }
 

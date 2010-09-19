@@ -1,5 +1,5 @@
 <?php
 
-$router -> addRoute( "%controller%/%action%/%id%" );
+$router -> addRoute("%controller%/%action%/%id%");
 
 ?>

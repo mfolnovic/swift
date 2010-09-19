@@ -14,9 +14,9 @@
  *
  * This class controls running actions, and maintains security
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Controller
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Controller
  */
 
 class Controller extends Base {
@@ -27,11 +27,11 @@ class Controller extends Base {
 	/**
 	 * Current action
 	 */
-	var $action = NULL;
+	var $action     = NULL;
 	/**
 	 * Current controller instance
 	 */
-	var $object = NULL;
+	var $object     = NULL;
 
 	/**
 	 * Runs a controller
@@ -41,16 +41,20 @@ class Controller extends Base {
 	 * @param  string $action     Name of action
 	 * @param  array  $data       Contains data
 	 * @return void
-	 * @todo   Move filterXSS to somewhere else, since now, it'll be run more times
 	 */
-	function run( $controller, $action, $data = array() ) {
+	public function run($controller, $action, $data = array()) {
 		$this -> clean();
+
+		/**
+		 * @todo Move this
+		 */
 		include_once CONTROLLERS_DIR . "application.php"; // loading ApplicationController
 
 		$path = CONTROLLERS_DIR . $controller . ".php";
-		if( file_exists( $path ) )
+
+		if(file_exists($path)) {
 			include_once $path;
-		else if( $plugin = Plugins::instance() -> loadController( $controller ) ) {
+		} else if($plugin = Plugins::instance() -> loadController($controller)) {
 			View::instance() -> view_path = PLUGIN_DIR . $plugin . '/app/views/';
 		} else {
 			Router::instance() -> continueRouting = true;
@@ -59,16 +63,16 @@ class Controller extends Base {
 
 		$controllerName = $controller . 'Controller';
 
-		if( is_callable( array( $controllerName, $action ) ) ) {
+		if(is_callable(array($controllerName, $action))) {
 			$this -> controller       = $controller;
 			$this -> action           = $action;
 			$this -> object           = new $controllerName;
-			$this -> object -> data   = array_merge( $_POST, $data );
+			$this -> object -> data   = array_merge($_POST, $data);
 
-			if( !file_exists( TMP_DIR . "caches/{$controller}_{$action}.php" ) ) {
-				$this -> object -> run_before_filters( $action );
+			if(!file_exists(TMP_DIR . "caches/{$controller}_{$action}.php")) {
+				$this -> object -> run_before_filters();
 				$this -> object -> $action();
-				$this -> object -> run_after_filters( $action );
+				$this -> object -> run_after_filters();
 			}
 		}
 	}
@@ -78,7 +82,7 @@ class Controller extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function render404() {
+	public function render404() {
 		ob_clean();
 		include PUBLIC_DIR . "/404.html";
 		exit;
@@ -89,12 +93,15 @@ class Controller extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function clean() {
-		if( empty( $this -> object ) ) return;
-		foreach( $this -> object -> globals as $key => $val )
-			unset( $GLOBALS[ $key ] );
-	}
+	public function clean() {
+		if(empty($this -> object)) {
+			return;
+		}
 
+		foreach($this -> object -> globals as $key => $val) {
+			unset($GLOBALS[$key]);
+		}
+	}
 }
 
 ?>

@@ -17,10 +17,10 @@
  *
  * Also, this class is responsible for page caching
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Cache
- * @todo        Move action and partial caching here!
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Cache
+ * @todo       Move action and partial caching here!
  */
 
 class Cache extends Base {
@@ -38,11 +38,12 @@ class Cache extends Base {
 	 * @static
 	 * @return return
 	 */
-	static function pageCache( $url ) {
-		$path = TMP_DIR . "caches/" . str_replace( '/', '_', $url );
-		if( file_exists( $path ) ) {
+	public static function pageCache($url) {
+		$path = TMP_DIR . "caches/" . str_replace('/', '_', $url);
+
+		if(file_exists($path)) {
 			include $path;
-			Log::write( $url, "CACHE" );
+			Log::write($url, "CACHE");
 			exit;
 		}
 	}
@@ -55,15 +56,15 @@ class Cache extends Base {
 	 * @static
 	 * @return object
 	 */
-	static function factory( $adapter ) {
-		if( !isset( self::$adapters[ $adapter ] ) ) {
-			$options = Config::get( 'cache', $adapter );
-			$class   = "Cache_" . ucfirst( $options[ 'adapter' ] );
+	public static function factory($adapter) {
+		if(!isset(self::$adapters[$adapter])) {
+			$options = Config::get('cache', $adapter);
+			$class   = "Cache_" . ucfirst($options['adapter']);
 
-			self::$adapters[ $adapter ] = new $class( $options );
+			self::$adapters[$adapter] = new $class($options);
 		}
 
-		return self::$adapters[ $adapter ];
+		return self::$adapters[$adapter];
 	}
 }
 

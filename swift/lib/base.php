@@ -15,9 +15,9 @@
  * Each class is inherited by this one
  * Provides before_filter and after_filter (rails-like)
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Base
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Base
  */
 
 class Base {
@@ -34,19 +34,19 @@ class Base {
 	 * @param  array  $args Arguments
 	 * @return void
 	 */
-	function __call( $name, $args ) {
+	public function __call($name, $args) {
 		$plugins = Plugins::instance();
-		$classes = get_parent_classes( get_class( $this ) );
+		$classes = get_parent_classes(get_class($this));
 
-		foreach( $classes as $class ) {
-			$extends = $plugins -> extensions( $class );
+		foreach($classes as $class) {
+			$extends = $plugins -> extensions($class);
 
-			foreach( $extends as $object ) {
-				$class_name = (string)$object -> name;
-				$object = new $class_name( $this );
+			foreach($extends as $object) {
+				$class_name = (string) $object -> name;
+				$object     = new $class_name($this);
 
-				if( method_exists( $object, $name ) ) {
-					call_user_func_array( array( $object, $name ), $args );
+				if(method_exists($object, $name)) {
+					call_user_func_array(array($object, $name), $args);
 					return true;
 				}
 			}
@@ -65,8 +65,8 @@ class Base {
 	 * @todo   Implement it
 	 * @todo   Optimize, call_user-func_array is slow!
 	 */
-	static function __callStatic( $name, $args ) {
-//		call_user_func_array( array( __CLASS__, $name ), $args );
+	public static function __callStatic($name, $args) {
+//		call_user_func_array(array(__CLASS__, $name), $args);
 	}
 
 	/**
@@ -76,10 +76,14 @@ class Base {
 	 * @param  string $args Optional arguments passed to constructor
 	 * @return object
 	 */
-	static function instance( $args = NULL ) {
+	public static function instance($args = NULL) {
 		$name = get_called_class();
-		if( !isset( self::$instance[ $name ] ) ) self::$instance[ $name ] = new $name( $args );
-		return self::$instance[ $name ];
+
+		if(!isset(self::$instance[$name])) {
+			self::$instance[$name] = new $name($args);
+		}
+
+		return self::$instance[$name];
 	}
 }
 

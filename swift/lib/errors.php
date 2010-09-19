@@ -3,10 +3,10 @@
 /**
  * Swift
  *
- * @package		Swift
- * @author		Swift dev team
- * @copyright	Copyright (c) 2010, Swift dev team
- * @license		LICENSE
+ * @author    Swift dev team
+ * @copyright Copyright (c) 2010, Swift dev team
+ * @license   LICENSE
+ * @package   Swift
  */
 
 /**
@@ -14,9 +14,9 @@
  *
  * Maintains all errors
  *
- * @package			Swift
- * @subpackage	Errors
- * @author			Swift dev team
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Errors
  */
 
 class Errors extends Base {
@@ -36,9 +36,9 @@ class Errors extends Base {
 	 * @static
 	 * @todo   Avoid switch
 	 */
-	static function error( $number, $message, $file, $line ) {
-		if( error_reporting() ) {
-			switch( $number ) {
+	public static function error($number, $message, $file, $line) {
+		if(error_reporting()) {
+			switch($number) {
 				case E_USER_NOTICE;
 				case E_NOTICE;
 					$type = 'notice';
@@ -55,9 +55,13 @@ class Errors extends Base {
 					$type = 'notice';
 			}
 
-			self::$errors[] = array( 'number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => array_slice( debug_backtrace(), 1 ), 'type' => $type );
-			LOG::write( $message . ' | ' . $file . ' | ' . $line, $type );
-			if( $number === E_USER_ERROR || $number == E_ERROR ) self::show();
+			self::$errors[] = array('number' => $number, 'message' => $message, 'file' => $file, 'line' => $line, 'backtrace' => array_slice(debug_backtrace(), 1), 'type' => $type);
+
+			LOG::write($message . ' | ' . $file . ' | ' . $line, $type);
+
+			if($number === E_USER_ERROR || $number == E_ERROR) {
+				self::show();
+			}
 		}
 	}
 
@@ -69,9 +73,11 @@ class Errors extends Base {
 	 * @static
 	 */
 	static function show() {
-		if( empty( self::$errors ) ) return;
+		if(empty(self::$errors)) {
+			return;
+		}
 		@ob_clean();
-		header( "HTTP/1.1 500 Internal Server Error" );
+		header("HTTP/1.1 500 Internal Server Error");
 
 		$errors = self::$errors;
 		include PUBLIC_DIR . "500.php";
@@ -79,7 +85,7 @@ class Errors extends Base {
 	}
 }
 
-set_error_handler( array( 'Errors', 'error' ) );
-register_shutdown_function( array( 'Errors', 'show' ) );
+set_error_handler(array('Errors', 'error'));
+register_shutdown_function(array('Errors', 'show'));
 
 ?>

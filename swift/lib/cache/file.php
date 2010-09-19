@@ -14,16 +14,16 @@
  *
  * This class allows using files as cache
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Cache
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Cache
  */
 
 class Cache_File extends Base {
 	/**
 	 * Internal cache to speed up file cache
 	*/
-	var $cache = array();
+	var $cache   = array();
 	/**
 	 * Used to know if application tried to change some variable
 	*/
@@ -31,24 +31,42 @@ class Cache_File extends Base {
 
 	/**
 	 * Constructor
+	 * Reads cache content from  file
 	 *
 	 * @access public
-	 * @param  string options Options
+	 * @param  string $options Options
 	 * @return void
 	 * @todo   Do I really need to read whole file each time?
 	 */
-	function __construct( $options ) {
-		$this -> readFromFile();
+	public function __construct($options) {
+		$f = fopen(CACHE_PATH, "w+");
+
+		while($line = fgets($f, 4096)) {
+			list($index, $value)   = explode("=", $line);
+			$this -> cache[$index] = unserialize($value);
+		}
+
+		fclose($f);
 	}
 
 	/**
 	 * Destructor
+	 * Writes cache content to file
 	 *
 	 * @access public
 	 * @return void
 	 */
 	function __destruct() {
-		$this -> writeToFile();
+		if(!$this -> changed) {
+			return;
+		}
+
+		$f = fopen(CACHE_PATH, "w");
+
+		foreach($this -> cache as $id => $value)
+			fwrite($f, $id . '=' . serialize($value) . PHP_EOL);
+
+		fclose($f);
 	}
 
 	/**
@@ -58,10 +76,12 @@ class Cache_File extends Base {
 	 * @param  mixed  $index Index to search for
 	 * @return mixed
 	 */
-	function get( $index ) {
-		if( !$this -> read ) $this -> readFromFile();
-		
-		return $this -> cache[ $index ];
+	function get($index) {
+		if(!$this -> read) {
+			$this -> readFromFile();
+		}
+
+		return $this -> cache[$index];
 	}
 
 	/**
@@ -72,44 +92,9 @@ class Cache_File extends Base {
 	 * @param  mixed  $value New value
 	 * @return void
 	 */
-	function set( $index, $value ) {
-		$this -> cache[ $index ] = $value;
-		$this -> changed = true;
-	}
-
-	/**
-	 * Reads everything to file
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function readFromFile() {
-		$f = fopen( CACHE_PATH, "w+" );
-
-		while( $line = fgets( $f, 4096 ) ) {
-			list( $index, $value ) = explode( "=", $line );
-
-			$this -> cache[ $index ] = unserialize( $value );
-		}
-
-		fclose( $f );
-	}
-	
-	/**
-	 * Writes everything to file
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function writeToFile() {
-		if( !$this -> changed ) return;
-
-		$f = fopen( CACHE_PATH, "w" );
-
-		foreach( $this -> cache as $id => $value )
-			fwrite( $f, $id . '=' . serialize( $value ) . PHP_EOL );
-
-		fclose( $f );
+	function set($index, $value) {
+		$this -> cache[$index] = $value;
+		$this -> changed       = true;
 	}
 }
 

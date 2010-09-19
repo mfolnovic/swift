@@ -38,8 +38,8 @@ class Security extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function __construct() {
-		$this -> filter( $_POST );
+	public function __construct() {
+		$this -> filter($_POST);
 		$this -> csrfToken();
 	}
 
@@ -49,15 +49,20 @@ class Security extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function checkCsrf() {
-		if( empty( $_POST ) ) return;
+	public function checkCsrf() {
+		if(empty($_POST)) {
+			return;
+		}
 
 		$time = time();
-		foreach( $_SESSION[ 'csrf_tokens' ] as $id => $val )
-			if( $val[ 1 ] - $time > $this -> token_expiration )
-				unset( $_SESSION[ 'csrf_tokens' ][ $id ] );
-			else if( $val[ 0 ] == $_POST[ 'csrf_token' ] )
+
+		foreach($_SESSION['csrf_tokens'] as $id => $val) {
+			if($val[1] - $time > $this -> token_expiration) {
+				unset($_SESSION['csrf_tokens'][$id]);
+			} else if($val[0] == $_POST['csrf_token']) {
 				return;
+			}
+		}
 
 		Controller::getInstance() -> render404();
 	}
@@ -68,11 +73,14 @@ class Security extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function csrfToken() {
-		$this -> csrf_token = md5( mt_rand() );
+	public function csrfToken() {
+		$this -> csrf_token = md5(mt_rand());
 
-		if( !isset( $_SESSION[ 'csrf_tokens' ] ) ) $_SESSION[ 'csrf_tokens' ] = array();
-		array_push( $_SESSION[ "csrf_tokens" ], array( $this -> csrf_token, time() ) );
+		if(!isset($_SESSION['csrf_tokens'])) {
+			$_SESSION['csrf_tokens'] = array();
+		}
+
+		array_push($_SESSION["csrf_tokens"], array($this -> csrf_token, time()));
 	}
 
 	/**
@@ -82,11 +90,13 @@ class Security extends Base {
 	 * @param  array $array Array to filter
 	 * @return array
 	 */
-	function filter( &$array ) {
-		if( is_string( $array ) ) return $array = htmlentities( $array, ENT_COMPAT, 'utf-8' );
+	public function filter(&$array) {
+		if(is_string($array)) {
+			return htmlentities($array, ENT_COMPAT, 'utf-8');
+		}
 
-		foreach( $array as $id => &$val )
-			$this -> filter( $val );
+		foreach($array as $id => &$val)
+			$this -> filter($val);
 	}
 
 }

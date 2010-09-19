@@ -33,17 +33,17 @@ class Session extends Base {
 	 * @return  void
 	 * @static
 	 */
-	static function init() {
+	public static function init() {
 		session_start();
 
-		if( !isset( $_SESSION[ 'flash' ] ) ) {
-			$_SESSION[ 'flash' ] = array();
+		if(!isset($_SESSION['flash'])) {
+			$_SESSION['flash'] = array();
 		}
 
-		$id = self::increment( 'flash_id' );
-		foreach( $_SESSION[ 'flash' ] as $index => &$value ) {
-			if( $id - 1 > $value[ 0 ] ) {
-				unset( $_SESSION[ 'flash' ][ $index ] );
+		$id = self::increment('flash_id');
+		foreach($_SESSION['flash'] as $index => &$value) {
+			if($id - 1 > $value[0]) {
+				unset($_SESSION['flash'][$index]);
 			}
 		}
 	}
@@ -56,8 +56,8 @@ class Session extends Base {
 	 * @return  mixed
 	 * @static
 	 */
-	static function get( $index ) {
-		return $_SESSION[ $index ];
+	public static function get($index) {
+		return $_SESSION[$index];
 	}
 
 	/**
@@ -69,8 +69,8 @@ class Session extends Base {
 	 * @return  void
 	 * @static
 	 */
-	static function set( $index, $value ) {
-		$_SESSION[ $index ] = $value;
+	public static function set($index, $value) {
+		$_SESSION[$index] = $value;
 	}
 
 	/**
@@ -82,8 +82,8 @@ class Session extends Base {
 	 * @return  void
 	 * @static
 	 */
-	static function push( $index, $value ) {
-		$_SESSION[ $index ][] = $value;
+	public static function push($index, $value) {
+		$_SESSION[$index][] = $value;
 	}
 
 	/**
@@ -94,9 +94,12 @@ class Session extends Base {
 	 * @return  int
 	 * @static
 	 */
-	static function increment( $index ) {
-		if( !isset( $_SESSION[ $index ] ) ) $_SESSION[ $index ] = 0;
-		return ++ $_SESSION[ $index ];
+	public static function increment($index) {
+		if(!isset($_SESSION[$index])) {
+			$_SESSION[$index] = 0;
+		}
+
+		return ++ $_SESSION[$index];
 	}
 
 	/**
@@ -107,9 +110,12 @@ class Session extends Base {
 	 * @return  int
 	 * @static
 	 */
-	static function decrement( $index ) {
-		if( !isset( $_SESSION[ $index ] ) ) $_SESSION[ $index ] = 0;
-		return -- $_SESSION[ $index ];
+	public static function decrement($index) {
+		if(!isset($_SESSION[$index])) {
+			$_SESSION[$index] = 0;
+		}
+
+		return -- $_SESSION[$index];
 	}
 
 	/**
@@ -120,9 +126,9 @@ class Session extends Base {
 	 * @return  mixed
 	 * @static
 	 */
-	static function flash_get( $index ) {
-		if( isset( $_SESSION[ 'flash' ][ $index ] ) ) {
-			return $_SESSION[ 'flash' ][ $index ][ 1 ];
+	public static function flash_get($index) {
+		if(isset($_SESSION['flash'][$index])) {
+			return $_SESSION['flash'][$index][1];
 		} else {
 			return NULL;
 		}
@@ -137,8 +143,8 @@ class Session extends Base {
 	 * @return  void
 	 * @static
 	 */
-	static function flash_set( $index, $value ) {
-		$_SESSION[ 'flash' ][ $index ] = array( $_SESSION[ 'flash_id' ], $value + 1 );
+	public static function flash_set($index, $value) {
+		$_SESSION['flash'][$index] = array($_SESSION['flash_id'], $value + 1);
 	}
 }
 

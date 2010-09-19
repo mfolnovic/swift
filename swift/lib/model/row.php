@@ -21,7 +21,7 @@
  */
 
 class Model_Row implements IteratorAggregate {
-	var $row = array();
+	var $row       = array();
 	var $tableName = NULL;
 	/**
 	 * Constructor
@@ -30,11 +30,11 @@ class Model_Row implements IteratorAggregate {
 	 * @param  array row Row
 	 * @return void
 	 */
-	function __construct( $tableName, $row = array() ) {
-		$this -> tableName = strtolower( $tableName );
-		$schema = Model::schema( $this -> tableName );
+	public function __construct($tableName, $row = array()) {
+		$this -> tableName = strtolower($tableName);
+		$schema            = Model::schema($this -> tableName);
 
-		foreach( $row as $index => $value ) {
+		foreach($row as $index => $value) {
 			$this -> $index = $value;
 		}
 	}
@@ -46,8 +46,8 @@ class Model_Row implements IteratorAggregate {
 	 * @param   string $index Index
 	 * @return  mixed
 	 */
-	function __get( $index ) {
-		return isset( $this -> row[ $index ] ) ? $this -> row[ $index ] : NULL;
+	public function __get($index) {
+		return isset($this -> row[$index]) ? $this -> row[$index] : NULL;
 	}
 
 	/**
@@ -58,11 +58,13 @@ class Model_Row implements IteratorAggregate {
 	 * @param   mixed $value New value
 	 * @return  object
 	 */
-	function __set( $index, $value ) {
-		$field = Model::schema( $this -> tableName, $index );
-		if( $field[ 'type' ] == 'timestamp' && !( $value instanceof Model_Type_Timestamp ) ) $value = new Model_Type_Timestamp( $value );
+	public function __set($index, $value) {
+		$field = Model::schema($this -> tableName, $index);
+		if($field['type'] == 'timestamp' && !($value instanceof Model_Type_Timestamp)) {
+			$value = new Model_Type_Timestamp($value);
+		}
 
-		$this -> row[ $index ] = $value;
+		$this -> row[$index] = $value;
 		return $this;
 	}
 
@@ -73,8 +75,8 @@ class Model_Row implements IteratorAggregate {
 	 * @param   string $index Index
 	 * @return  return
 	 */
-	function __isset( $index ) {
-		return isset( $this -> row[ $index ] );
+	public function __isset($index) {
+		return isset($this -> row[$index]);
 	}
 
 	/**
@@ -83,8 +85,8 @@ class Model_Row implements IteratorAggregate {
 	 * @access public
 	 * @return object
 	 */
-	function getIterator() {
-		return new ArrayIterator( $this -> row );
+	public function getIterator() {
+		return new ArrayIterator($this -> row);
 	}
 }
 

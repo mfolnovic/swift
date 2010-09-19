@@ -15,7 +15,7 @@
  * This class works as factory class for all cache adapters
  *
  * @author     Swift dev team
- * @package	   Swift
+ * @package    Swift
  * @subpackage Database
  */
 
@@ -35,15 +35,15 @@ class Db extends Base {
 	 * @static
 	 * @todo   Cache has almost same function, try to move it to Base
 	 */
-	static function factory( $adapter ) {
-		$options = Config::get( 'database', $adapter );
-		$adapter = 'Db_' . ucfirst( $options[ 'adapter' ] );
+	public static function factory($adapter) {
+		$options = Config::get('database', $adapter);
+		$adapter = 'Db_' . ucfirst($options['adapter']);
 
-		if( !isset( self::$adapters[ $adapter ] ) ) {
-			self::$adapters[ $adapter ] = new $adapter( $options );
+		if(!isset(self::$adapters[$adapter])) {
+			self::$adapters[$adapter] = new $adapter($options);
 		}
 
-		return self::$adapters[ $adapter ];
+		return self::$adapters[$adapter];
 	}
 }
 

@@ -14,9 +14,9 @@
  *
  * Gives internal directory manipulation to Swift
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Directory
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Directory
  */
 
 class Dir {
@@ -29,13 +29,15 @@ class Dir {
 	 * @static
 	 * @todo   Almost same function as dirs, try to merge them?
 	 */
-	static function files( $path ) {
+	public static function files($path) {
 		$ret = array();
-		$dir = scandir( $path );
+		$dir = scandir($path);
 
-		foreach( $dir as $a )
-			if( $a[ 0 ] != '.' && is_file( $path . $a ) )
+		foreach($dir as $a) {
+			if($a[0] != '.' && is_file($path . $a)) {
 				$ret[] = $a;
+			}
+		}
 
 		return $ret;
 	}
@@ -49,13 +51,15 @@ class Dir {
 	 * @static
 	 * @todo   Rename to directories?
 	 */
-	static function dirs( $path ) {
+	public static function dirs($path) {
 		$ret = array();
-		$dir = scandir( $path );
+		$dir = scandir($path);
 
-		foreach( $dir as $a )
-			if( $a[ 0 ] != '.' && is_dir( $path . $a ) )
+		foreach($dir as $a) {
+			if($a[0] != '.' && is_dir($path . $a)) {
 				$ret[] = $a;
+			}
+		}
 
 		return $ret;
 	}
@@ -68,8 +72,8 @@ class Dir {
 	 * @static
 	 * @return array
 	 */
-	static function all( $path ) {
-		return array_slice( scandir( $path ), 2 );
+	public static function all($path) {
+		return array_slice(scandir($path), 2);
 	}
 
 	/**
@@ -83,8 +87,8 @@ class Dir {
 	 * @static
 	 * @todo   Move to class file
 	 */
-	static function read( $dir, $file ) {
-		return file_get_contents( $dir . '/' . $file );
+	public static function read($dir, $file) {
+		return file_get_contents($dir . '/' . $file);
 	}
 
 	/**
@@ -95,39 +99,46 @@ class Dir {
 	 * @return void
 	 * @static
 	 */
-	static function make_dir( $dir ) {
-		if( file_exists( $dir ) ) return;
-		$dir = dirname( $dir );
-		$dirs = explode( '/', $dir );
+	public static function make_dir($dir) {
+		if(file_exists($dir)) {
+			return;
+		}
+
+		$dir     = dirname($dir);
+		$dirs    = explode('/', $dir);
 		$current = '';
 
-		foreach( $dirs as $value ) {
+		foreach($dirs as $value) {
 			$current .= $value . '/';
-			if( !file_exists( $current ) )
-				if( @mkdir( $current ) === FALSE )
-					trigger_error( "Couldn't make directory $current" );
+
+			if(!file_exists($current) && @mkdir($current) === FALSE) {
+				trigger_error("Couldn't make directory $current");
+			}
 		}
 	}
 
 	/**
 	 * Returns part of both path where both paths have same directories
+	 *
 	 * @access  public
 	 * @param   string $path1 First path
 	 * @param   string $path2 Second path
 	 * @return  return
 	 * @static
 	 */
-	static function sameFolders( $path1, $path2 ) {
+	public static function sameFolders($path1, $path2) {
 		$ret = '';
 		$tmp = '';
 
-		for( $i = 0, $size = min( strlen( $path1 ), strlen( $path2 ) ); $i < $size; ++ $i ) {
-			if( $path1[ $i ] != $path2[ $i ] ) break;
-			else if( $path1[ $i ] == '/' ) {
+		for($i = 0, $size = min(strlen($path1), strlen($path2)); $i < $size; ++ $i) {
+			if($path1[$i] != $path2[$i]) { 
+				break;
+			} else if($path1[$i] == '/') {
 				$ret .= $tmp;
 				$tmp  = '/';
-			} else
-				$tmp .= $path1[ $i ];
+			} else {
+				$tmp .= $path1[$i];
+			}
 		}
 
 		return $ret . '/';

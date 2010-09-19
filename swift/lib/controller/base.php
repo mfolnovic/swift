@@ -27,20 +27,20 @@ class Controller_Base extends Base {
 	/**
 	 * Contains all after_filters
 	 */
-	var $after_filters = array();
+	var $after_filters  = array();
 	/**
 	 * Contains all $_POST data
 	 */
-	var $data;
+	var $data           = array();
 	/**
 	 * Contains reference to configuration
 	 * @todo Needed?
 	 */
-	var $config;
+	var $config         = NULL;
 	/**
 	 * All vars available in views are here
 	 */
-	var $globals = array();
+	var $globals        = array();
 	/**
 	 * Name of controller
 	 * @todo Needed?
@@ -53,14 +53,10 @@ class Controller_Base extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function __construct() {
-		global $config, $controller;
-
-		$this -> globals = array();
-		$this -> config =& $config -> options;
-		$this -> controllerName = strtolower( substr( get_class( $this ), 0, -10 ) );
-		$this -> current_time = time(); // needed?
-		$this -> csrf_token = Security::instance() -> csrf_token;
+	public function __construct() {
+		$this -> config         =& Config::instance() -> options;
+		$this -> controllerName =  strtolower(substr(get_class($this), 0, -10));
+		$this -> csrf_token     =  Security::instance() -> csrf_token;
 	}
 
 	/**
@@ -70,10 +66,12 @@ class Controller_Base extends Base {
 	 * @return void
 	 * @todo   before_filters should be called before every call, not just constructing
 	 */
-	function run_before_filters( $action ) {
-		foreach( $this -> before_filters as $function )
-			if( !isset( $function[ 1 ][ 'only' ] ) || in_array( $action, $function[ 1 ][ 'only' ] ) )
-				call_user_func( array( $this, $function[ 0 ] ) );
+	public function run_before_filters($action) {
+		foreach($this -> before_filters as $function) {
+			if(!isset($function[1]['only']) || in_array($action, $function[1]['only'])) {
+				call_user_func(array($this, $function[0]));
+			}
+		}
 	}
 
 	/**
@@ -84,10 +82,12 @@ class Controller_Base extends Base {
 	 * @return void
 	 * @todo   after_filters should be called after every call, not just destructing
 	 */
-	function run_after_filters( $action ) {
-		foreach( $this -> after_filters as $function )
-			if( !isset( $function[ 1 ][ 'only' ] ) || in_array( $action, $function[ 1 ][ 'only' ] ) )
-				call_user_func( array( $this, $function[ 0 ] ) );
+	public function run_after_filters($action) {
+		foreach($this -> after_filters as $function) {
+			if(!isset($function[1]['only']) || in_array($action, $function[1]['only'])) {
+				call_user_func(array($this, $function[0]));
+			}
+		}
 	}
 
 	/**
@@ -99,13 +99,18 @@ class Controller_Base extends Base {
 	 * @todo   Options as last argument?
 	 * @todo   More DRY between before_filter and after_filter
 	 */
-	function before_filter() {
+	public function before_filter() {
 		$functions = func_get_args();
-		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
-		else $options = array();
 
-		foreach( $functions as $function )
-			$this -> before_filters[] = array( $function, $options );
+		if(is_array(end($functions))) {
+			$options = array_pop($functions);
+		} else {
+			$options = array();
+		}
+
+		foreach($functions as $function) {
+			$this -> before_filters[] = array($function, $options);
+		}
 	}
 
 	/**
@@ -116,13 +121,17 @@ class Controller_Base extends Base {
 	 * @return void
 	 * @todo   Options as last argument?
 	 */
-	function after_filter( $function ) {
+	public function after_filter($function) {
 		$functions = func_get_args();
-		if( is_array( end( $functions ) ) ) $options = array_pop( $functions );
-		else $options = array();
+		if(is_array(end($functions))) {
+			$options = array_pop($functions);
+		} else {
+			$options = array();
+		}
 
-		foreach( $functions as $function )
-			$this -> after_filters[] = array( $function, $options );
+		foreach($functions as $function) {
+			$this -> after_filters[] = array($function, $options);
+		}
 	}
 
 	/**
@@ -132,7 +141,7 @@ class Controller_Base extends Base {
 	 * @param  string $layout Name of new layout
 	 * @return void
 	 */
-	function layout( $layout ) {
+	public function layout($layout) {
 		View::instance() -> layout = $layout;
 	}
 
@@ -143,12 +152,12 @@ class Controller_Base extends Base {
 	 * @param  string $url Url to redirect to
 	 * @return void
 	*/
-	function redirect( $url ) {
-		if( isAjax() ) {
-			header( "X-Redirect: $url" );
-			Router::instance() -> route( $url );
+	public function redirect($url) {
+		if(isAjax()) {
+			header("X-Redirect: $url");
+			Router::instance() -> route($url);
 		}	else {
-			header( "Location:" . URL_PREFIX . $url );
+			header("Location:" . URL_PREFIX . $url);
 		}
 	}
 
@@ -159,7 +168,7 @@ class Controller_Base extends Base {
 	 * @param  string $url Path which should be rendered
 	 * @return return
 	 */
-	function render( $path ) {
+	public function render($path) {
 		View::instance() -> render = $path;
 	}
 
@@ -169,7 +178,7 @@ class Controller_Base extends Base {
 	 * @access public
 	 * @return void
 	 */
-	function notFound() {
+	public function notFound() {
 		Router::instance() -> continueRouting = true;
 	}
 
@@ -180,10 +189,12 @@ class Controller_Base extends Base {
 	 * @param  string $action,... Names of actions to cache
 	 * @return return
 	 */
-	function caches_action() {
+	public function caches_action() {
 		$view = View::instance();
-		foreach( func_get_args() as $action )
-			$view -> action_caches[] = array( &$this -> controllerName, $action );
+
+		foreach(func_get_args() as $action) {
+			$view -> action_caches[] = array(&$this -> controllerName, $action);
+		}
 	}
 
 	/**
@@ -193,8 +204,8 @@ class Controller_Base extends Base {
 	 * @param  mixed $index Index
 	 * @return mixed
 	 */
-	function &__get( $index ) {
-		return $this -> globals[ $index ];
+	public function &__get($index) {
+		return $this -> globals[$index];
 	}
 
 	/**
@@ -205,8 +216,9 @@ class Controller_Base extends Base {
 	 * @param  mixed $value Value
 	 * @return object
 	 */
-	function __set( $index, $value ) {
-		$this -> globals[ $index ] = $value;
+	public function __set($index, $value) {
+		$this -> globals[$index] = $value;
+
 		return $this;
 	}
 
@@ -217,8 +229,8 @@ class Controller_Base extends Base {
 	 * @param  mixed $index Index
 	 * @return object
 	*/
-	function __isset( $index ) {
-		return isset( $this -> globals[ $index ] );
+	public function __isset($index) {
+		return isset($this -> globals[$index]);
 	}
 };
 

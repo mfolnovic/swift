@@ -48,7 +48,7 @@ class Router extends Base {
 	 * @param  string name description
 	 * @return return
 	 */
-	function __construct() {
+	public function __construct() {
 		$this -> loadRoutes();
 	}
 
@@ -60,30 +60,30 @@ class Router extends Base {
 	 * @return void
 	 * @todo   Allows URLs like %controller%/%action%/%h%:%m%:%s%
 	 */
-	function route( $path ) {
-		if( empty( $path ) ) {
-			Controller::instance() -> run( $this -> root[ 'controller' ], $this -> root[ 'action' ] );
+	public function route($path) {
+		if(empty($path)) {
+			Controller::instance() -> run($this -> root['controller'], $this -> root['action']);
 			return;
 		}
 
-		$path = str_replace( "+", " ", $path );
+		$path = str_replace("+", " ", $path);
 		$start = 0; 
-		$end = strpos( $path, "?" ) - 1;
-		if( $end == -1 ) $end = strlen( $path ) - 1;
+		$end = strpos($path, "?") - 1;
+		if($end == -1) $end = strlen($path) - 1;
 
-		while( $start <= $end ) {
-			if( $path[ $start ] == '/' ) ++ $start;
-			else if( $path[ $end ] == '/' ) -- $end;
+		while($start <= $end) {
+			if($path[$start] == '/') ++ $start;
+			else if($path[$end] == '/') -- $end;
 			else break;
 		}
 
-		$path = substr( $path, $start, $end - $start + 1 );
+		$path = substr($path, $start, $end - $start + 1);
 
 		$this -> url = $path;
-		$this -> path = explode( "/", $path );
+		$this -> path = explode("/", $path);
 
-		foreach( $this -> routes as $route )
-			if( $this -> checkRoute( $route, $this -> path ) )
+		foreach($this -> routes as $route)
+			if($this -> checkRoute($route, $this -> path))
 				return;
 
 		Controller::instance() -> render404();
@@ -97,37 +97,44 @@ class Router extends Base {
 	 * @param  array $path  Current path
 	 * @return return
 	 */
-	function checkRoute( &$route, $path ) {
-		$ret = array();
-
+	public function checkRoute(&$route, $path) {
+		$i                       = 0;
+		$ret                     = array();
 		$this -> continueRouting = false;
-		$i = 0;
-		foreach( $route[ 0 ] as $val ) {
-			if( !isset( $path[ $i ] ) ) {
-				if( $val[ 1 ] === false ) return false;
+
+		foreach($route[0] as $val) {
+			if(!isset($path[$i])) {
+				if($val[1] === false) {
+					return false;
+				}
+
 				break;
 			}
 
-			if( $val[ 1 ] === false && $val[ 0 ] != $path[ $i ] )
+			if($val[1] === false && $val[0] != $path[$i]) {
 				return false;
-			else if( $val[ 1 ] === true )
-				$ret[ $val[ 0 ] ] = $path[ $i ];
+			} else if($val[1] === true) {
+				$ret[$val[0]] = $path[$i];
+			}
 
 			++ $i;
 		}
 
-		foreach( $route[ 1 ] as $id => $val )
-			if( !isset( $ret[ $id ] ) )
-				$ret[ $id ] = $val;
+		foreach($route[1] as $id => $val) {
+			if(!isset($ret[$id])) {
+				$ret[$id] = $val;
+			}
+		}
 
-		Controller::instance() -> run( $ret[ 'controller' ], $ret[ 'action' ], $ret );
+		Controller::instance() -> run($ret['controller'], $ret['action'], $ret);
+
 		return !$this -> continueRouting;
 	}
 
 	/**
 	 * Load all routes from routes.php
 	 */
-	function loadRoutes() {
+	public function loadRoutes() {
 		include CONFIG_DIR . "routes.php";
 	}
 
@@ -140,17 +147,18 @@ class Router extends Base {
 	 * @return void
 	 * @todo   Do I really need to parse all routes?
 	 */
-	function addRoute( $route, $options = array() ) {
-		$ret = array();
-		$route = explode( '/', $route );
+	public function addRoute($route, $options = array()) {
+		$ret   = array();
+		$route = explode('/', $route);
 
-		foreach( $route as $id => $val )
-			if( $val[ 0 ] == '%' )
-				$ret[] = array( substr( $val, 1, -1 ), true );
-			else
-				$ret[] = array( $val, false );
+		foreach($route as $id => $val)
+			if($val[0] == '%') {
+				$ret[] = array(substr($val, 1, -1), true);
+			} else {
+				$ret[] = array($val, false);
+			}
 
-		$this -> routes[] = array( $ret, $options );
+		$this -> routes[] = array($ret, $options);
 	}
 
 	/**
@@ -160,8 +168,8 @@ class Router extends Base {
 	 * @param  string $action     Root action
 	 * @return void
 	 */
-	function root( $controller, $action ) {
-		$this -> root = array( 'controller' => $controller, 'action' => $action );
+	public function root($controller, $action) {
+		$this -> root = array('controller' => $controller, 'action' => $action);
 	}
 }
 

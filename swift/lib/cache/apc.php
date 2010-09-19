@@ -14,9 +14,9 @@
  *
  * This class gives APC features to Swift Cache Class
  *
- * @author      Swift dev team
- * @package     Swift
- * @subpackage  Cache
+ * @author     Swift dev team
+ * @package    Swift
+ * @subpackage Cache
  */
 
 class Cache_Apc extends Base {
@@ -27,8 +27,8 @@ class Cache_Apc extends Base {
 	 * @param  string $key Key
 	 * @return object
 	 */
-	function get( $key ) {
-		return apc_fetch( $key );
+	public function get($key) {
+		return apc_fetch($key);
 	}
 
 	/**
@@ -41,8 +41,8 @@ class Cache_Apc extends Base {
 	 * @param  int    $expire Expires in $expire seconds
 	 * @return mixed
 	 */
-	function set( $key, $value, $expire = 0 ) {
-		apc_store( $key, $value, $expire );
+	public function set($key, $value, $expire = 0) {
+		apc_store($key, $value, $expire);
 
 		return $value;
 	}
@@ -54,8 +54,8 @@ class Cache_Apc extends Base {
 	 * @param  string $key Key
 	 * @return bool
 	 */
-	function exists( $key ) {
-		return $this -> get( $key ) !== FALSE;
+	public function exists($key) {
+		return $this -> get($key) !== FALSE;
 	}
 
 	/**
@@ -65,8 +65,8 @@ class Cache_Apc extends Base {
 	 * @param  string $key Key
 	 * @return void
 	 */
-	function delete( $key ) {
-		apc_delete( $key );
+	public function delete($key) {
+		apc_delete($key);
 	}
 
 	/**
@@ -76,8 +76,8 @@ class Cache_Apc extends Base {
 	 * @param	 string $type Type of cache it clears, default user
 	 * @return void
 	 */
-	function clear( $type = 'user' ) {
-		apc_clear_cache( $type );
+	public function clear($type = 'user') {
+		apc_clear_cache($type);
 	}
 }
 

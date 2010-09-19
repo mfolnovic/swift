@@ -33,26 +33,27 @@ class Model extends Base {
 	 * @param  string $name Name of model
 	 * @return object
 	 */
-	function create( $name ) {
-		if( !isset( $this -> tables[ $name ] ) ) {
+	public function create($name) {
+		if(!isset($this -> tables[$name])) {
 			$path = MODEL_DIR . $name . '.php';
-			if( file_exists( $path ) ) {
+
+			if(file_exists($path)) {
 				include $path;
-				$this -> tables[ $name ] = array();
+				$this -> tables[$name] = array();
 			} else {
-				trigger_error( "Model $name doesn't exist!", ERROR );
+				trigger_error("Model $name doesn't exist!", ERROR);
 			}
 		}
 
 		return new $name;
 	}
 
-	static function schema( $name, $field = NULL ) {
-		$schema = model( $name ) -> schema;
+	public static function schema($name, $field = NULL) {
+		$schema = model($name) -> schema;
 
-		if( !empty( $field ) ) {
+		if(!empty($field)) {
 			// just an workaround for now, since getting schema doesn't work for joins
-			$schema = isset( $schema[ $field ] ) ? $schema[ $field ] : array( 'type' => 'integer' );
+			$schema = isset($schema[$field]) ? $schema[$field] : array('type' => 'integer');
 		}
 
 		return $schema;

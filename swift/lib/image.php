@@ -34,9 +34,9 @@ class Image extends Base {
 	 * @param  string $path Path to image
 	 * @return void
 	 */
-	function __construct( $path ) {
-		$this -> dir = dirname( $path ) . '/';
-		$this -> image  = new Imagick( $path );
+	public function __construct($path) {
+		$this -> dir    = dirname($path) . '/';
+		$this -> image  = new Imagick($path);
 		$this -> width  = $this -> image -> getImageWidth();
 		$this -> height = $this -> image -> getImageHeight();
 	}
@@ -48,8 +48,8 @@ class Image extends Base {
 	 * @param  string $name Name of new image
 	 * @return void
 	 */
-	function write( $name ) {
-		$this -> image -> writeImage( $this -> dir . $name );
+	public function write($name) {
+		$this -> image -> writeImage($this -> dir . $name);
 
 		return $this;
 	}
@@ -62,14 +62,15 @@ class Image extends Base {
 	 * @param  int $height Height of new image
 	 * @return object
 	 */
-	function resizeAndCrop( $width, $height ) {
-		$this -> image -> cropThumbnailImage( $width, $height );
+	public function resizeAndCrop($width, $height) {
+		$this -> image -> cropThumbnailImage($width, $height);
 
 		return $this;
 	}
 
-	function resize( $width, $height ) {
-		$this -> image -> scaleImage( $width, $height );
+	public function resize($width, $height) {
+		$this -> image -> scaleImage($width, $height);
+
 		$this -> width  = $this -> image -> getImageWidth();
 		$this -> height = $this -> image -> getImageHeight();
 

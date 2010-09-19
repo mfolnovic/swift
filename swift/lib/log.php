@@ -32,17 +32,19 @@ class Log extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function init() {
-		if( !empty( self::$adapter ) ) return;
+	public static function init() {
+		if(!empty(self::$adapter)) {
+			return;
+		}
 
-		$options = Config::get( 'log' );
-		if( $options === FALSE ) return;
+		$options = Config::get('log');
+		if($options === FALSE) return;
 
-		$adapter = 'Log_' . $options[ 'adapter' ];
-		self::$adapter = new $adapter( $options );
+		$adapter = 'Log_' . $options['adapter'];
+		self::$adapter = new $adapter($options);
 
-		self::write( '' );
-		self::write( date( 'm.d.y H:m:s' ) . ' | ' . FULL_URL );
+		self::write('');
+		self::write(date('m.d.y H:m:s') . ' | ' . FULL_URL);
 	}
 
 	/**
@@ -52,9 +54,9 @@ class Log extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function destroy() {
-		Benchmark::start( 'request', $_SERVER[ 'REQUEST_TIME' ] );
-		self::write( 'Request done in ' . Benchmark::end( 'request' ) . ' seconds' );
+	public static function destroy() {
+		Benchmark::start('request', $_SERVER['REQUEST_TIME']);
+		self::write('Request done in ' . Benchmark::end('request') . ' seconds');
 	}
 
 	/**
@@ -65,14 +67,14 @@ class Log extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function write( $message, $type = NULL, $benchmark = NULL ) {
+	public static function write($message, $type = NULL, $benchmark = NULL) {
 		self::init();
-		if( self::$adapter === NULL ) return;
+		if(self::$adapter === NULL) return;
 
-		if( !empty( $type ) ) $type = "[$type] ";
-		if( !empty( $benchmark ) ) $benchmark = '(' . Benchmark::end( $benchmark ) . ' seconds)';
+		if(!empty($type)) $type = "[$type] ";
+		if(!empty($benchmark)) $benchmark = '(' . Benchmark::end($benchmark) . ' seconds)';
 
-		self::$adapter -> write( "$type$benchmark" . ( !empty( $benchmark) || !empty( $type ) ? ': ' : '' ) . $message );
+		self::$adapter -> write("$type$benchmark" . (!empty($benchmark) || !empty($type) ? ': ' : '') . $message);
 	}
 
 	/**
@@ -83,8 +85,8 @@ class Log extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function error( $message ) {
-		self::write( $message, ERROR );
+	public static function error($message) {
+		self::write($message, ERROR);
 	}
 
 	/**
@@ -95,11 +97,11 @@ class Log extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function notice( $message ) {
-		self::write( $message, NOTICE );
+	public static function notice($message) {
+		self::write($message, NOTICE);
 	}
 }
 
-register_shutdown_function( "Log::destroy" );
+register_shutdown_function("Log::destroy");
 
 ?>

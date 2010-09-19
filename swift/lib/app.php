@@ -37,7 +37,7 @@ class App extends Base {
 	 * @return void
 	 * @static
 	 */
-	static function boot() {
+	public static function boot() {
 		setlocale(LC_ALL, Config::get('locale'));
 	}
 
@@ -50,7 +50,7 @@ class App extends Base {
 	 * @param  string $class, ... Class to load
 	 * @return void
 	 */
-	static function load() {
+	public static function load() {
 		$classes = func_get_args();
 		$type    = array_shift($classes);
 

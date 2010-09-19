@@ -17,7 +17,7 @@
  * @todo   Doesn't work while file upload using malsup form plugin (plugin bug?)
  */
 function isAjax() {
-	return isset( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) && strtolower( $_SERVER[ 'HTTP_X_REQUESTED_WITH' ] ) === 'xmlhttprequest';
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 }
 
 /**
@@ -28,11 +28,11 @@ function isAjax() {
  * @return string
  * @todo   Benchmark against substr
  */
-function samePrefix( $str1, $str2 ) {
+function samePrefix($str1, $str2) {
 	$ret = '';
 
-	for( $i = 0, $len1 = strlen( $str1 ), $len2 = strlen( $str2 ); $i < $len1 && $i < $len2 && $str1[ $i ] == $str2[ $i ]; ++ $i )
-		$ret .= $str1[ $i ];
+	for($i = 0, $len1 = strlen($str1), $len2 = strlen($str2); $i < $len1 && $i < $len2 && $str1[$i] == $str2[$i]; ++ $i)
+		$ret .= $str1[$i];
 
 	return $ret;
 }
@@ -44,8 +44,8 @@ function samePrefix( $str1, $str2 ) {
  * @param  string $str2 Second string
  * @return string
  */
-function removeSamePrefix( $str1, $str2 ) {
-	return substr( $str1, 0, strlen( samePrefix( $str1, $str2 ) ) );
+function removeSamePrefix($str1, $str2) {
+	return substr($str1, 0, strlen(samePrefix($str1, $str2)));
 }
 
 /**
@@ -55,8 +55,8 @@ function removeSamePrefix( $str1, $str2 ) {
  * @param  string $filename Name of file
  * @return return
  */
-function extension( $filename ) {
-	return substr( $filename, strlen( filename( $filename ) ) + 1 );
+function extension($filename) {
+	return substr($filename, strlen(filename($filename)) + 1);
 }
 
 /**
@@ -66,26 +66,25 @@ function extension( $filename ) {
  * @param   string $filename Name of file
  * @return  string
  */
-function filename( $filename ) {
-	return substr( $filename, 0, strpos( $filename, '.' ) );
+function filename($filename) {
+	return substr($filename, 0, strpos($filename, '.'));
 }
 
 /**
  * Returns all parent classes
- * If Class1 extended Class2, and Class2 extended Class3, then this function would return array( 'Class1', 'Class2', 'Class3' )
+ * If Class1 extended Class2, and Class2 extended Class3, then this function would return array('Class1', 'Class2', 'Class3')
  *
  * @access public
  * @param  string $class Name of class
  */
-function get_parent_classes( $class ) {
-	$ret = array( $class );
+function get_parent_classes($class) {
+	$ret = array($class);
 
-	while( ( $class = get_parent_class( $class ) ) !== FALSE )
+	while(($class = get_parent_class($class)) !== FALSE)
 		$ret[] = $class;
 
 	return $ret;
 }
-
 
 /**
  * Returns instance of model $name, and can also create new row from data $data
@@ -94,8 +93,8 @@ function get_parent_classes( $class ) {
  * @param  string $name Name of model
  * @return object
 */
-function model( $name ) {
-	return Model::instance() -> create( $name );
+function model($name) {
+	return Model::instance() -> create($name);
 }
 
 ?>
