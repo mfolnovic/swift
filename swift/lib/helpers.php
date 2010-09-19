@@ -97,4 +97,15 @@ function model($name) {
 	return Model::instance() -> factory($name);
 }
 
+function underscoreToCamelCase($string) {
+	$string = explode('_', $string);
+	$ret    = '';
+
+	foreach($string as $part) {
+		$ret .= ucfirst($part);
+	}
+
+	return $ret;
+}
+
 ?>

@@ -11,9 +11,9 @@
  */
 
 define('ENV', 'development');
-define("ROOT_DIR", getcwd() . '/../');
-define("LIB_DIR", ROOT_DIR . "lib/");
-define("DIR", ROOT_DIR . "tests/fixtures/");
+define("ROOT_DIR", getcwd() . '/');
+define("LIB_DIR", ROOT_DIR . "swift/lib/");
+define("DIR", ROOT_DIR);
 
 include LIB_DIR . "boot.php";
 

@@ -278,18 +278,13 @@ class Db_Mysql extends Base {
 		$this -> query("DELETE FROM {$base -> tableName}" . $this -> generateWhere($base));
 	}
 
-	public function recreateTable(&$base) {
-		$this -> query("DROP TABLE IF EXISTS " . $base -> tableName);
+	public function createTable($table, $schema) {
+		$this -> query("DROP TABLE IF EXISTS " . $table);
 
-		$q     = "CREATE TABLE " . $base -> tableName . " (";
-		$first = true;
+		$q     = "CREATE TABLE " . $table . " (`id` int(11) NOT NULL AUTO_INCREMENT";
 
-		foreach($base -> schema as $field => $desc) {
-			if(!$first) {
-				$q .= ',';
-			}
-
-			$q .= '`' . $field . '` ' . $desc['type'];
+		foreach($schema as $field => $desc) {
+			$q .= ',`' . $field . '` ' . $desc['type'];
 			if(isset($desc['size'])) {
 				$q .= '(' . $desc['size'] . ')';
 			}
@@ -305,20 +300,8 @@ class Db_Mysql extends Base {
 			$first = FALSE;
 		}
 
-		/**
-		 * @todo add support for other types of keys
-		 */
-		foreach($base -> schema_keys as $field => $type) {
-			$q .= ',';
+		$q .= ',PRIMARY KEY (`id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
 
-			if($type == 'primary') {
-				$q .= "PRIMARY KEY (`$field`)";
-			}
-
-			$first = FALSE;
-		}
-		$q .= ') ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;';
-		
 		$this -> query($q);
 	}
 

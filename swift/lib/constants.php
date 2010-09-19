@@ -29,6 +29,7 @@ define('APP_DIR', DIR . 'app/');
 define('VENDOR_DIR', LIB_DIR . '../vendor/');
 define('CONFIG_DIR', APP_DIR . 'config/');
 define('CONTROLLERS_DIR', APP_DIR . 'controllers/');
+define('MIGRATIONS_DIR', APP_DIR . 'migrations/');
 define('LOG_DIR', APP_DIR . 'log/');
 define('MODEL_DIR', APP_DIR . 'models/');
 define('PLUGIN_DIR', APP_DIR . 'plugins/');
