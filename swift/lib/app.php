@@ -95,10 +95,12 @@ class App extends Base {
 			}
 
 			if(!class_exists($class_name, false)) {
-				throw new Exception( "Couldn't load class $class!" );
+				throw new AppException( "Couldn't load class $class!" );
 			}
 		}
 	}
 }
+
+class AppException extends Exception {}
 
 ?>
