@@ -31,6 +31,10 @@ class Yaml {
 	 * @static
 	 */
 	public static function parse($path) {
+		if(!file_exists($path)) {
+			throw new YamlException("Path $path doesn't exist!");
+		}
+	
 		/* Use native if available */
 		if(function_exists('yaml_parse_file')) {
 			return yaml_parse_file($path);
@@ -40,5 +44,7 @@ class Yaml {
 		}
 	}
 }
+
+class YamlException extends Exception {}
 
 ?>
