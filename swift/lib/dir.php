@@ -112,7 +112,7 @@ class Dir {
 			$current .= $value . '/';
 
 			if(!file_exists($current) && @mkdir($current) === FALSE) {
-				trigger_error("Couldn't make directory $current");
+				throw new DirException("Couldn't make directory $current");
 			}
 		}
 	}
@@ -144,5 +144,7 @@ class Dir {
 		return $ret . '/';
 	}
 }
+
+class DirException extends Exception {}
 
 ?>
