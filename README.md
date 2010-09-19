@@ -18,12 +18,6 @@ The goal of this project is to help developers build their web applications in a
 - i18n
 - and plenty more
 
-## Documentation
-
-Because documentation is often changed, we currently don't provide it.
-If you want to generate it, run:
-phpdoc -d swift/lib -t app/public/doc/ -ti "Swift Documentation" -q -dn Swift -s
-
 ## Notice
 
 This is an alpha (preview) release of Swift. It isn't stable for production yet!
