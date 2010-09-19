@@ -122,4 +122,6 @@ class View extends Base {
 	}
 }
 
+class ViewException extends Exception {}
+
 ?>

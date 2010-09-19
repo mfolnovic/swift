@@ -59,7 +59,7 @@ class View_Haml extends Base {
 		Dir::make_dir($to);
 
 		if(!file_exists($from)) {
-			trigger_error("Template doesn't exist!");
+			throw new ViewException("Template doesn't exist!");
 		}
 
 		$fileFrom       = fopen($from, "r");
