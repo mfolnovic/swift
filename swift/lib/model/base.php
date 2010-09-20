@@ -49,7 +49,7 @@
  * @subpackage Model
  */
 
-class Model_Base extends Base implements IteratorAggregate {
+class Model_Base extends Model_Validations implements IteratorAggregate {
 	/**
 	 * Table name
 	 */
@@ -376,37 +376,6 @@ class Model_Base extends Base implements IteratorAggregate {
 				$this -> resultSet[$dataID] -> $name -> resultSet[$id] = $row;
 			}
 		}
-	}
-
-	/**
-	 * Returns TRUE if current row is valid
-	 *
-	 * @access  public
-	 * @return  bool
-f	 */
-	public function valid() {
-		foreach($this -> update as $field => &$val) {
-			if(!isset($this -> validations[$field])) {
-				continue;
-			}
-
-			foreach($this -> validations[$field] as $validation) {
-				if($validation['rule'] == 'required' && empty($val)) {
-					$this -> errors[] = $validation['message'];
-				}
-			}
-		}
-
-		return empty($this -> errors);
-	}
-
-	/**
-	 * Returns TRUE if current row is invalid
-	 * @access  public
-	 * @return  bool
-	 */
-	public function invalid() {
-		return !$this -> valid();
 	}
 }
 
