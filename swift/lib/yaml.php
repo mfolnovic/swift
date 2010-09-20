@@ -17,8 +17,6 @@
  * @author      Swift dev team
  * @package     Swift
  * @subpackage  Yaml
- * @todo        Make our own parser
- * @todo        Compiling array to yaml
  */
 
 class Yaml {
@@ -34,7 +32,7 @@ class Yaml {
 		if(!file_exists($path)) {
 			throw new YamlException("Path $path doesn't exist!");
 		}
-	
+
 		/* Use native if available */
 		if(function_exists('yaml_parse_file')) {
 			return yaml_parse_file($path);

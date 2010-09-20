@@ -80,7 +80,6 @@ class Plugins extends Base {
 	 *
 	 * @access public
 	 * @return void
-	 * @todo   Cache
 	 */
 	public function loadManifests() {
 		$plugins = $this -> pluginList();

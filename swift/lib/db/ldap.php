@@ -204,9 +204,6 @@ class Db_Ldap extends Base {
 		}
 
 		if(!$base -> relationChanged) {
-			/**
-			 * @todo Implement it
-			 */
 		} else {
 			$this -> select($base);
 			$this -> cache -> delete($this -> toQuery($base));

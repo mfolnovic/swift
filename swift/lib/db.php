@@ -33,7 +33,6 @@ class Db extends Base {
 	 * @param  string $adapter Adapter name
 	 * @return object
 	 * @static
-	 * @todo   Cache has almost same function, try to move it to Base
 	 */
 	public static function factory($adapter) {
 		$options = Config::get('database', $adapter);

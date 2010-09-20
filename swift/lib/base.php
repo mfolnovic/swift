@@ -62,8 +62,6 @@ class Base {
 	 * @param  string $name Function name
 	 * @param  array  $args Arguments
 	 * @return void
-	 * @todo   Implement it
-	 * @todo   Optimize, call_user-func_array is slow!
 	 */
 	public static function __callStatic($name, $args) {
 //		call_user_func_array(array(__CLASS__, $name), $args);

@@ -58,7 +58,6 @@ class Router extends Base {
 	 * @access public
 	 * @param  string $path Path to route from
 	 * @return void
-	 * @todo   Allows URLs like %controller%/%action%/%h%:%m%:%s%
 	 */
 	public function route($path) {
 		if(empty($path)) {
@@ -145,7 +144,6 @@ class Router extends Base {
 	 * @param  string $route   Route to parse and add
 	 * @param  array  $options Options for this route
 	 * @return void
-	 * @todo   Do I really need to parse all routes?
 	 */
 	public function addRoute($route, $options = array()) {
 		$ret   = array();

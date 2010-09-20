@@ -36,7 +36,6 @@ class Cache_File extends Base {
 	 * @access public
 	 * @param  string $options Options
 	 * @return void
-	 * @todo   Do I really need to read whole file each time?
 	 */
 	public function __construct($options) {
 		$f = fopen(CACHE_PATH, "w+");

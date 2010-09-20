@@ -17,7 +17,6 @@
  * @author     Swift dev team
  * @package	   Swift
  * @subpackage Config
- * @todo       Cache!
  */
 
 class Config extends Base {

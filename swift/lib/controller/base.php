@@ -33,17 +33,11 @@ class Controller_Base extends Base {
 	 */
 	var $data           = array();
 	/**
-	 * Contains reference to configuration
-	 * @todo Needed?
-	 */
-	var $config         = NULL;
-	/**
 	 * All vars available in views are here
 	 */
 	var $globals        = array();
 	/**
 	 * Name of controller
-	 * @todo Needed?
 	 */
 	var $controllerName = "";
 
@@ -54,7 +48,6 @@ class Controller_Base extends Base {
 	 * @return void
 	 */
 	public function __construct() {
-		$this -> config         =& Config::$options;
 		$this -> controllerName =  strtolower(substr(get_class($this), 0, -10));
 		$this -> csrf_token     =  Security::instance() -> csrf_token;
 	}

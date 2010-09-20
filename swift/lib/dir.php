@@ -27,7 +27,6 @@ class Dir {
 	 * @param  string $path Directory to search in
 	 * @return array
 	 * @static
-	 * @todo   Almost same function as dirs, try to merge them?
 	 */
 	public static function files($path) {
 		$ret = array();
@@ -49,7 +48,6 @@ class Dir {
 	 * @param  string $path Directory to search in
 	 * @return array
 	 * @static
-	 * @todo   Rename to directories?
 	 */
 	public static function dirs($path) {
 		$ret = array();
@@ -74,21 +72,6 @@ class Dir {
 	 */
 	public static function all($path) {
 		return array_slice(scandir($path), 2);
-	}
-
-	/**
-	 * Reads from file
-	 *
-	 * @access public
-	 * @deprecated
-	 * @param  string $dir  directory
-	 * @param  string $file file
-	 * @return string
-	 * @static
-	 * @todo   Move to class file
-	 */
-	public static function read($dir, $file) {
-		return file_get_contents($dir . '/' . $file);
 	}
 
 	/**

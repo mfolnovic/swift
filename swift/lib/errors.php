@@ -34,7 +34,6 @@ class Errors extends Base {
 	 * @param  int    line    In line $line
 	 * @return void
 	 * @static
-	 * @todo   Avoid switch
 	 */
 	public static function error($exception) {
 			self::$errors[] = array('number' => $exception -> getCode(), 'message' => $exception -> getMessage(), 'file' => $exception -> getFile(), 'line' => $exception -> getLine(), 'backtrace' => $exception -> getTrace(), 'type' => 'error');

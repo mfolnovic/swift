@@ -9,10 +9,6 @@
  * @license   LICENSE
  */
 
-/* 
-	@todo	Move this somewhere else 
-*/
-
 include APP_DIR . "helpers.php";
 include LIB_DIR . "view/helpers.php";
 
@@ -56,7 +52,6 @@ class View extends Base {
 	 * @param  string $controller Controller
 	 * @param  string $action     Action
 	 * @return void
-	 * @todo   fix caching, filename should be current url
 	 */
 	public function render($controller = NULL, $action = NULL) {
 		$view_id = Benchmark::start();

@@ -20,7 +20,6 @@
  * @author     Swift dev team
  * @package    Swift
  * @subpackage Cache
- * @todo       Move action and partial caching here!
  */
 
 class Cache extends Base {

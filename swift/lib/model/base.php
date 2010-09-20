@@ -47,7 +47,6 @@
  * @author     Swift dev team
  * @package    Swift
  * @subpackage Model
- * @todo       __set_state?
  */
 
 class Model_Base extends Base implements IteratorAggregate {
@@ -325,7 +324,6 @@ class Model_Base extends Base implements IteratorAggregate {
 	 * @access public
 	 * @param  string $name  Name of association
 	 * @return void
-	 * @todo   Avoid $assoc
 	 */
 	public function handleAssociation($name) {
 		if(isset($this -> hasMany[$name])) { 
@@ -385,9 +383,7 @@ class Model_Base extends Base implements IteratorAggregate {
 	 *
 	 * @access  public
 	 * @return  bool
-	 * @todo    Avoid multiple ifs by taking those if to each function
-	 *          e.g. validates_required validates field if required validation is true
-	 */
+f	 */
 	public function valid() {
 		foreach($this -> update as $field => &$val) {
 			if(!isset($this -> validations[$field])) {

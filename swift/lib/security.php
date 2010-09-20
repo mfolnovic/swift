@@ -26,8 +26,6 @@ class Security extends Base {
 	var $csrf_token;
 	/**
 	 * Time in seconds after which csrf token expires
-	 *
-	 * @todo    Make it constant
 	 */
 	var $token_expiration = 3600;
 
