@@ -16,7 +16,7 @@
  *
  * @author     Swift dev team
  * @package    Swift
- * @subpackage Subpackage
+ * @subpackage Model
  */
 
 class Model_Validations extends Base {
@@ -63,7 +63,5 @@ class Model_Validations extends Base {
 		return empty($value);
 	}
 }
-
-
 
 ?>
