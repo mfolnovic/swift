@@ -47,7 +47,7 @@ class Db extends Base {
 
 	public static function getSchema($tables, $field) {
 		$schema =& Db_Migrations::instance() -> schema;
-		if(is_string($tables)) return isset($schema[$tables][$field]) ? $schema[$tables][$field] : array();
+		if(is_string($tables)) return isset($schema[$tables][$field]) ? $schema[$tables][$field] : array('type' => 'integer'); // current workaround
 
 		foreach($tables as $table) {
 			if(isset($schema[$table][$field])) {
