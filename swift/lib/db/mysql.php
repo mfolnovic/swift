@@ -198,7 +198,7 @@ class Db_Mysql extends Base {
 
 		for($i = 0; $i < $res -> num_rows; ++ $i) {
 			$row                           =  $res -> fetch_assoc();
-			$table[$row['id']]             =  new Model_Row(get_class($base), $row);
+			$table[$row['id']]             =  new Model_Row($base, $row);
 			$base -> resultSet[$row['id']] =& $table[$row['id']];
 		}
 		
@@ -281,16 +281,24 @@ class Db_Mysql extends Base {
 	public function createTable($table, $schema) {
 		$this -> query("DROP TABLE IF EXISTS " . $table);
 
-		$q     = "CREATE TABLE " . $table . " (`id` int(11) NOT NULL AUTO_INCREMENT";
+		$q     = "";
 
 		foreach($schema as $field => $desc) {
-			$q .= ',`' . $field . '` ' . $desc['type'];
+			if(!empty($q)) {
+				$q .= ',';
+			}
+
+			$q .= '`' . $field . '` ' . $desc['type'];
 			if(isset($desc['size'])) {
 				$q .= '(' . $desc['size'] . ')';
 			}
 
 			if(isset($desc['default'])) {
 				$q .= ' DEFAULT ' . $desc['default'];
+			}
+
+			if(isset($desc['not_null'])) {
+				$q .= ' NOT NULL';
 			}
 
 			if(isset($desc['auto_increment'])) {
@@ -302,7 +310,7 @@ class Db_Mysql extends Base {
 
 		$q .= ',PRIMARY KEY (`id`)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;';
 
-		$this -> query($q);
+		$this -> query("CREATE TABLE " . $table . " (" . $q);
 	}
 
 	/**

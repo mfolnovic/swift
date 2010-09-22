@@ -44,6 +44,18 @@ class Db extends Base {
 
 		return self::$adapters[$adapter];
 	}
+
+	public static function getSchema($tables, $field) {
+		$schema =& Db_Migrations::instance() -> schema;
+		if(is_string($tables)) return isset($schema[$tables][$field]) ? $schema[$tables][$field] : array();
+
+		foreach($tables as $table) {
+			if(isset($schema[$table][$field])) {
+				return $schema[$table][$field];
+			}
+		}
+		return $schema;
+	}
 }
 
 ?>

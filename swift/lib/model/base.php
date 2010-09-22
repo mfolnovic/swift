@@ -26,7 +26,7 @@
  * $user = $this -> model('user') -> find_by_username('username');
  *
  * // creating new user from POST data
- * $user = $this -> model('user', $this -> data['user']) -> save();
+ * $user = $this -> model('user') -> values($this -> data['user']) -> save();
  *
  * // updating record from POST data
  * $user = $this -> model('user') -> find_by_id($this -> data["id"]) -> values($this -> data) -> save();
@@ -39,7 +39,7 @@
  * // This will create query (but not run, until you want to get any field/row): SELECT username, password FROM user WHERE `username` like '%multi%' ORDER BY `ID` desc;
  * 
  * // you can also access attributes
- * $user = $this -> model('user') -> first();
+ * $user = $this -> model('user') -> first(); // you don't have to call first
  * echo $user -> username;
  * ?>
  * </code>
@@ -67,10 +67,6 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 	 */
 	var $validations         = array();
 	/**
-	 * Schema for this table
-	 */
-	var $schema              = array();
-	/**
 	 * Belongs to relationships
 	 */
 	var $belongsTo           = array();
@@ -95,7 +91,6 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 	 * Is relation changed?
 	 */
 	var $relationChanged     = FALSE;
-	var $errors              = array();
 	var $attr_protected      = array();
 	var $_canOverride        = TRUE;
 	/**
@@ -171,7 +166,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 
 		if(empty($this -> resultSet)) {
 			$row_id = -1;
-			$this -> resultSet = array($row_id => new Model_Row(get_class($this)));
+			$this -> resultSet = array($row_id => new Model_Row($this));
 		} else {
 			reset($this -> resultSet);
 			$row_id = key($this -> resultSet);
@@ -376,6 +371,10 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 				$this -> resultSet[$dataID] -> $name -> resultSet[$id] = $row;
 			}
 		}
+	}
+
+	function getSchema($field) {
+		$tables = array_merge(array($this -> tableName), $this -> relation['joins']);
 	}
 }
 

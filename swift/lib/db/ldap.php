@@ -138,7 +138,7 @@ class Db_Ldap extends Base {
 						}
 					}
 
-					$table[$count + $i]    =  new Model_Row(get_class($base), $entry);
+					$table[$count + $i]    =  new Model_Row($base, $entry);
 					$base -> resultSet[$i] =& $table[$count + $i];
 				}
 			}

@@ -22,7 +22,7 @@
 
 class Model_Row implements IteratorAggregate {
 	var $row       = array();
-	var $tableName = NULL;
+	var $parent    = NULL;
 	/**
 	 * Constructor
 	 *
@@ -30,9 +30,8 @@ class Model_Row implements IteratorAggregate {
 	 * @param  array row Row
 	 * @return void
 	 */
-	public function __construct($tableName, $row = array()) {
-		$this -> tableName = strtolower($tableName);
-		$schema            = Model::schema($this -> tableName);
+	public function __construct(&$parent, $row = array()) {
+		$this -> parent = $parent;
 
 		foreach($row as $index => $value) {
 			$this -> $index = $value;
@@ -59,7 +58,7 @@ class Model_Row implements IteratorAggregate {
 	 * @return  object
 	 */
 	public function __set($index, $value) {
-		$field = Model::schema($this -> tableName, $index);
+		$field = Db::getSchema($this -> parent -> tableName, $index);
 		if($field['type'] == 'timestamp' && !($value instanceof Model_Type_Timestamp)) {
 			$value = new Model_Type_Timestamp($value);
 		}
