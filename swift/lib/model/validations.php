@@ -20,6 +20,7 @@
  */
 
 class Model_Validations extends Base {
+	var $errors = array();
 	/**
 	 * Returns TRUE if current row is valid
 	 *
@@ -33,7 +34,7 @@ class Model_Validations extends Base {
 			}
 
 			foreach($this -> validations[$field] as $validation) {
-				if(call_user_func(array($this,$validation['rule']), $val)) {
+				if(call_user_func(array($this,'validates_' . $validation['rule']), $val)) {
 					$this -> errors[] = $validation['message'];
 				}
 			}
