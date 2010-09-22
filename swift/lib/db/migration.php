@@ -32,8 +32,9 @@ class Db_Migration {
 	 * @return void
 	 */
 	public function create_table($table, $schema) {
-		$db = Db::factory($this -> connection);
-		$db -> createTable($table, $schema);
+		$schema = array_merge(array('id' => array('type' => 'int', 'size' => 11, 'not_null' => true, 'auto_increment' => true)), $schema);
+		Db::factory($this -> connection) -> createTable($table, $schema);
+		Db_Migrations::instance() -> addToSchema($table, $schema);
 	}
 	/**
 	 * Drops table $table
