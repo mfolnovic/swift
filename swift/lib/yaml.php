@@ -30,15 +30,28 @@ class Yaml {
 	 */
 	public static function parse($path) {
 		if(!file_exists($path)) {
-			throw new YamlException("Path $path doesn't exist!");
+			return array();
 		}
 
 		/* Use native if available */
 		if(function_exists('yaml_parse_file')) {
-			return yaml_parse_file($path);
+			return yaml_parse_file($path) ? $ret : array();
 		} else {
 			App::load('vendor', 'spyc');
-			return spyc_load_file($path);
+			return Spyc::YAMLLoad($path);
+		}
+	}
+
+	public static function write($path, $array) {
+		if(!file_exists($path)) {
+			touch($path);
+		}
+
+		if(function_exists('yaml_emit_file')) {
+			yaml_emit_file($path, $array);
+		} else {
+			App::load('vendor', 'spyc');
+			file_put_contents($path, Spyc::YAMLDump($array));
 		}
 	}
 }
