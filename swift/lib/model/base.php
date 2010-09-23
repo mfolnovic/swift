@@ -185,10 +185,6 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 	 * @return return
 	 */
 	public function __call($function, $arguments) {
-		if(parent::__call($function, $arguments)) {
-			return $this;
-		}
-
 		if(in_array($function, array_keys($this -> relation))) {
 			if(is_array($arguments[0])) {
 				$args = $arguments[0];
@@ -214,7 +210,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 				return $ret;
 			}
 		}	else {
-			throw new ModelException("Unknown function $function!");
+			parent::__call();
 		}
 
 		return $this;
@@ -361,7 +357,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 			return;
 		}
 
-		$assocModel = Model::instance() -> create($className) -> where(array($association['foreignKey'] => array_keys($ids)));
+		$assocModel = Model::instance() -> factory($className) -> where(array($association['foreignKey'] => array_keys($ids)));
 		if(!empty($assoc)) {
 			$assocModel -> includes($assoc);
 		}

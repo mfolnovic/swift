@@ -52,6 +52,8 @@ class Base {
 			}
 		}
 
+		throw new Exception( "Unknown function $name" );
+
 		return false;
 	}
 
