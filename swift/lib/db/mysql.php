@@ -229,7 +229,7 @@ class Db_Mysql extends Base {
 			return;
 		}
 
-		if(!$base -> relationChanged) {
+		if(!$base -> relationChanged && isset($base -> resultSet[-1])) {
 			$columns   =  '';
 			$values    =  '';
 			$newRecord =& $base -> resultSet[-1];
@@ -246,11 +246,10 @@ class Db_Mysql extends Base {
 
 			$this -> query("INSERT INTO {$base -> tableName} ($columns) VALUES ($values)");
 			$newRecord -> id         = $this -> conn -> insert_id;
-			$base -> relationChanged = true;
 			$base -> where(array('id' => $newRecord -> id));
 
 			$table                               =& Model::instance() -> tables[$base -> tableName];
-			$table[$newRecord -> id]             =  $base -> newRecord;
+			$table[$newRecord -> id]             =  $newRecord;
 			$base -> resultSet[$newRecord -> id] =& $table[$newRecord -> id];
 			$base -> update                      = array();
 
