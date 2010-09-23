@@ -151,6 +151,7 @@ class Controller_Base extends Base {
 			Router::instance() -> route($url);
 		}	else {
 			header("Location:" . URL_PREFIX . $url);
+			exit;
 		}
 	}
 
