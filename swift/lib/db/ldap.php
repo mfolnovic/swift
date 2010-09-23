@@ -211,7 +211,7 @@ class Db_Ldap extends Base {
 			if(!$this -> conn) {
 				$this -> connect();
 			}
-			$this -> bindAsAdmin();
+			$this -> bindAdmin();
 
 			foreach($base -> update as $id => $val) {
 				if($id == 'unicodePwd') {
