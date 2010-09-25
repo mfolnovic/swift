@@ -102,24 +102,19 @@ class Db_Ldap extends Base {
 		$table             =& Model::instance() -> tables[$base -> tableName];
 		$count             =  count($table);
 		$base -> resultSet =  array();
-		
-		if(empty($base -> relation['basedn'])) {
-			$basedn = $this -> options['dn'];
-		} else {
-			$basedn = $base -> relation['basedn'][0];
-		}
 
 		$q = $this -> toQuery($base);
+		$im = implode('|', $q);
 
 		Benchmark::start('query');
-		$entries = $this -> cache -> get("$basedn|$q");
+		$entries = $this -> cache -> get($im);
 
 		if($entries === false) {
 			if(!$this -> conn) {
 				$this -> connect();
 			}
 
-			$res = @ldap_search($this -> conn, $basedn, $q, $base -> relation['select']);
+			$res = @ldap_search($this -> conn, $q[0], $q[1], $base -> relation['select']);
 
 			if($res !== false) {
 				$rows = @ldap_get_entries($this -> conn, $res);
@@ -148,7 +143,7 @@ class Db_Ldap extends Base {
 		}
 
 		Log::write($q, 'LDAP', 'query');
-		$this -> cache -> set("$basedn|$q", $base -> resultSet, $this -> options['cache']);
+		$this -> cache -> set($im, $base -> resultSet, $this -> options['cache']);
 	}
 
 	/**
@@ -158,7 +153,7 @@ class Db_Ldap extends Base {
 	 * @param  object $base Model
 	 * @return string
 	 */
-	public function toQuery(&$base) {
+	public function toQuery(&$base, $implode = FALSE) {
 		if(empty($base -> relation['where'])) {
 			return '(cn=*)';
 		}
@@ -186,7 +181,17 @@ class Db_Ldap extends Base {
 			$where = "(|$where)";
 		}
 
-		return $where;
+		if(empty($base -> relation['basedn'])) {
+			$basedn = $this -> options['dn'];
+		} else {
+			$basedn = $base -> relation['basedn'][0];
+		}
+
+		$ret = array($basedn, $where);
+		if($implode) {
+			$ret = implode('|', $ret);
+		}
+		return $ret;
 	}
 
 	/**
@@ -204,7 +209,7 @@ class Db_Ldap extends Base {
 		if(!$base -> relationChanged) {
 		} else {
 			$this -> select($base);
-			$this -> cache -> delete($this -> toQuery($base));
+			$this -> cache -> delete($this -> toQuery($base, true));
 
 			if(!$this -> conn) {
 				$this -> connect();
@@ -218,7 +223,7 @@ class Db_Ldap extends Base {
 
 				if(empty($val)) {
 					ldap_mod_del($this -> conn, $base -> dn, array($id => $val));
-				} else if($base -> $id === NULL) {
+				} else {
 					@ldap_mod_add($this -> conn, $base -> dn, array($id => $val));
 
 					if(ldap_errno($this -> conn) > 0) {
