@@ -198,7 +198,7 @@ class Db_Mysql extends Base {
 		for($i = 0; $i < $res -> num_rows; ++ $i) {
 			$base[] = $res -> fetch_assoc();
 		}
-		
+
 		$base -> handleAssociations();
 	}
 
