@@ -45,8 +45,21 @@ class Plugins extends Base {
 			$types = array('controller' => 'controllers', 'model' => 'models', 'library' => 'libs');
 
 			foreach($types as $type => $subdir) {
-				if(is_dir($path . $subdir)) {
-					App::$load_paths[$type][] = $path . $subdir;
+				$subpath = $path . $subdir . '/';
+				if(is_dir($subpath)) {
+					App::$load_paths[$type][] = $subpath;
+
+					if($type == 'library') {
+						$files = Dir::files($subpath);
+
+						foreach($files as $file) {
+							include $subpath . $file;
+							$class_name = ucfirst(filename($file));
+							foreach($class_name::$extends as $extend) {
+								$this -> extends[$extend] = $class_name;
+							}
+						}
+					}
 				}
 			}
 		}
