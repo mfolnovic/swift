@@ -39,13 +39,14 @@ class Base {
 		$classes = get_parent_classes(get_class($this));
 
 		foreach($classes as $class) {
-			$extends = $plugins -> extensions($class);
+			if(!isset($plugins -> extends[$class])) {
+				continue;
+			}
 
-			foreach($extends as $object) {
-				$class_name = (string) $object -> name;
-				$object     = new $class_name($this);
+			foreach((array)$plugins -> extends[$class] as $class_name) {
+				if(method_exists($class_name, $name)) {
+					$object     = new $class_name($this);
 
-				if(method_exists($object, $name)) {
 					call_user_func_array(array($object, $name), $args);
 					return true;
 				}
