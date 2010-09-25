@@ -166,52 +166,53 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 
 		if(empty($this -> resultSet)) {
 			$row_id = -1;
-			$this -> resultSet = array($row_id => array());
+			$this -> resultSet = array($row_id => new StdClass);
 		} else {
 			reset($this -> resultSet);
 			$row_id = key($this -> resultSet);
 		}
 
-		$field = Db::getSchema(array_merge(array($this -> tableName), $this -> relation['join']), $index);
+		$field = Db::getSchema(array_merge(array($this -> tableName), $this -> relation['join']), $key);
 		if($field['type'] == 'timestamp' && !($value instanceof Model_Type_Timestamp)) {
 			$value = new Model_Type_Timestamp($value);
 		}
 
-		//$this[$row_id] -> $key = $value;
+		$this -> resultSet[$row_id] -> $key = $value;
+		$this -> update[$key] =& $this -> resultSet[$row_id] -> $key;
 	}
 
 	/**
-	 * Gets row from resultSet with index $index
+	 * Gets row from resultSet with key $key
 	 *
 	 * @access public
-	 * @param  string $index Index
+	 * @param  string $key Key
 	 * @return object
 	 */
-	public function offsetGet($index) {
-		return $this -> resultSet[$index];
+	public function offsetGet($key) {
+		return isset($this -> resultSet[$key]) ? $this -> resultSet[$key] : NULL;
 	}
 
 	/**
-	 * If $index is NULL, then it inserts $row to current result set.
-	 * If $index isn't NULL, sets row in result set with index $index to $row
+	 * If $key is NULL, then it inserts $row to current result set.
+	 * If $key isn't NULL, sets row in result set with key $key to $row
 	 *
 	 * Also, $row is bit transformed, it acceptes array, and it transforms it to object
 	 * and if an field is timestamp, then it transforms it to Model_Type_Timestamp
 	 *
 	 * @access public
-	 * @param  string $index Index
+	 * @param  string $key key
 	 * @param  array  $row   Row from sql/ldap
 	 * @return object
 	 */
-	public function offsetSet($index, $row) {
+	public function offsetSet($key, $row) {
 		if(empty($this -> resultSet)) {
 			$this -> resultSet = array();
-			$index = 0;
+			$key = 0;
 		}
 
-		if($index !== 0 && empty($index)) {
+		if($key !== 0 && empty($key)) {
 			end($this -> resultSet);
-			$index = key($this -> resultSet) + 1;
+			$key = key($this -> resultSet) + 1;
 		}
 
 		foreach($row as $i => &$value) {
@@ -221,30 +222,30 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 			}
 		}
 
-		$this -> resultSet[$index] = (object) $row;
+		$this -> resultSet[$key] = (object) $row;
 	}
 
 	/**
-	 * Checks if row with id $index exists in current result set
+	 * Checks if row with id $key exists in current result set
 	 *
 	 * @access public
-	 * @param  string $index Index
+	 * @param  string $key key
 	 * @return bool
 	 */
-	public function offsetExists($index) {
-		return isset($this -> resulSet[$index]);
+	public function offsetExists($key) {
+		return isset($this -> resulSet[$key]);
 	}
 
 	/**
-	 * Unsets row with index $index in result set
+	 * Unsets row with key $key in result set
 	 *
 	 * @access public
-	 * @param  string $index Index
+	 * @param  string $key key
 	 * @return bool
 	 * @todo   Also delete if from database ?
 	 */
-	public function offsetUnset($index) {
-		unset($this -> resultSet[$index]);
+	public function offsetUnset($key) {
+		unset($this -> resultSet[$key]);
 	}
 
 	/**
