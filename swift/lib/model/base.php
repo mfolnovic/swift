@@ -206,15 +206,12 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 	public function offsetSet($index, $row) {
 		if(empty($this -> resultSet)) {
 			$this -> resultSet = array();
+			$index = 0;
 		}
 
-		if(empty($index)) {
+		if($index !== 0 && empty($index)) {
 			end($this -> resultSet);
-			$index = key($this -> resultSet);
-
-			if(empty($index)) {
-				$index = 0;
-			}
+			$index = key($this -> resultSet) + 1;
 		}
 
 		foreach($row as $i => &$value) {
