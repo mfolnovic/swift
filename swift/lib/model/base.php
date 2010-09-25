@@ -49,7 +49,7 @@
  * @subpackage Model
  */
 
-class Model_Base extends Model_Validations implements IteratorAggregate {
+class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAccess {
 	/**
 	 * Table name
 	 */
@@ -132,6 +132,10 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 	 * @return mixed
 	 */
 	public function __get($key) {
+		if(!$this -> isAssociation($key)) {
+			$this -> handleAssociation($key);
+		}
+
 		if(!$this -> relationChanged && $this -> resultSet === NULL) {
 			return NULL;
 		}
@@ -143,10 +147,6 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 		}
 
 		$tmp = reset($this -> resultSet);
-
-		if(!isset($tmp -> $key)) {
-			$this -> handleAssociation($key);
-		}
 
 		return isset($tmp -> $key) ? $tmp -> $key : NULL;
 	}
@@ -166,14 +166,98 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 
 		if(empty($this -> resultSet)) {
 			$row_id = -1;
-			$this -> resultSet = array($row_id => new Model_Row($this));
+			$this -> resultSet = array($row_id => array());
 		} else {
 			reset($this -> resultSet);
 			$row_id = key($this -> resultSet);
 		}
 
-		$this -> resultSet[$row_id] -> $key = $value;
-		$this -> update[$key]               = $this -> resultSet[$row_id] -> $key;
+		$field = Db::getSchema(array_merge(array($this -> tableName), $this -> relation['join']), $index);
+		if($field['type'] == 'timestamp' && !($value instanceof Model_Type_Timestamp)) {
+			$value = new Model_Type_Timestamp($value);
+		}
+
+		//$this[$row_id] -> $key = $value;
+	}
+
+	/**
+	 * Gets row from resultSet with index $index
+	 *
+	 * @access public
+	 * @param  string $index Index
+	 * @return object
+	 */
+	public function offsetGet($index) {
+		return $this -> resultSet[$index];
+	}
+
+	/**
+	 * If $index is NULL, then it inserts $row to current result set.
+	 * If $index isn't NULL, sets row in result set with index $index to $row
+	 *
+	 * Also, $row is bit transformed, it acceptes array, and it transforms it to object
+	 * and if an field is timestamp, then it transforms it to Model_Type_Timestamp
+	 *
+	 * @access public
+	 * @param  string $index Index
+	 * @param  array  $row   Row from sql/ldap
+	 * @return object
+	 */
+	public function offsetSet($index, $row) {
+		if(empty($this -> resultSet)) {
+			$this -> resultSet = array();
+		}
+
+		if(empty($index)) {
+			end($this -> resultSet);
+			$index = key($this -> resultSet);
+
+			if(empty($index)) {
+				$index = 0;
+			}
+		}
+
+		foreach($row as $i => &$value) {
+			$field = Db::getSchema(array_merge(array($this -> tableName), $this -> relation['join']), $i);
+			if($field['type'] == 'timestamp' && !($value instanceof Model_Type_Timestamp)) {
+				$value = new Model_Type_Timestamp($value);
+			}
+		}
+
+		$this -> resultSet[$index] = (object) $row;
+	}
+
+	/**
+	 * Checks if row with id $index exists in current result set
+	 *
+	 * @access public
+	 * @param  string $index Index
+	 * @return bool
+	 */
+	public function offsetExists($index) {
+		return isset($this -> resulSet[$index]);
+	}
+
+	/**
+	 * Unsets row with index $index in result set
+	 *
+	 * @access public
+	 * @param  string $index Index
+	 * @return bool
+	 * @todo   Also delete if from database ?
+	 */
+	public function offsetUnset($index) {
+		unset($this -> resultSet[$index]);
+	}
+
+	/**
+	 * Gets iterator used for iterating through object
+	 *
+	 * @access public
+	 * @return object
+	 */
+	public function getIterator() {
+		return new ArrayIterator($this -> all());
 	}
 
 	/**
@@ -210,21 +294,12 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 				return $ret;
 			}
 		}	else {
-			parent::__call();
+			parent::__call($function, $arguments);
 		}
 
 		return $this;
 	}
 
-	/**
-	 * Allows iterating through model
-	 *
-	 * @access public
-	 * @return object
-	 */
-	public function getIterator() {
-		return new ArrayIterator($this -> all());
-	}
 	/**
 	 * Returns first row based on current relation
 	 *
@@ -330,12 +405,6 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 			return;
 		}
 
-		if(isset($this -> relation['includes'][$name])) {
-			$assoc = $this -> relation['includes'][$name];
-		} else { 
-			$assoc = NULL;
-		}
-
 		$association = array_merge(array('primaryKey' => 'id', 'foreignKey' => 'id'), $association);
 
 		$className   = $association['model'];
@@ -344,13 +413,17 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 
 		$ids = array();
 		foreach($this -> resultSet as $id => $row) {
+			if(!property_exists($row, $primaryKey) || empty($row -> $primaryKey)) {
+				continue;
+			}
+
 			if(!isset($ids[$row -> $primaryKey])) {
 				$ids[$row -> $primaryKey] = array();
 			}
 
-			$ids[$row -> $primaryKey][]   = $id;
-			$row -> $name                 = model($className);
-			$row -> $name -> resultSet    = array();
+			$ids[$row -> $primaryKey][] = $id;
+			$row -> $name              = model($className);
+			$row -> $name -> resultSet = array();
 		}
 
 		if(empty($ids)) {
@@ -358,8 +431,8 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 		}
 
 		$assocModel = Model::instance() -> factory($className) -> where(array($association['foreignKey'] => array_keys($ids)));
-		if(!empty($assoc)) {
-			$assocModel -> includes($assoc);
+		if(isset($this -> relation['includes'][$name])) {
+			$assocModel -> includes($this -> relation['includes'][$name]);
 		}
 
 		foreach($assocModel -> all() as $id => $row) {
@@ -369,8 +442,15 @@ class Model_Base extends Model_Validations implements IteratorAggregate {
 		}
 	}
 
-	function getSchema($field) {
-		$tables = array_merge(array($this -> tableName), $this -> relation['joins']);
+	/**
+	 * Checks if $key is associated to a relationship
+	 *
+	 * @access public
+	 * @param  string $key Key to check for
+	 * @return bool
+	 */
+	function isAssociation($key) {
+		return (isset($this -> hasOne[$key]) || isset($this -> belongsTo[$key]) || isset($this -> hasMany[$key]) || isset($this -> hasAndBelongsToMany[$key]));
 	}
 }
 

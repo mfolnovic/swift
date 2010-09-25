@@ -45,6 +45,15 @@ class Db extends Base {
 		return self::$adapters[$adapter];
 	}
 
+
+	/**
+	 * Searches through all tables specified in $tables, looking for table which
+	 * has field $field. If it finds it, returns schema for that field
+	 *
+	 * @access public
+	 * @param  string $tables description
+	 * @return array
+	 */
 	public static function getSchema($tables, $field) {
 		$schema =& Db_Migrations::instance() -> schema;
 
@@ -58,7 +67,8 @@ class Db extends Base {
 				return $schema[$table][$field];
 			}
 		}
-		return $schema;
+
+		return NULL;
 	}
 }
 

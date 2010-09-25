@@ -193,13 +193,10 @@ class Db_Mysql extends Base {
 
 		$base -> resultSet       =  array();
 		$base -> relationChanged =  FALSE;
-		$table                   =& Model::instance() -> tables[$base -> tableName];
 		$res                     = $this -> query($this -> toQuery($base));
 
 		for($i = 0; $i < $res -> num_rows; ++ $i) {
-			$row                           =  $res -> fetch_assoc();
-			$table[$row['id']]             =  new Model_Row($base, $row);
-			$base -> resultSet[$row['id']] =& $table[$row['id']];
+			$base[] = $res -> fetch_assoc();
 		}
 		
 		$base -> handleAssociations();

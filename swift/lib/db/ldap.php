@@ -138,14 +138,12 @@ class Db_Ldap extends Base {
 						}
 					}
 
-					$table[$count + $i]    =  new Model_Row($base, $entry);
-					$base -> resultSet[$i] =& $table[$count + $i];
+					$base[] = $entry;
 				}
 			}
 		} else {
 			foreach($entries as $id => $val) {
-				$table[$count + $id]    =  $val;
-				$base -> resultSet[$id] =& $table[$count + $id];
+				$base[] = $val;
 			}
 		}
 
