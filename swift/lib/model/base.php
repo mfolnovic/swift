@@ -411,7 +411,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 
 		$ids = array();
 		foreach($this -> resultSet as $id => $row) {
-			if(!property_exists($row, $primaryKey) || empty($row -> $primaryKey)) {
+			if(!property_exists($row, $primaryKey)) {
 				continue;
 			}
 
