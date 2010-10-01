@@ -107,7 +107,7 @@ class Db_Ldap extends Base {
 		$im = implode('|', $q);
 
 		Benchmark::start('query');
-		$entries = $this -> cache -> get($im);
+		$entries = $this -> cache -> get($im) && false;
 
 		if($entries === false) {
 			if(!$this -> conn) {
@@ -142,7 +142,7 @@ class Db_Ldap extends Base {
 			}
 		}
 
-		Log::write($q, 'LDAP', 'query');
+		Log::write($im, 'LDAP', 'query');
 		$this -> cache -> set($im, $base -> resultSet, $this -> options['cache']);
 	}
 
@@ -154,8 +154,14 @@ class Db_Ldap extends Base {
 	 * @return string
 	 */
 	public function toQuery(&$base, $implode = FALSE) {
+		if(empty($base -> relation['basedn'])) {
+			$basedn = $this -> options['dn'];
+		} else {
+			$basedn = $base -> relation['basedn'][0];
+		}
+
 		if(empty($base -> relation['where'])) {
-			return '(cn=*)';
+			return array($basedn, '(cn=*)');
 		}
 
 		$where = '';
@@ -179,12 +185,6 @@ class Db_Ldap extends Base {
 
 		if($cnt > 1) {
 			$where = "(|$where)";
-		}
-
-		if(empty($base -> relation['basedn'])) {
-			$basedn = $this -> options['dn'];
-		} else {
-			$basedn = $base -> relation['basedn'][0];
 		}
 
 		$ret = array($basedn, $where);
@@ -222,7 +222,7 @@ class Db_Ldap extends Base {
 				}
 
 				if(empty($val)) {
-					ldap_mod_del($this -> conn, $base -> dn, array($id => $val));
+					@ldap_mod_del($this -> conn, $base -> dn, array($id => $val));
 				} else {
 					@ldap_mod_add($this -> conn, $base -> dn, array($id => $val));
 
@@ -275,8 +275,8 @@ class Db_Ldap extends Base {
 
 		return $ret;
 	}
+
 }
 
 class LdapException extends Exception {}
-
 ?>
