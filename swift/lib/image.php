@@ -36,6 +36,7 @@ class Image extends Base {
 	 */
 	public function __construct($path) {
 		$this -> dir    = dirname($path) . '/';
+		$this -> name   = filename($path);
 		$this -> image  = new Imagick($path);
 		$this -> width  = $this -> image -> getImageWidth();
 		$this -> height = $this -> image -> getImageHeight();
@@ -48,8 +49,8 @@ class Image extends Base {
 	 * @param  string $name Name of new image
 	 * @return void
 	 */
-	public function write($name) {
-		$this -> image -> writeImage($this -> dir . $name);
+	public function write($path) {
+		$this -> image -> writeImage($path);
 
 		return $this;
 	}
@@ -58,7 +59,7 @@ class Image extends Base {
 	 * Resize image proportionally, and then crop what's redundant
 	 *
 	 * @access public
-	 * @param  int $width Width of new image
+	 * @param  int $width  Width of new image
 	 * @param  int $height Height of new image
 	 * @return object
 	 */
@@ -68,11 +69,38 @@ class Image extends Base {
 		return $this;
 	}
 
+	/**
+	 * Resizes image to width $width anad height $height
+	 *
+	 * @param  int $width  Width of new image
+	 * @param  int $height Height of new image
+	 * @return object
+	 */
 	public function resize($width, $height) {
 		$this -> image -> scaleImage($width, $height);
 
 		$this -> width  = $this -> image -> getImageWidth();
 		$this -> height = $this -> image -> getImageHeight();
+
+		return $this;
+	}
+
+	/**
+	 * Compresses image to compress rate $rate
+	 *
+	 * @param  int $rate Compress rate
+	 * @return object
+	 */
+	function compress($rate = 80) {
+		switch(strtolower(extension($this -> name))) {
+			case 'jpg':
+				$compression = Imagick::COMPRESSION_JPEG;
+			default:
+				$compression = Imagick::COMPRESSION_BZIP;
+		}
+
+		$this -> image -> setImageCompression($compression);
+		$this -> image -> setImageCompressionQuality($rate);
 
 		return $this;
 	}
