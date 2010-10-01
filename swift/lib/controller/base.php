@@ -226,6 +226,9 @@ class Controller_Base extends Base {
 	public function __isset($index) {
 		return isset($this -> globals[$index]);
 	}
+	function action() {
+		return Controller::instance() -> action;
+	}
 };
 
 ?>
