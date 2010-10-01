@@ -35,7 +35,7 @@ class Yaml {
 
 		/* Use native if available */
 		if(function_exists('yaml_parse_file')) {
-			return yaml_parse_file($path) ? $ret : array();
+			return ($ret = yaml_parse_file($path)) ? $ret : array();
 		} else {
 			App::load('vendor', 'spyc');
 			return Spyc::YAMLLoad($path);
