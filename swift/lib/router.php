@@ -81,9 +81,11 @@ class Router extends Base {
 		$this -> url = $path;
 		$this -> path = explode("/", $path);
 
-		foreach($this -> routes as $route)
-			if($this -> checkRoute($route, $this -> path))
+		foreach($this -> routes as $route) {
+			if($this -> checkRoute($route, $this -> path)) {
 				return;
+			}
+		}
 
 		Controller::instance() -> render404();
 	}
