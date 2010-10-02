@@ -34,7 +34,7 @@ class Config extends Base {
 			return;
 		}
 
-		$files = array('application');
+		$files = array(ENV);
 
 		foreach($files as $file) {
 			$path = CONFIG_DIR . $file;
@@ -43,6 +43,8 @@ class Config extends Base {
 				self::$options = array_merge(self::$options, Yaml::parse($path . '.yml'));
 			} else if(file_exists($path . '.php')) {
 				include $path . ".php";
+			} else {
+				throw new ConfigException("Couldn't load configuration file $file");
 			}
 		}
 	}
@@ -69,5 +71,7 @@ class Config extends Base {
 		return $curr;
 	}
 }
+
+class ConfigException extends Exception {}
 
 ?>
