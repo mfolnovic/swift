@@ -66,7 +66,9 @@ class Errors extends Base {
 	}
 
 	function exception($number, $message, $filename, $line) {
-		throw new ErrorException($message, 0, $number, $filename, $line); 
+		if(error_reporting()) {
+			throw new ErrorException($message, 0, $number, $filename, $line); 
+		}
 	}
 }
 
