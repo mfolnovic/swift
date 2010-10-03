@@ -99,17 +99,9 @@ function xss_clean($string) {
 function errors_for(&$base) {
 	if(empty($base -> errors)) {
 		return '';
+	} else {
+		return '<div class="errors"><div>'. implode('</div><div>', $base -> errors) . '</div></div>';
 	}
-
-	$content = '<div class="errors"><h2>Errors:</h2>';
-
-	foreach($base -> errors as $error) {
-		$content .= "<div>$error</div>";
-	}
-
-	$content .= "</div>";
-
-	return $content;
 }
 
 function _attributes($array) {
