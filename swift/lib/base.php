@@ -24,7 +24,8 @@ class Base {
 	/**
 	 * Contains all singleton instances
 	*/
-	static $instance = array();
+	static $instance  = array();
+	var    $pinstance = array();
 
 	/**
 	 * Searches through all plugins and finds that function
@@ -45,9 +46,11 @@ class Base {
 
 			foreach((array)$plugins -> extends[$class] as $class_name) {
 				if(method_exists($class_name, $name)) {
-					$object     = new $class_name($this);
+					if(!isset($this -> pinstance[$class_name])) {
+						$this -> pinstance[$class_name] = new $class_name($this);
+					}
 
-					call_user_func_array(array($object, $name), $args);
+					call_user_func_array(array($this -> pinstance[$class_name], $name), $args);
 					return true;
 				}
 			}
