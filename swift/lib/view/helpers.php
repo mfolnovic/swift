@@ -92,6 +92,10 @@ function yield($tpl='default') {
 	return App::$response -> storage[$tpl];
 }
 
+function render($tpl) {
+	return App::$response -> render($tpl);
+}
+
 function xss_clean($string) {
 	return htmlentities($string, ENT_QUOTES, 'utf-8');
 }
