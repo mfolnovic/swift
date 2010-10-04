@@ -40,7 +40,7 @@ function javascript() {
 
 		return $ret;
 	}
-}	
+}
 
 function stylesheet() {
 	$version = Config::get('version');
@@ -73,7 +73,7 @@ function format_time($timestamp) {
 function form($url, $options = array()) {
 	$options = array_merge($options, array('method' => 'post'));
 
-	return "<form action=\"" . URL_PREFIX . "$url\"" . _attributes($options) . '><input type="hidden" name="csrf_token" value="' . Controller::instance() -> object -> csrf_token . '">';
+	return "<form action=\"" . URL_PREFIX . "$url\"" . _attributes($options) . '><input type="hidden" name="csrf_token" value="' . App::$request -> object -> csrf_token . '">';
 }
 
 function _formEnd() {
@@ -85,11 +85,11 @@ function ahref($title, $href, $options = array()) {
 }
 
 function partial($name) {
-	View::instance() -> render(null, '_' . $name);
+	return App::$response -> render(App::$request -> controller . '/_' . $name);
 }
 
-function render($controller = NULL, $action = NULL) {
-	View::instance() -> render($controller, $action);
+function yield($tpl='default') {
+	return App::$response -> storage[$tpl];
 }
 
 function xss_clean($string) {

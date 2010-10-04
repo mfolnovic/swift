@@ -40,6 +40,8 @@ class Controller_Base extends Base {
 	 * Name of controller
 	 */
 	var $controllerName = "";
+	var $request;
+	var $response;
 
 	/**
 	 * Constructor
@@ -47,9 +49,11 @@ class Controller_Base extends Base {
 	 * @access public
 	 * @return void
 	 */
-	public function __construct() {
-		$this -> controllerName =  strtolower(substr(get_class($this), 0, -10));
-		$this -> csrf_token     =  Security::instance() -> csrf_token;
+	public function __construct($request, $response) {
+		$this -> controllerName = strtolower(substr(get_class($this), 0, -10));
+		$this -> csrf_token     = Security::instance() -> csrf_token;
+		$this -> request        = $request;
+		$this -> response       = $response;
 	}
 
 	/**
@@ -57,7 +61,6 @@ class Controller_Base extends Base {
 	 *
 	 * @access public
 	 * @return void
-	 * @todo   before_filters should be called before every call, not just constructing
 	 */
 	public function run_before_filters($action) {
 		foreach($this -> before_filters as $function) {
@@ -73,7 +76,6 @@ class Controller_Base extends Base {
 	 *
 	 * @access public
 	 * @return void
-	 * @todo   after_filters should be called after every call, not just destructing
 	 */
 	public function run_after_filters($action) {
 		foreach($this -> after_filters as $function) {
@@ -135,7 +137,7 @@ class Controller_Base extends Base {
 	 * @return void
 	 */
 	public function layout($layout) {
-		View::instance() -> layout = $layout;
+		$this -> response -> layout = $layout;
 	}
 
 	/**
@@ -148,7 +150,7 @@ class Controller_Base extends Base {
 	public function redirect($url) {
 		if(isAjax()) {
 			header("X-Redirect: $url");
-			Router::instance() -> route($url);
+			$this -> request = new Request($url);
 		}	else {
 			header("Location:" . URL_PREFIX . $url);
 			exit;
@@ -163,7 +165,7 @@ class Controller_Base extends Base {
 	 * @return return
 	 */
 	public function render($path) {
-		View::instance() -> render = $path;
+		$this -> response -> render = $path;
 	}
 
 	/**
@@ -184,10 +186,8 @@ class Controller_Base extends Base {
 	 * @return return
 	 */
 	public function caches_action() {
-		$view = View::instance();
-
 		foreach(func_get_args() as $action) {
-			$view -> action_caches[] = array(&$this -> controllerName, $action);
+			$this -> response -> action_caches[] = array(&$this -> controllerName, $action);
 		}
 	}
 
@@ -227,7 +227,7 @@ class Controller_Base extends Base {
 		return isset($this -> globals[$index]);
 	}
 	function action() {
-		return Controller::instance() -> action;
+		return $this -> request -> action;
 	}
 };
 

@@ -37,6 +37,10 @@ class App extends Base {
 		'vendor'     => ''
 	);
 
+	static $extends = array();
+	static $request;
+	static $response;
+
 	/**
 	 * Currently, only sets correct locale
 	 *
@@ -45,7 +49,23 @@ class App extends Base {
 	 * @static
 	 */
 	public static function boot() {
+		self::load('library', 'config', 'router', 'view', 'security');
+		spl_autoload_register('App::load');
+
 		setlocale(LC_ALL, Config::get('locale'));
+
+		self::loadPlugins();
+
+		Security::instance();
+		self::$request = new Request($_GET['url']);
+		self::$response = new Response();
+
+		self::$request -> route();
+		if(empty(self::$response -> render)) {
+			self::$response -> render = self::$request -> controller . '/' . self::$request -> action;
+		}
+		self::$response -> render();
+		self::$response -> renderLayout();
 	}
 
 	/**
@@ -60,7 +80,12 @@ class App extends Base {
 	 */
 	public static function load() {
 		$classes = func_get_args();
-		$type    = array_shift($classes);
+
+		if(in_array($classes[0], array_keys(self::$load_paths))) {
+			$type    = array_shift($classes);
+		} else {
+			$type = 'library';
+		}
 
 		foreach($classes as $class) {
 			$class_name = $class . self::$append_names[$type];
@@ -95,8 +120,41 @@ class App extends Base {
 			}
 
 			if(!class_exists($class_name, false)) {
-			exit;
-//				throw new AppException( "Couldn't load class $class!" );
+				throw new AppException( "Couldn't load class $class!" );
+			}
+		}
+	}
+
+	/**
+	 * Load all plugins and change load_paths
+	 *
+	 * @access  public
+	 * @return  void
+	 */
+	public static function loadPlugins() {
+		$plugins = Dir::dirs(PLUGIN_DIR);
+
+		foreach($plugins as $plugin) {
+			$path  = PLUGIN_DIR . '/' . $plugin . '/';
+			$types = array('controller' => 'controllers', 'model' => 'models', 'library' => 'libs');
+
+			foreach($types as $type => $subdir) {
+				$subpath = $path . $subdir . '/';
+				if(is_dir($subpath)) {
+					self::$load_paths[$type][] = $subpath;
+
+					if($type == 'library') {
+						$files = Dir::files($subpath);
+
+						foreach($files as $file) {
+							include $subpath . $file;
+							$class_name = ucfirst(filename($file));
+							foreach($class_name::$extends as $extend) {
+								self::$extends[$extend] = $class_name;
+							}
+						}
+					}
+				}
 			}
 		}
 	}

@@ -274,7 +274,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 				$args = $arguments;
 			}
 
-			$this -> relation[$function] = $args;
+			$this -> relation[$function] = array_merge($this -> relation[$function], (array)$args);
 			$this -> relationChanged    = TRUE;
 		} else if($function == 'find' || substr($function, 0, 8) == 'find_by_') {
 			$field = substr($function, 8);

@@ -36,15 +36,14 @@ class Base {
 	 * @return void
 	 */
 	public function __call($name, $args) {
-		$plugins = Plugins::instance();
 		$classes = get_parent_classes(get_class($this));
 
 		foreach($classes as $class) {
-			if(!isset($plugins -> extends[$class])) {
+			if(!isset(App::$extends[$class])) {
 				continue;
 			}
 
-			foreach((array)$plugins -> extends[$class] as $class_name) {
+			foreach((array)App::$extends[$class] as $class_name) {
 				if(method_exists($class_name, $name)) {
 					if(!isset($this -> pinstance[$class_name])) {
 						$this -> pinstance[$class_name] = new $class_name($this);

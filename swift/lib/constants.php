@@ -25,7 +25,7 @@ define('ERROR', E_USER_ERROR);
 define('WARNING', E_USER_WARNING);
 define('NOTICE', E_USER_NOTICE);
 
-define('APP_DIR', DIR . 'app/');
+define('APP_DIR', ROOT_DIR . 'app/');
 define('VENDOR_DIR', LIB_DIR . '../vendor/');
 define('CONFIG_DIR', APP_DIR . 'config/');
 define('CONTROLLERS_DIR', APP_DIR . 'controllers/');
