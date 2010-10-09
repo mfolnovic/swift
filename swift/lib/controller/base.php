@@ -175,7 +175,7 @@ class Controller_Base extends Base {
 	 * @return void
 	 */
 	public function notFound() {
-		Router::instance() -> continueRouting = true;
+		App::$request -> render404();
 	}
 
 	/**

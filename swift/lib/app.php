@@ -61,9 +61,17 @@ class App extends Base {
 		self::$response = new Response();
 
 		self::$request -> route();
+
+		if(self::$request -> code != 200) {
+			ob_clean();
+			include PUBLIC_DIR . "/" . self::$request -> code . ".html";
+			exit;
+		}
+
 		if(empty(self::$response -> render)) {
 			self::$response -> render = self::$request -> controller . '/' . self::$request -> action;
 		}
+
 		self::$response -> render();
 		self::$response -> renderLayout();
 	}
