@@ -99,7 +99,7 @@ class Response extends Base {
 	}
 
 	public function renderLayout() {
-		echo $this -> renderTemplate('layouts/' . $this -> layout, 'layout');
+		echo $this -> layout === FALSE ? $this -> storage['default'] : $this -> renderTemplate('layouts/' . $this -> layout, 'layout');
 	}
 
 	public function renderTemplate($tpl, $storage = 'default') {
