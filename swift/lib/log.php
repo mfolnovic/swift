@@ -33,10 +33,6 @@ class Log extends Base {
 	 * @static
 	 */
 	public static function init() {
-		if(!empty(self::$adapter)) {
-			return;
-		}
-
 		$options = Config::get('log');
 		if($options === FALSE) return;
 
@@ -68,7 +64,10 @@ class Log extends Base {
 	 * @static
 	 */
 	public static function write($message, $type = NULL, $benchmark = NULL) {
-		self::init();
+		if(empty(self::$adapter)) {
+			self::init();
+		}
+
 		if(self::$adapter === NULL) return;
 
 		if(!empty($type)) $type = "[$type] ";
