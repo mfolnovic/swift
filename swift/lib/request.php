@@ -34,13 +34,6 @@ class Request extends Base {
 	 */
 	var $root;
 	/**
-	 * @internal
-	 *
-	 * If this one is true, then try to find other route
-	 * Signal from controller that Router missed correct route
-	*/
-	var $continueRouting;
-	/**
 	 * Current controller
 	 */
 	var $controller = NULL;
@@ -52,6 +45,7 @@ class Request extends Base {
 	 * Current controller instance
 	 */
 	var $object     = NULL;
+	var $code       = 200;
 
 	function __construct($path) {
 		$this -> path = $path;
@@ -81,7 +75,7 @@ class Request extends Base {
 			}
 		}
 
-		$this -> render404();
+		$this -> setCode(404);
 	}
 
 	/**
@@ -95,7 +89,6 @@ class Request extends Base {
 	public function checkRoute(&$route, $path) {
 		$i                       = 0;
 		$ret                     = array();
-		$this -> continueRouting = false;
 
 		foreach($route[0] as $val) {
 			if(!isset($path[$i])) {
@@ -182,7 +175,7 @@ class Request extends Base {
 		$actionName     = $action;
 
 		if(is_callable(array($controllerName, $actionName))) {
-			$this -> object           = new $controllerName(App::$request, App::$response);
+			$this -> object           = new $controllerName($this, App::$response);
 			$this -> object -> data   = array_merge($_POST, $data);
 
 			if(!file_exists(TMP_DIR . "caches/{$controller}_{$action}.php")) {
@@ -198,15 +191,13 @@ class Request extends Base {
 	}
 
 	/**
-	 * Renders 404
+	 * Sets header status code to $code
 	 * @access public
+	 * @param  int $code Code
 	 * @return void
-	 * @todo   500 ... ?
 	 */
-	public function render404() {
-		ob_clean();
-		include PUBLIC_DIR . "/404.html";
-		exit;
+	public function setStatus($code) {
+		$this -> code = $code;
 	}
 
 	/**
