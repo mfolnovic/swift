@@ -62,12 +62,13 @@ class View_Haml extends Base {
 			throw new ViewException("Template doesn't exist!");
 		}
 
-		$fileFrom       = fopen($from, "r");
-		$fileTo         = fopen($to, "w");
+		$content        = explode("\n", file_get_contents($from));
 		$this -> parsed = '';
 		$this -> tree   = array();
 
-		while($this -> line = fgets($fileFrom)) {
+		foreach($content as $line) {
+			$line = ' ' . $line;
+			$this -> line =& $line;
 			$this -> parseLine();
 		}
 
@@ -76,10 +77,7 @@ class View_Haml extends Base {
 			$this -> parsed .= $curr[1];
 		}
 
-		fwrite($fileTo, $this -> parsed);
-
-		fclose($fileFrom);
-		fclose($fileTo);
+		file_put_contents($to, $this -> parsed);
 	}
 
 	/**
@@ -91,7 +89,7 @@ class View_Haml extends Base {
 	public function parseLine() {
 		$ret  =  '';
 		$line =& $this -> line; // for easier typing
-		$line =  ' ' . substr($line, 0, -1); // remove newline
+//		$line =  ' ' . substr($line, 0, -1); // remove newline
 		$size =  strlen($line);
 		$data =  array('tag' => '', 'attributes' => array(), 'html' => '');
 
