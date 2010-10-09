@@ -46,24 +46,6 @@ class Response extends Base {
 		ob_end_flush();
 	}
 
-	/**
-	 * This function is responsible for rendering and caching
-	 *
-	 * @access public
-	 * @param  string $controller Controller
-	 * @param  string $action     Action
-	 * @return void
-	 */
-	public function render($tpl = '') {
-		if($this -> render === FALSE) {
-			return;
-		} else if(empty($tpl)){
-			$tpl = $this -> render;
-		}
-
-		return $this -> renderTemplate($tpl);
-	}
-
 	public function render2($request) {
 		$view_id = Benchmark::start();
 
@@ -99,10 +81,16 @@ class Response extends Base {
 	}
 
 	public function renderLayout() {
-		echo $this -> layout === FALSE ? $this -> storage['default'] : $this -> renderTemplate('layouts/' . $this -> layout, 'layout');
+		echo $this -> layout === FALSE ? $this -> storage['default'] : $this -> render('layouts/' . $this -> layout, 'layout');
 	}
 
-	public function renderTemplate($tpl, $storage = 'default') {
+	public function render($tpl = '', $storage = 'default') {
+		if($this -> render === FALSE) {
+			return;
+		} else if(empty($tpl)){
+			$tpl = $this -> render;
+		}
+
 		$compiled = TMP_DIR . "views/$tpl.php";
 		$template = ($this -> view_path ? $this -> view_path : VIEWS_DIR) . $tpl . '.php';
 
