@@ -49,7 +49,7 @@ class App extends Base {
 	 * @static
 	 */
 	public static function boot() {
-		self::load('library', 'config', 'router', 'view', 'security');
+		self::load('library', 'config', 'security');
 		spl_autoload_register('App::load');
 
 		setlocale(LC_ALL, Config::get('locale'));
@@ -57,7 +57,7 @@ class App extends Base {
 		self::loadPlugins();
 
 		Security::instance();
-		self::$request = new Request($_GET['url']);
+		self::$request  = new Request($_GET['url']);
 		self::$response = new Response();
 
 		self::$request -> route();
