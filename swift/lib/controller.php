@@ -19,7 +19,7 @@
  * @subpackage Controller
  */
 
-class Controller_Base extends Base {
+class Controller extends Base {
 	/**
 	 * Contains all before_filters
 	 */
