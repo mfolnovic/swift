@@ -192,6 +192,7 @@ class Request extends Base {
 
 	/**
 	 * Sets header status code to $code
+	 *
 	 * @access public
 	 * @param  int $code Code
 	 * @return void
@@ -202,10 +203,12 @@ class Request extends Base {
 
 	/**
 	 * Clean globals
+	 *
 	 * @access public
+	 * @private
 	 * @return void
 	 */
-	public function clean() {
+	private function clean() {
 		if(empty($this -> object)) {
 			return;
 		}
