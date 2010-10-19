@@ -46,6 +46,7 @@ class Security extends Base {
 	 *
 	 * @access public
 	 * @return void
+	 * @todo   If CSRF token is not valid, render 404
 	 */
 	public function checkCsrf() {
 		if(empty($_POST)) {
@@ -61,8 +62,6 @@ class Security extends Base {
 				return;
 			}
 		}
-
-		Controller::getInstance() -> render404();
 	}
 
 	/**
