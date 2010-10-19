@@ -40,7 +40,7 @@ class Session extends Base {
 	 */
 	public static function init() {
 		if(self::$init) {
-			return false;
+			return;
 		} else {
 			self::$init = TRUE;
 		}
