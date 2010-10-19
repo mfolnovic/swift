@@ -1,6 +1,6 @@
 <?php
 
-class ApplicationController extends Controller_Base {
+class ApplicationController extends Controller {
 }
 
 ?>
