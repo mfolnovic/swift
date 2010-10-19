@@ -10,15 +10,15 @@
  */
 
 include APP_DIR . "helpers.php";
-include LIB_DIR . "view/helpers.php";
+include LIB_DIR . "response/helpers.php";
 
 /**
- * Swift View Class
+ * Swift Response Class
  *
  * This class is resposible for all rendering
  *
  * @package    Swift
- * @subpackage View
+ * @subpackage Response
  * @author     Swift dev team
  */
 
@@ -96,7 +96,7 @@ class Response extends Base {
 
 		if(!file_exists($compiled) || !Config::get('cache_views')) {
 			$haml_id = Benchmark::start();
-			View_Haml::instance() -> parse($template, $compiled);
+			Response_Haml::instance() -> parse($template, $compiled);
 			Log::write($tpl, 'HAML', $haml_id);
 		}
 

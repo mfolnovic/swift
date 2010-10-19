@@ -10,17 +10,17 @@
  */
 
 /**
- * Swift View Class - HAML parser
+ * Swift Response Class - HAML parser
  *
  * This class is responsible for parsing haml files
  *
  * @author     Swift dev team
  * @package    Swift
- * @subpackage View
+ * @subpackage Response
  * @todo       Support blocks, e.g. partial cache
  */
 
-class View_Haml extends Base {
+class Response_Haml extends Base {
 	/**
 	 * All HTML tags which don't need closing tag
 	 */
@@ -59,7 +59,7 @@ class View_Haml extends Base {
 		Dir::make_dir($to);
 
 		if(!file_exists($from)) {
-			throw new ViewException("Template doesn't exist!");
+			throw new ResponseException("Template doesn't exist!");
 		}
 
 		$content        = explode("\n", file_get_contents($from));
