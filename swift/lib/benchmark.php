@@ -32,7 +32,10 @@ class Benchmark extends Base {
 	static $id    = 0;
 
 	/**
-	 * This function marks start point with name $name
+	 * This function marks start point with name $name and returns $name
+	 * If $name is NULL/not specified, it'll generate it's own ID
+	 * If $time is NULL/not specified, it'll use current time (microtime(true))
+	 * Returns $name, which is useful if it's generated
 	 *
 	 * @access public
 	 * @param  string $name Mark name
@@ -61,7 +64,7 @@ class Benchmark extends Base {
 	 * @param  string $name  Mark name
 	 * @param  int    $round Number of decimal digits to round to
 	 * @static
-	 * @return int
+	 * @return double
 	 */
 	public static function end($name, $round = 4) {
 		if(!isset(self::$marks[$name])) {
