@@ -59,7 +59,7 @@ class Response_Haml extends Base {
 		Dir::make_dir($to);
 
 		if(!file_exists($from)) {
-			throw new ResponseException("Template doesn't exist!");
+			throw new ResponseException("Template $from doesn't exist!");
 		}
 
 		$content        = explode("\n", file_get_contents($from));
@@ -335,5 +335,7 @@ class Response_Haml extends Base {
 		return $ret;
 	}
 }
+
+class ResponseException extends Exception {}
 
 ?>
