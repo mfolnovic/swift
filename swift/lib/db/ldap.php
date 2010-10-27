@@ -168,11 +168,11 @@ class Db_Ldap extends Base {
 		$cnt   = 0;
 
 		foreach($base -> relation['where'] as $field => $value) {
-			++ $cnt;
-
 			if(!is_array($value)) {
 				$value = array($value);
 			}
+
+			$cnt += count($value);
 
 			foreach($value as $val) {
 				if(is_numeric($field)) {
