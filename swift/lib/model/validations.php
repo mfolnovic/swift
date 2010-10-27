@@ -34,7 +34,7 @@ class Model_Validations extends Base {
 			}
 
 			foreach($this -> validations[$field] as $validation) {
-				if(call_user_func(array($this,'validates_' . $validation['rule']), $val)) {
+				if(!call_user_func(array($this,'validates_' . $validation['rule']), $val, $validation)) {
 					$this -> errors[] = $validation['message'];
 				}
 			}
@@ -60,8 +60,16 @@ class Model_Validations extends Base {
 	 * @param  string $value Value to validate
 	 * @return bool
 	 */
-	public function validates_required($value) {
-		return empty($value);
+	public function validates_required($value, $validation) {
+		return !empty($value);
+	}
+
+	public function validates_length($value, $validation) {
+		$length = strlen($value);
+		if(isset($validation['min']) && $length < $validation['min']) return FALSE;
+		if(isset($validation['max']) && $length > $validation['max']) return FALSE;
+
+		return TRUE;
 	}
 }
 
