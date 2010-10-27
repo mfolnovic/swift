@@ -150,7 +150,7 @@ class Controller extends Base {
 	public function redirect($url) {
 		if(isAjax()) {
 			header("X-Redirect: $url");
-			$this -> request = new Request($url);
+			App::$request -> route($url);
 		}	else {
 			header("Location:" . URL_PREFIX . $url);
 			exit;
@@ -175,7 +175,7 @@ class Controller extends Base {
 	 * @return void
 	 */
 	public function notFound() {
-		App::$request -> render404();
+		App::$request -> setStatus(404);
 	}
 
 	/**

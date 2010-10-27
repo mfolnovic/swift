@@ -57,10 +57,10 @@ class App extends Base {
 		self::loadPlugins();
 
 		Security::instance();
-		self::$request  = new Request($_GET['url']);
-		self::$response = new Response();
+		self::$request  = new Request;
+		self::$response = new Response;
 
-		self::$request -> route();
+		self::$request -> route($_GET['url']);
 
 		if(self::$request -> code != 200) {
 			ob_clean();

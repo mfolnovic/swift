@@ -47,19 +47,20 @@ class Request extends Base {
 	var $object     = NULL;
 	var $code       = 200;
 
-	function __construct($path) {
-		$this -> path = $path;
-	}
-
 	/**
 	 * Main function responsible to route $path to current controller & action
 	 *
 	 * @access public
 	 * @param  string $path Path to route from
 	 * @return void
+	 * @todo   Move including routes to constructor
 	 */
-	public function route() {
-		include CONFIG_DIR . 'routes.php';
+	public function route($url) {
+		if(empty($this -> routes)) {
+			include CONFIG_DIR . 'routes.php';
+		}
+
+		$this -> path = $url;
 
 		if(empty($this -> path)) {
 			$this -> runController($this -> root['controller'], $this -> root['action']);
