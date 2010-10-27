@@ -181,6 +181,11 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 		$this -> update[$key] =& $this -> resultSet[$row_id] -> $key;
 	}
 
+	public function __isset($key) {
+		$tmp = $this -> __get($key);
+		return !empty($tmp);
+	}
+
 	/**
 	 * Gets row from resultSet with key $key
 	 *
