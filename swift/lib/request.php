@@ -30,7 +30,7 @@ class Request extends Base {
 	var $path;
 	/**
 	 * Root route
-	 * Use this route for empty url
+	 * Use this route for empty url (/)
 	 */
 	var $root;
 	/**
@@ -76,7 +76,7 @@ class Request extends Base {
 			}
 		}
 
-		$this -> setCode(404);
+		$this -> setStatus(404);
 	}
 
 	/**
@@ -88,8 +88,8 @@ class Request extends Base {
 	 * @return return
 	 */
 	public function checkRoute(&$route, $path) {
-		$i                       = 0;
-		$ret                     = array();
+		$i   = 0;
+		$ret = array();
 
 		foreach($route[0] as $val) {
 			if(!isset($path[$i])) {
@@ -131,8 +131,8 @@ class Request extends Base {
 		$route = explode('/', $route);
 
 		foreach($route as $id => $val)
-			if($val[0] == '%') {
-				$ret[] = array(substr($val, 1, -1), true);
+			if($val[0] == ':') {
+				$ret[] = array(substr($val, 1), true);
 			} else {
 				$ret[] = array($val, false);
 			}
@@ -157,7 +157,7 @@ class Request extends Base {
 	 * @access public
 	 * @param  string $controller Name of controller
 	 * @param  string $action     Name of action
-	 * @param  array  $data       Contains data
+	 * @param  array  $data       Contains data ($_POST, $_GET)
 	 * @return void
 	 */
 	public function runController($controller, $action, $data = array()) {
