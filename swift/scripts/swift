@@ -15,6 +15,15 @@ define("ROOT_DIR", getcwd() . '/');
 define("LIB_DIR", ROOT_DIR . "swift/lib/");
 define("DIR", ROOT_DIR);
 
-include LIB_DIR . "boot.php";
+include LIB_DIR . "base.php";
+include LIB_DIR . "dir.php";
+include LIB_DIR . "constants.php";
+include LIB_DIR . "helpers.php";
+include LIB_DIR . "app.php";
+spl_autoload_register('App::load'); // tmp
+App::load('scripts');
+
+$scripts = new Scripts();
+$scripts -> call(array_slice($argv, 1));
 
 ?>
