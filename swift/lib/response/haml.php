@@ -302,7 +302,7 @@ class Response_Haml extends Base {
 			}
 			
 			if($string[$i] == '$') {
-				preg_match('/[a-zA-Z->_\[\]\' ]+/', $string, $matches, null, $i + 1);
+				preg_match('/[0-9a-zA-Z->_\[\]\' ]+/', $string, $matches, null, $i + 1);
 
 				$str = "echo \${$matches[0]};";
 				if(!$phpOpen) {
