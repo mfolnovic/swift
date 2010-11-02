@@ -102,7 +102,12 @@ class App extends Base {
 				continue;
 			}
 
-			$class_path = strtr(strtolower($class), '_', '/');
+			/** Temp fix */
+			if($type == 'library') {
+				$class_path = strtr(strtolower($class), '_', '/');
+			} else {
+				$class_path = strtolower($class);
+			}
 
 			foreach(self::$load_paths[$type] as $directory) {
 				$path = $directory . $class_path;
