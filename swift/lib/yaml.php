@@ -47,7 +47,7 @@ class Yaml {
 			touch($path);
 		}
 
-		if(function_exists('yaml_emit_file')) {
+		if(function_exists('yaml_emit_file') && false) { // it isn't implemented yet
 			yaml_emit_file($path, $array);
 		} else {
 			App::load('vendor', 'spyc');
