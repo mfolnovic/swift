@@ -159,8 +159,8 @@ class Db_Mysql extends Base {
 		$relation =& $base -> relation;
 
 		return (empty($relation['group']) ? '' : ' GROUP BY ' . implode(',', $relation['group'])) .
-		       (empty($relation['limit']) ? '' : ' LIMIT ' . implode(',', $relation['limit'])) .
-		       (empty($relation['order']) ? '' : ' ORDER BY ' . implode(' ', $relation['order']));
+		       (empty($relation['order']) ? '' : ' ORDER BY ' . implode(' ', $relation['order'])).
+		       (empty($relation['limit']) ? '' : ' LIMIT ' . implode(',', $relation['limit']));
 	}
 
 	/**
