@@ -176,8 +176,7 @@ class Request extends Base {
 		$actionName     = $action;
 
 		if(is_callable(array($controllerName, $actionName))) {
-			$this -> object           = new $controllerName($this, App::$response);
-			$this -> object -> data   = array_merge($_POST, $data);
+			$this -> object           = new $controllerName($this, App::$response, array_merge($_POST, $data));
 
 			if(!file_exists(TMP_DIR . "caches/{$controller}_{$action}.php")) {
 				$this -> object -> run_before_filters($actionName);

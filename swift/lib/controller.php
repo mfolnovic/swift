@@ -49,11 +49,12 @@ class Controller extends Base {
 	 * @access public
 	 * @return void
 	 */
-	public function __construct($request, $response) {
+	public function __construct($request, $response, $data) {
 		$this -> controllerName = strtolower(substr(get_class($this), 0, -10));
 		$this -> csrf_token     = Security::instance() -> csrf_token;
 		$this -> request        = $request;
 		$this -> response       = $response;
+		$this -> data           = $data;
 	}
 
 	/**
