@@ -222,7 +222,7 @@ class Db_Ldap extends Base {
 				}
 
 				if(empty($val)) {
-					@ldap_mod_del($this -> conn, $base -> dn, array($id => $val));
+					@ldap_mod_del($this -> conn, $base -> dn, array($id => array()));
 				} else {
 					@ldap_mod_add($this -> conn, $base -> dn, array($id => $val));
 
