@@ -27,9 +27,8 @@
  * @return return
  */
 function javascript() {
-	$version = Config::get('version');
-
-	if(!empty($version) && file_exists(PUBLIC_DIR . 'javascripts/all.js')) {
+	if(file_exists(PUBLIC_DIR . 'javascripts/all.js')) {
+		$version = filemtime(PUBLIC_DIR . 'javascripts/all.js');
 		return "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/all.js?$version\"></script>";
 	} else {
 		$ret = '';
@@ -43,9 +42,8 @@ function javascript() {
 }
 
 function stylesheet() {
-	$version = Config::get('version');
-
-	if(!empty($version) && file_exists(PUBLIC_DIR . 'stylesheets/all.css')) {
+	if(file_exists(PUBLIC_DIR . 'stylesheets/all.css')) {
+		$version = filemtime(PUBLIC_DIR . 'stylesheets/all.css');
 		return "<link href=\"" . URL_PREFIX . "stylesheets/all.css?$version\" rel=\"stylesheet\" type=\"text/css\">";
 	} else {
 		$ret = '';
