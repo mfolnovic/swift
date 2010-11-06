@@ -24,7 +24,7 @@ class Response_Haml extends Base {
 	/**
 	 * All HTML tags which don't need closing tag
 	 */
-	var $ommitCloseTag = array("br" => 1, "input" => 2, "link" => 3, "meta" => 4, 'colgroup' => 5, 'td' => 6, 'tr' => 7, 'th' => 8, 'hr' => 9, "li" => 10, 'area' => 11);
+	var $ommitCloseTag = array("br" => 1, "input" => 2, "link" => 3, "meta" => 4, 'col' => 5, 'td' => 6, 'tr' => 7, 'th' => 8, 'hr' => 9, "li" => 10, 'area' => 11);
 	/**
 	 * PHP control structures
 	 * Used internally for putting brackets automatically
