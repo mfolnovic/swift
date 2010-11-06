@@ -63,6 +63,7 @@ class App extends Base {
 		self::$request -> route($_GET['url']);
 
 		if(self::$request -> code != 200) {
+			header('HTTP/1.0 ' . self::$request -> code . ' ' . self::$request -> messages[self::$request -> code]);
 			ob_clean();
 			include PUBLIC_DIR . "/" . self::$request -> code . ".html";
 			exit;
