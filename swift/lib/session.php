@@ -46,6 +46,8 @@ class Session extends Base {
 		}
 
 		session_start();
+		session_name('Swift'); // Application name?
+		session_regenerate_id();
 
 		if(!isset($_SESSION['flash'])) {
 			$_SESSION['flash'] = array();
