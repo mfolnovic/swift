@@ -45,8 +45,8 @@ class Session extends Base {
 			self::$init = TRUE;
 		}
 
-		session_start();
 		session_name('Swift'); // Application name?
+		session_start();
 		session_regenerate_id();
 
 		if(!isset($_SESSION['flash'])) {
