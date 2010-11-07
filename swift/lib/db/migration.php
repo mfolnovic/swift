@@ -45,6 +45,9 @@ class Db_Migration {
 	 */
 	public function drop_table($table) {
 	}
+
+	public function add_index() {
+	}
 }
 
 
