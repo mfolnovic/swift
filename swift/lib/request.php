@@ -232,7 +232,7 @@ class Request extends Base {
 		$controllerName = $controller . 'Controller';
 		$actionName     = $action;
 
-		if(is_callable(array($controllerName, $actionName))) {
+		if(method_exists($controllerName, $actionName)) {
 			$this -> object           = new $controllerName($this, App::$response, array_merge($_POST, $data));
 
 			if(!file_exists(TMP_DIR . "caches/{$controller}_{$action}.php")) {
