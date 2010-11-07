@@ -381,7 +381,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 				$name = $assoc;
 			}
 
-			$this -> handleAssociation($name);
+			$this -> handleAssociation($name, $assoc);
 		}
 
 		return $this;
@@ -394,7 +394,8 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 	 * @param  string $name  Name of association
 	 * @return void
 	 */
-	public function handleAssociation($name) {
+	public function handleAssociation($name, $assoc = array()) {
+		if(!is_array($assoc)) $assoc = array();
 		if(isset($this -> hasMany[$name])) { 
 			$association =& $this -> hasMany[$name]; 
 			$type        =  'hasMany'; 
@@ -434,6 +435,7 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 		}
 
 		$assocModel = Model::instance() -> factory($className) -> where(array($association['foreignKey'] => array_keys($ids)));
+		$assocModel -> relation = array_merge($assocModel -> relation, $assoc);
 		if(isset($this -> relation['includes'][$name])) {
 			$assocModel -> includes($this -> relation['includes'][$name]);
 		}
@@ -454,6 +456,10 @@ class Model_Base extends Model_Validations implements IteratorAggregate, ArrayAc
 	 */
 	function isAssociation($key) {
 		return (isset($this -> hasOne[$key]) || isset($this -> belongsTo[$key]) || isset($this -> hasMany[$key]) || isset($this -> hasAndBelongsToMany[$key]));
+	}
+
+	function runQuery($query) {
+		return $this -> link -> query($query);
 	}
 }
 
