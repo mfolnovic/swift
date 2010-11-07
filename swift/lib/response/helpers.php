@@ -28,32 +28,34 @@
  */
 function javascript() {
 	if(file_exists(PUBLIC_DIR . 'javascripts/all.js')) {
-		$version = filemtime(PUBLIC_DIR . 'javascripts/all.js');
-		return "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/all.js?$version\"></script>";
+		$files = array('all.js');
 	} else {
-		$ret = '';
-
-		foreach(func_get_args() as $val) {
-			$ret .= "<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/$val\"></script>";
-		}
-
-		return $ret;
+		$files = func_get_args();
 	}
+
+	$ret = '';
+	foreach($files as $file) {
+		$version = filemtime(PUBLIC_DIR . 'javascripts/' . $file);
+		$ret .="<script type=\"text/javascript\" src=\"" . URL_PREFIX . "javascripts/$file?$version\"></script>";
+	}
+
+	return $ret;
 }
 
 function stylesheet() {
-	if(file_exists(PUBLIC_DIR . 'stylesheets/all.css')) {
-		$version = filemtime(PUBLIC_DIR . 'stylesheets/all.css');
-		return "<link href=\"" . URL_PREFIX . "stylesheets/all.css?$version\" rel=\"stylesheet\" type=\"text/css\">";
+	if(file_exists(PUBLIC_DIR . 'stylesheets/all.js')) {
+		$files = array('all.css');
 	} else {
-		$ret = '';
-
-		foreach(func_get_args() as $val) {
-			$ret .= "<link href=\"" . URL_PREFIX . "stylesheets/$val\" rel=\"stylesheet\" type=\"text/css\">";
-		}
-
-		return $ret;
+		$files = func_get_args();
 	}
+
+	$ret = '';
+	foreach($files as $file) {
+		$version = filemtime(PUBLIC_DIR . 'stylesheets/' . $file);
+		$ret .= "<link href=\"" . URL_PREFIX . "stylesheets/$file?$version\" rel=\"stylesheet\" type=\"text/css\">";
+	}
+
+	return $ret;
 }
 
 function favicon($icon) {
