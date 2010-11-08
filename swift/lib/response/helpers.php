@@ -43,7 +43,7 @@ function javascript() {
 }
 
 function stylesheet() {
-	if(file_exists(PUBLIC_DIR . 'stylesheets/all.js')) {
+	if(file_exists(PUBLIC_DIR . 'stylesheets/all.css')) {
 		$files = array('all.css');
 	} else {
 		$files = func_get_args();
