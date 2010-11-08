@@ -61,6 +61,7 @@ class Model_Validations extends Base {
 	 * @return bool
 	 */
 	public function validates_required($value, $validation) {
+		$value = trim($value);
 		return !empty($value);
 	}
 

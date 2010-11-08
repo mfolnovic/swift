@@ -72,7 +72,6 @@ class App extends Base {
 		if(empty(self::$response -> render)) {
 			self::$response -> render = self::$request -> controller . '/' . self::$request -> action;
 		}
-
 		self::$response -> render();
 		self::$response -> renderLayout();
 	}

@@ -138,7 +138,7 @@ class Controller extends Base {
 	 * @return void
 	 */
 	public function layout($layout) {
-		$this -> response -> layout = $layout;
+		App::$response -> layout = $layout;
 	}
 
 	/**
@@ -166,7 +166,7 @@ class Controller extends Base {
 	 * @return return
 	 */
 	public function render($path) {
-		$this -> response -> render = $path;
+		App::$response -> render = $path;
 	}
 
 	/**
