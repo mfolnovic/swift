@@ -177,6 +177,7 @@ class Controller extends Base {
 	 */
 	public function notFound() {
 		App::$request -> setStatus(404);
+		exit;
 	}
 
 	/**
