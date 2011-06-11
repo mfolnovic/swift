@@ -81,7 +81,7 @@ class Security extends Base {
 	}
 
 	/**
-	 * Fitlers array $array from XSS
+	 * Filters array $array from XSS
 	 *
 	 * @access public
 	 * @param  array $array Array to filter
